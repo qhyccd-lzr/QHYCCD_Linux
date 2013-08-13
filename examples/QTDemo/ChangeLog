@@ -1,0 +1,33 @@
+2012-07-11 CCD 1.2.7 (c)Galaxy Master  <galaxy_master@mail.ru>
+	* Added software binning for QHY5
+	* Improved reliability of stopping capturing from QHY cameras
+	* Autosaving preview to BMP is optional now 
+	* Added russian and english manuals
+
+2012-05-22 CCD 1.2.5 (c)Galaxy Master  <galaxy_master@mail.ru>
+	* Added support of QHY5 
+	* Added software binning for QHY5
+
+2012-05-10 CCD 1.2.1 (c)Galaxy Master  <galaxy_master@mail.ru>
+	* Bugfixes for QHY8L reset
+
+2012-03-09 CCD 1.2.0 (c)Galaxy Master  <galaxy_master@mail.ru>
+	* Added support of QHY8L
+	* Added QHY9 temperature control
+	* Added color previews for 'bayer' images
+	* Bugfixes 
+
+2012-01-13 CCD 1.1.1 (c)Galaxy Master  <galaxy_master@mail.ru>
+	* Added control for color processing
+	* Fixed image buffer reallocation bug
+	* Added BULB mode via USB for DSLR
+
+2011-12-14 CCD 1.1.0 (c)Galaxy Master  <galaxy_master@mail.ru>
+
+	* Supports TSNK-lab ICX285AL cameras, QHY6, QHY9, DSI2PRO, DSLR	
+	* Supports 12,16 bits Mono and 24,48 bits RGB image formats
+	* Photo and video modes can be used
+	* Histogram control of preview
+	* Two modes of capture: a single frame and series
+	* Bugfixes
+	* And some other minor changes...

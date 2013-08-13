@@ -1,0 +1,1 @@
+qmake-qt4 CONFIG+=release

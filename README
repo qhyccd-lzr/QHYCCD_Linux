@@ -1,0 +1,8 @@
+Installation frome source code
+===============================================
+1.	Install gcc ,make,etc. for building from sources.
+2.  Install libusb version >= 1.0.0 with development packages.
+3.  Install fxload.
+4.  Install opencv.
+5.  Run ./configure and make to build program.
+6.  Run make install to install the lib to your system.

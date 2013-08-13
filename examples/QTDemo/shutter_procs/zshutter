@@ -1,0 +1,2 @@
+#!/bin/bash
+echo -e "I'm dummy shutter.\nBuild a Shutter program binary from the 'shutter_procs' directory and replace this one by it."

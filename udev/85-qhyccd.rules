@@ -1,0 +1,77 @@
+# Udev rules for QHY CCD cameras
+# QHY2,  QHY5, QHY6, QHY8, QHY10
+#
+# ---- Initial Release ----
+# Clive Rogers.  2 May 2009
+#
+# Add rules for QHY2, QHY5, QHY6, QHY8
+#
+# ---- Update 1 ----
+# YANG Xudong 21 Oct 2010
+#
+# Add rules for QHY10 and modified for libqhyccd
+
+
+# Camera inserted.
+# Vendorid & Prodid: QHY VOTI
+
+ACTION!="add", GOTO="qhy_vidpid_end"
+SUBSYSTEM=="usb", ENV{DEVTYPE}=="usb_device", GOTO="qhy_vidpid_test"
+SUBSYSTEM!="usb_device", GOTO="qhy_vidpid_end"
+
+LABEL="qhy_vidpid_test"
+
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0412", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY2.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0901", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5LOADER.HEX -D $env{DEVNAME}"
+SYSFS{idVendor}=="1618", SYSFS{idProduct}=="0901", RUN+="/bin/sleep 5"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0901", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="1002", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5LOADER.HEX -D $env{DEVNAME}"
+SYSFS{idVendor}=="1618", SYSFS{idProduct}=="1002", RUN+="/bin/sleep 5"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="1002", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="0547", ATTRS{idProduct}=="1002", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5LOADER.HEX -D $env{DEVNAME}"
+SYSFS{idVendor}=="0547", SYSFS{idProduct}=="1002", RUN+="/bin/sleep 5"
+ATTRS{idVendor}=="0547", ATTRS{idProduct}=="1002", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0259", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY6.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="6000", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY8.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="1000", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY10.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="2850", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/IMG2PRO.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="b285", RUN+="/sbin/fxload -t fx2lp -I /usr/lib/libqhyccd/firmware/IMG2S.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0920", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5II.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="8300", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY9.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="8310", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY9L.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="6940", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY22.HEX -D $env{DEVNAME}"
+LABEL="qhy_vidpid_end"
+
+# This is the ID presented once the firmware has been loaded.
+# idVendor and idProduct match Cypress FX2 USB chips.
+
+ACTION!="add", GOTO="qhy-rules-end"
+SUBSYSTEMS=="usb", GOTO="qhy-vipi"
+GOTO="qhy-rules-end"
+
+LABEL="qhy-vipi"
+
+ATTRS{modalias}=="usb:v16c0p081e*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY2"
+
+ATTRS{modalias}=="usb:v16c0p296d*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY5"
+
+ATTRS{modalias}=="usb:v16c0p081d*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY6"
+
+ATTRS{modalias}=="usb:v16c0p2972*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY8"
+
+ATTRS{modalias}=="usb:v1618p1001*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY10"
+
+ATTRS{modalias}=="usb:v1618p2851*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="IMG2PRO"
+
+ATTRS{modalias}=="usb:v1618pa285*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="IMG2S"
+
+ATTRS{modalias}=="usb:v1618p0921*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY5II"
+
+ATTRS{modalias}=="usb:v1618p8301*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY9"
+
+ATTRS{modalias}=="usb:v1618p8311*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY9L"
+
+ATTRS{modalias}=="usb:v1618p6941*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY22"
+
+LABEL="qhy-rules-end"
+
