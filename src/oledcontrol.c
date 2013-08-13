@@ -18,9 +18,8 @@
 int port_handle = 0;
 
 
-int   open_port() 
+int   openoled() 
 { 
-    int port_handle = 0;   
     struct termios options; 
     int status; 
 
@@ -72,7 +71,10 @@ int   open_port()
     } 
     return port_handle; 
 } 
-
+void closeoled()
+{
+    close(port_handle);
+}
 
 void send2speaker()
 {
@@ -85,7 +87,7 @@ void send2speaker()
     write(port_handle,buf,7);
 }
 
-void send2oled(int width,int height,int bpp,int channels,unsigned char *showdata)
+void interGuiderOled(int width,int height,int bpp,int channels,unsigned char *showdata)
 {
     unsigned char data[132 * 32];
     memset(data,0,132 * 32);
@@ -205,51 +207,23 @@ void send2oled(int width,int height,int bpp,int channels,unsigned char *showdata
     cvReleaseImage(&img);
 }
 
+char readoled()
+{
+    char read_buf[256];   
+    read(port_handle, read_buf, sizeof(read_buf));
+    return read_buf[0];
+}
+
+#if 0
 int   main(int   argc,   char   *   argv[])   
 { 
     char read_buf[256];
-    port_handle = open_port();
-
+    openoled();
     IplImage *img = cvLoadImage("pad.jpg",0);
-    send2oled(img->width,img->height,img->depth,img->nChannels,img->imageData);
+    interGuiderOled(img->width,img->height,img->depth,img->nChannels,img->imageData);
     cvReleaseImage(&img);
     send2speaker();
-        
-    while(1)
-    {
-        bzero(read_buf, sizeof(read_buf));
-
-        read(port_handle, read_buf, sizeof(read_buf));
-        printf("%d\n",read_buf[0]); 
-#if 0
-        if(read_buf[0] == '0')
-        {
-            send2oled("0");
-            send2oled("0");
-        }
-        else if(read_buf[0] == '1')
-        {
-            send2speaker();
-        }
-        else if(read_buf[0] == '2')
-        {
-            send2oled("2");
-            send2oled("2");
-        }
-        else if(read_buf[0] == '3')
-        {
-            send2oled("3");
-            send2oled("3");
-        }
-        else if(read_buf[0] == '4')
-        {
-            send2oled("4");
-            send2oled("4");
-        }
- #endif
-        usleep(100);
-    }
-    close(port_handle); 
 
     return   0   ; 
 }
+#endif
