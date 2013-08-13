@@ -211,9 +211,30 @@ int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
         unsigned char *buf;
         buf = (unsigned char*)malloc(p_size);
 
+        int dataEndpoint;
+        
+        switch(QCam.CAMERA)
+        {
+            case DEVICETYPE_QHY5II:
+            case DEVICETYPE_QHY5LII:
+            {
+                dataEndpoint = 0x82;
+            }
+            break;
+            case DEVICETYPE_QHY9:
+            {
+                dataEndpoint = 0x86;
+            }
+            break;
+            default:
+            {
+                dataEndpoint = 0x86;
+            }
+        }
+
         for (i = 0; i < p_num; ++i) {
                 ret = libusb_bulk_transfer(dev_handle,
-                                           QHYCCD_DATA_READ_ENDPOINT,
+                                           dataEndpoint,
                                            buf, p_size,
                                            &length_transfered, 0);
                 if (ret < 0) {
