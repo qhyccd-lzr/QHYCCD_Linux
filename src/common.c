@@ -680,6 +680,9 @@ void BeginCooler(unsigned char PWM)
 
 double GetTemp()
 {
+	if(QCam.CAMERA == DEVICETYPE_QHY5LII){
+		return GetQHY5LIITemp();
+	}
 	if(QCam.CAMERA == DEVICETYPE_QHY9 || QCam.CAMERA == DEVICETYPE_QHY9L || QCam.CAMERA == DEVICETYPE_QHY22)
 	{
 		return GetCCDTemp(QCam.ccd_handle);

@@ -14,6 +14,7 @@ void   SetExposureTime_QHY5LII(unsigned long i);
 void   SetGainMonoQHY5LII(double gain);
 void   SetGainColorQHY5LII(double gain, double RG, double BG);
 void   CorrectQHY5LIIWH(int *w,int *h);
+double GetQHY5LIITemp(void);
 double setQHY5LREG_PLL(unsigned char clock);
 void   initQHY5LII_1280X960(void);
 void   initQHY5LII_QVGA(void);
