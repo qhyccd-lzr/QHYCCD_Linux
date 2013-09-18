@@ -695,6 +695,35 @@ void  W_I2C_MICRON_Address16_OneRegister(unsigned short adr, unsigned short dat)
     I2CTwoWrite(adr, dat);
 }
 
+unsigned short R_I2C_MICRON_Address16_OneRegister(unsigned short adr)
+{
+    return I2CTwoRead(adr);
+}
+
+double GetQHY5LIITemp(void){
+	double slope;
+	double T0;
+	uint16_t sensed, calib1, calib2;
+	W_I2C_MICRON_Address16_OneRegister(0x30B4, 0x0011);
+	sensed = R_I2C_MICRON_Address16_OneRegister(0x30B2);
+	calib1 = R_I2C_MICRON_Address16_OneRegister(0x30C6);
+	calib2 = R_I2C_MICRON_Address16_OneRegister(0x30C8);
+	W_I2C_MICRON_Address16_OneRegister(0x30B4, 0x0000);
+
+	slope = (70.0 - 55.0)/(calib1 - calib2);
+	T0 = (slope*calib1 - 70.0);
+/*#ifdef QHY5L_DEBUG
+	printf("calib1 = 0x%x\n", calib1);
+	printf("calib2 = 0x%x\n", calib2);
+	printf("sensed = 0x%x\n", sensed);
+	printf("slope %f\n", slope);
+	printf("T0 %f\n", T0);
+	printf("Temperatura %f\n", slope * sensed - T0);
+#endif*/
+	return slope * sensed - T0;
+}
+
+
 void InitQHY5LIIRegs(void)
 {
 	// [720p, 25fps input27Mhz,output50Mhz, ]
