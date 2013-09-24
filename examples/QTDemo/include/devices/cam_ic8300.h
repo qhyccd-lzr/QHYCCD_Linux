@@ -1,55 +1,55 @@
 /*
- * cam_qhy9.h
+ * cam_ic8300.h
  *
  *  Created on: 29.11.2011
  *      Author: gm
  */
 
-#ifndef CAM_QHY9_H_
-#define CAM_QHY9_H_
+#ifndef CAM_ic8300_H_
+#define CAM_ic8300_H_
 
 #include <libusb-1.0/libusb.h>
 
 #include "camera.h"
 
 
-#define QHY9_VENDOR_ID   0x1618
-#define QHY9_PRODUCT_ID  0x8311
+#define ic8300_VENDOR_ID   0x1618
+#define ic8300_PRODUCT_ID  0x8311
 
-#define QHY9_MATRIX_WIDTH   3584
-#define QHY9_MATRIX_HEIGHT  2574
-
-
-
-
-#define QHY9_WIDTH_B1	QHY9_MATRIX_WIDTH
-#define QHY9_HEIGHT_B1	QHY9_MATRIX_HEIGHT
-
-#define QHY9_WIDTH_B2	1792
-#define QHY9_HEIGHT_B2	1287
-
-
-#define QHY9_WIDTH_B3	1196
-#define QHY9_HEIGHT_B3	858
-
-
-#define QHY9_WIDTH_B4	896
-#define QHY9_HEIGHT_B4	644
-
-#define QHY9_BUFFER_LEN 9360000 // 3600*2600
-
-#define QHY9_BINN_CNT 4
+#define ic8300_MATRIX_WIDTH   3584
+#define ic8300_MATRIX_HEIGHT  2574
 
 
 
-class cam_qhy9_params : public cam_base_params
+
+#define ic8300_WIDTH_B1	ic8300_MATRIX_WIDTH
+#define ic8300_HEIGHT_B1	ic8300_MATRIX_HEIGHT
+
+#define ic8300_WIDTH_B2	1792
+#define ic8300_HEIGHT_B2	1287
+
+
+#define ic8300_WIDTH_B3	1196
+#define ic8300_HEIGHT_B3	858
+
+
+#define ic8300_WIDTH_B4	896
+#define ic8300_HEIGHT_B4	644
+
+#define ic8300_BUFFER_LEN 9360000 // 3600*2600
+
+#define ic8300_BINN_CNT 4
+
+
+
+class cam_ic8300_params : public cam_base_params
 {
 public:
-	cam_qhy9_params() : cam_base_params( 1500 )
+	cam_ic8300_params() : cam_base_params( 1500 )
 	{
 		reset();
 	}
-	virtual ~cam_qhy9_params(){}
+	virtual ~cam_ic8300_params(){}
 	virtual void reset()
 	{
 		cam_base_params::reset();
@@ -106,7 +106,7 @@ public:
 	int fan;
 
 private:
-	static const camera_model::model m_model = camera_model::qhy9;
+	static const camera_model::model m_model = camera_model::ic8300;
 };
 
 
@@ -124,15 +124,15 @@ typedef struct
 	int out_frame_width;
 	int out_frame_height;
 	int out_buffer_size;
-}qhy9_params_t;
+}ic8300_params_t;
 
 
-class ccamera_qhy9 : public ccamera_base
+class ccamera_ic8300 : public ccamera_base
 {
 	Q_OBJECT
 public:
-	ccamera_qhy9();
-	virtual ~ccamera_qhy9();
+	ccamera_ic8300();
+	virtual ~ccamera_ic8300();
 
 	virtual camera_model::model get_model( void ) const;
 
@@ -181,8 +181,8 @@ private:
 	double mv_to_degree( double v ) const;
 	int set_dc201( int pwm );
 
-	cam_qhy9_params m_high_params;	// human-readable params
-	qhy9_params_t   m_low_params;
+	cam_ic8300_params m_high_params;	// human-readable params
+	ic8300_params_t   m_low_params;
 
 	struct libusb_device_handle *m_handle;
 	// Magic numbers have been researched by Vladimir Volynsky
@@ -191,4 +191,4 @@ private:
 };
 
 
-#endif /* CAM_QHY9_H_ */
+#endif /* CAM_ic8300_H_ */

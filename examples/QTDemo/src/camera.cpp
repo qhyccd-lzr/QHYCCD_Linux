@@ -296,15 +296,13 @@ namespace camera_model
 		case null:
 			return "null";
 		case qhy5:
-			return "qhy5";
-                case qhy5ii:
-                        return "qhy5ii";
+                        return "qhy5";
                 case qhy5lii:
                         return "qhy5lii";
 		case qhy6:
 			return "qhy6";
-		case qhy9:
-			return "qhy9";
+		case ic8300:
+			return "ic8300";
 		case qhy8l:
 			return "qhy8l";
 		default:
@@ -318,14 +316,12 @@ namespace camera_model
 			return null;
                 else if( !strcmp( str, "qhy5" ) )
 			return qhy5;
-                else if(!strcmp(str,"qhy5ii"))
-                    return qhy5ii;
                 else if(!strcmp(str,"qhy5lii"))
                     return qhy5lii;
                 else if( !strcmp( str, "qhy6" ) )
 			return qhy6;
-                else if( !strcmp( str, "qhy9" ) )
-			return qhy9;
+                else if( !strcmp( str, "ic8300" ) )
+			return ic8300;
                 else if( !strcmp( str, "qhy8l" ) )
 			return qhy8l;
 		else

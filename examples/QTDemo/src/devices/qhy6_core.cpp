@@ -396,7 +396,7 @@ int qhy6_core_shared::set_params( int exposuretime, int binn, int gain, int offs
 
 	REG[22] = 0;						// MultiFieldBIN no use for QHY6-9  set to 0
 
-	REG[29] = 0x0000;						// ClockADJ no use for QHY9-11  16Bit set to 0
+	REG[29] = 0x0000;						// ClockADJ no use for ic8300-11  16Bit set to 0
 	// [Qhy6Pro StrToInt(Form7->LableFineTone->Caption ); Investigation needed]
 	REG[30] = 0;
 
@@ -416,7 +416,7 @@ int qhy6_core_shared::set_params( int exposuretime, int binn, int gain, int offs
 	REG[47] = 0;						// TopSkipPix no use for QHY6-9-11 16Bit set to 0
 	REG[48] = 0;
 
-	REG[51] = 0;						// QHY9 0: programme control mechanical shutter automaticly   1: programme will not control shutter.
+	REG[51] = 0;						// ic8300 0: programme control mechanical shutter automaticly   1: programme will not control shutter.
 	REG[52] = 0;						// DownloadCloseTEC no use for QHY6-9   set to 0
 
 	REG[53] = 0;						// Unknown: (reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0)

@@ -21,10 +21,9 @@ namespace camera_model
 	{
                 null = 1,
 		qhy5,
-                qhy5ii,
                 qhy5lii,
 		qhy6,
-		qhy9,
+		ic8300,
 		qhy8l,
 		unknown
 	};

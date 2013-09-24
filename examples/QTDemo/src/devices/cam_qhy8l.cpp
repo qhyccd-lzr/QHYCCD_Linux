@@ -771,9 +771,9 @@ int ccamera_qhy8l::set_params( int exposuretime, int binn, int gain, int offset,
 	REG[19] = MSB(reg.AnitInterlace );                     // AnitInterlace no use for QHY8-9-11  16Bit set to 0
 	REG[20] = LSB(reg.AnitInterlace );
 
-	REG[22] = reg.MultiFieldBIN ;                         // MultiFieldBIN no use for QHY9  set to 0
+	REG[22] = reg.MultiFieldBIN ;                         // MultiFieldBIN no use for ic8300  set to 0
 
-	REG[29] = MSB(reg.ClockADJ );                          // ClockADJ no use for QHY9-11  16Bit set to 0
+	REG[29] = MSB(reg.ClockADJ );                          // ClockADJ no use for ic8300-11  16Bit set to 0
 	REG[30] = LSB(reg.ClockADJ );
 
 	REG[32] = reg.AMPVOLTAGE;                              // 1: anti-amp light mode
@@ -789,11 +789,11 @@ int ccamera_qhy8l::set_params( int exposuretime, int binn, int gain, int offset,
 
 	REG[46] = reg.TopSkipNull;                                             // TopSkipNull unit is line.
 
-	REG[47] = MSB(reg.TopSkipPix );                     // TopSkipPix no use for QHY9-11 16Bit set to 0
+	REG[47] = MSB(reg.TopSkipPix );                     // TopSkipPix no use for ic8300-11 16Bit set to 0
 	REG[48] = LSB(reg.TopSkipPix );
 
-	REG[51] = reg.MechanicalShutterMode;                 // QHY9 0: programme control mechanical shutter automaticly   1: programme will not control shutter.
-	REG[52] = reg.DownloadCloseTEC ;                     // DownloadCloseTEC no use for QHY9   set to 0
+	REG[51] = reg.MechanicalShutterMode;                 // ic8300 0: programme control mechanical shutter automaticly   1: programme will not control shutter.
+	REG[52] = reg.DownloadCloseTEC ;                     // DownloadCloseTEC no use for ic8300   set to 0
 
 	REG[53] = (reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0);
 	REG[57] = reg.ADCSEL;

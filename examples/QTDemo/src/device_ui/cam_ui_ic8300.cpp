@@ -1,14 +1,14 @@
-#include "cam_ui_qhy9.h"
+#include "cam_ui_ic8300.h"
 #include "utils.h"
 
 
-cam_ui_qhy9::cam_ui_qhy9( ccamera_base *pcam, QWidget *parent ) :
+cam_ui_ic8300::cam_ui_ic8300( ccamera_base *pcam, QWidget *parent ) :
     ui_device_base(pcam, parent)
 {
 	ui.setupUi( this->ui_device_base::m_hw_ui );
 	this->ui_device_base::m_hw_ui->setWindowTitle( tr("HW params") );
 
-	m_params = static_cast<cam_qhy9_params *>(m_camera->alloc_params_object());
+	m_params = static_cast<cam_ic8300_params *>(m_camera->alloc_params_object());
 
 	m_timer.setInterval( 3000 );
 	m_timer.stop();
@@ -23,20 +23,20 @@ cam_ui_qhy9::cam_ui_qhy9( ccamera_base *pcam, QWidget *parent ) :
 }
 
 
-cam_ui_qhy9::~cam_ui_qhy9()
+cam_ui_ic8300::~cam_ui_ic8300()
 {
 	delete m_params;
 }
 
 
-void cam_ui_qhy9::onHwOkClick()
+void cam_ui_ic8300::onHwOkClick()
 {
 	if( is_valid() )
 		this->ui_device_base::m_hw_ui->close();
 }
 
 
-bool cam_ui_qhy9::is_valid( void )
+bool cam_ui_ic8300::is_valid( void )
 {
  int offset, gain;
  double exposure;
@@ -118,7 +118,7 @@ bool cam_ui_qhy9::is_valid( void )
 }
 
 
-bool cam_ui_qhy9::apply( void )
+bool cam_ui_ic8300::apply( void )
 {
 	if( !is_valid() )
 		return false;
@@ -133,7 +133,7 @@ bool cam_ui_qhy9::apply( void )
 }
 
 
-void cam_ui_qhy9::fill_interface( void )
+void cam_ui_ic8300::fill_interface( void )
 {
 	m_camera->get_params_copy( m_params );
 
@@ -148,12 +148,12 @@ void cam_ui_qhy9::fill_interface( void )
 }
 
 
-void cam_ui_qhy9::onTimer()
+void cam_ui_ic8300::onTimer()
 {
 	bool ret = 0;
 	std::map< std::string, std::string > req_result;
 
-	ret = m_camera->exec_slow_ambiguous_synchronous_request( ccamera_qhy9::temp_req,
+	ret = m_camera->exec_slow_ambiguous_synchronous_request( ccamera_ic8300::temp_req,
 															std::map< std::string, std::string >(),
 															&req_result );
 	if( ret )
@@ -170,13 +170,13 @@ void cam_ui_qhy9::onTimer()
 }
 
 
-void cam_ui_qhy9::onShow()
+void cam_ui_ic8300::onShow()
 {
 	m_timer.start();
 }
 
 
-void cam_ui_qhy9::onClose()
+void cam_ui_ic8300::onClose()
 {
 	m_timer.stop();
 }

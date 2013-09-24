@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <ui version="4.0">
- <class>cam_ui_qhy9Class</class>
- <widget class="QWidget" name="cam_ui_qhy9Class">
+ <class>cam_ui_ic8300Class</class>
+ <widget class="QWidget" name="cam_ui_ic8300Class">
   <property name="geometry">
    <rect>
     <x>0</x>
@@ -29,7 +29,7 @@
    </size>
   </property>
   <property name="windowTitle">
-   <string>cam_ui_qhy9</string>
+   <string>cam_ui_ic8300</string>
   </property>
   <layout class="QGridLayout" name="gridLayout">
    <item row="0" column="0" colspan="2">

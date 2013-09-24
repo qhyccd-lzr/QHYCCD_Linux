@@ -15,13 +15,13 @@
 #include "cam_null.h"
 #include "cam_qhy6.h"
 #include "cam_qhy5lii.h"
-#include "cam_qhy9.h"
+#include "cam_ic8300.h"
 
 #include "cam_ui_null.h"
 #include "cam_ui_qhy5.h"
 #include "cam_ui_qhy5lii.h"
 #include "cam_ui_qhy6.h"
-#include "cam_ui_qhy9.h"
+#include "cam_ui_ic8300.h"
 #include "cam_ui_qhy8l.h"
 
 
@@ -82,20 +82,21 @@ ccd::ccd(QWidget *parent) : QWidget(parent)
 	// Init Camera
 	switch( param_block->get_camera_model() )
 	{
+        case camera_model::unknown:
 	case camera_model::null:
 		m_camera = new ccamera_null();
 		break;
 	case camera_model::qhy5:
 		m_camera = new ccamera_qhy5();
 		break;
-  case camera_model::qhy5lii:
-    m_camera = new ccamera_qhy5lii();
-    break;
+        case camera_model::qhy5lii:
+                m_camera = new ccamera_qhy5lii();
+                break;
 	case camera_model::qhy6:
 		m_camera = new ccamera_qhy6();
 		break;
-	case camera_model::qhy9:
-		m_camera = new ccamera_qhy9();
+	case camera_model::ic8300:
+		m_camera = new ccamera_ic8300();
 		break;
 	case camera_model::qhy8l:
 		m_camera = new ccamera_qhy8l();
@@ -125,6 +126,7 @@ ccd::ccd(QWidget *parent) : QWidget(parent)
 	// Init Camera
 	switch( param_block->get_camera_model() )
 	{
+        case camera_model::unknown:
 	case camera_model::null:
 		device_wnd = new cam_ui_null( m_camera, this );
 		break;
@@ -137,8 +139,8 @@ ccd::ccd(QWidget *parent) : QWidget(parent)
 	case camera_model::qhy6:
 		device_wnd = new cam_ui_qhy6( m_camera, this );
 		break;
-	case camera_model::qhy9:
-		device_wnd = new cam_ui_qhy9( m_camera, this );
+	case camera_model::ic8300:
+		device_wnd = new cam_ui_ic8300( m_camera, this );
 		break;
 	case camera_model::qhy8l:
 		device_wnd = new cam_ui_qhy8l( m_camera, this );

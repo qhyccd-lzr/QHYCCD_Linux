@@ -20,8 +20,8 @@ HEADERS += include/device_ui/cam_ui_qhy5.h \
     include/histogramwnd.h \
     include/maindef.h \
     include/about.h \
-    include/device_ui/cam_ui_qhy9.h \
-    include/devices/cam_qhy9.h \
+    include/device_ui/cam_ui_ic8300 \
+    include/devices/cam_ic8300.h \
     include/lusb.h \
     include/devices/qhy6_core.h \
     include/devices/cam_qhy6.h \
@@ -43,7 +43,8 @@ HEADERS += include/device_ui/cam_ui_qhy5.h \
     include/utils.h \
     include/device_ui/cam_ui_qhy5lii.h \
     include/devices/cam_qhy5lii.h \
-    include/devices/qhy5lii_core.h
+    include/devices/qhy5lii_core.h \
+    include/device_ui/cam_ui_ic8300.h
 
 SOURCES += src/device_ui/cam_ui_qhy5.cpp \
     src/devices/cam_qhy5.cpp \
@@ -54,8 +55,8 @@ SOURCES += src/device_ui/cam_ui_qhy5.cpp \
     src/histogramwnd.cpp \
     src/maindef.cpp \
     src/about.cpp \
-    src/device_ui/cam_ui_qhy9.cpp \
-    src/devices/cam_qhy9.cpp \
+    src/device_ui/cam_ui_ic8300.cpp \
+    src/devices/cam_ic8300.cpp \
     src/lusb.cpp \
     src/devices/qhy6_core.cpp \
     src/devices/cam_qhy6.cpp \
@@ -83,7 +84,7 @@ FORMS += ui/configwnd.ui \
     ui/about.ui \
     ui/device_ui/cam_ui_qhy5.ui \
     ui/device_ui/cam_ui_qhy8l.ui \
-    ui/device_ui/cam_ui_qhy9.ui \
+    ui/device_ui/cam_ui_ic8300.ui \
     ui/device_ui/cam_ui_qhy6.ui \
     ui/device_ui/cam_ui_null.ui \
     ui/sessionswnd.ui \

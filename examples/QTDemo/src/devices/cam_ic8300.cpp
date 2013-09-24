@@ -1,5 +1,5 @@
 /*
- * cam_qhy9.cpp
+ * cam_ic8300.cpp
  *
  *  Created on: 29.11.2011
  *      Author: gm
@@ -14,35 +14,35 @@
 
 #include "camera.h"
 //#include "lusb.h"
-#include "cam_qhy9.h"
+#include "cam_ic8300.h"
 #include "timer.h"
 #include "utils.h"
 #include "image.h"
 #include <libqhyccd/common.h>
 
-// disables hardware access for QHY9
-//#define NO_QHY9
+// disables hardware access for ic8300
+//#define NO_ic8300
 
 #define SENDREGS  0xB5
 
 
 // Magic numbers have been researched by Vladimir Volynsky
-const int ccamera_qhy9::m_binn_loading_time[QHY9_BINN_CNT] = { 11300, 4500, 3000, 2600 };
-const int ccamera_qhy9::m_binn_loading_size[QHY9_BINN_CNT] = { 18429440, 4606976, 2051584, 1150976 };
+const int ccamera_ic8300::m_binn_loading_time[ic8300_BINN_CNT] = { 11300, 4500, 3000, 2600 };
+const int ccamera_ic8300::m_binn_loading_size[ic8300_BINN_CNT] = { 18429440, 4606976, 2051584, 1150976 };
 
-ccamera_qhy9::ccamera_qhy9() :
+ccamera_ic8300::ccamera_ic8300() :
 	m_handle( NULL )
 {
         //int ret = lusb::initialize();
         //if( ret != 0 )
-        //	log_e( "ccamera_qhy9::ccamera_qhy9(): Could not initialize libusb" );
+        //	log_e( "ccamera_ic8300::ccamera_ic8300(): Could not initialize libusb" );
 
 	// load params
 	m_high_params.load();
 }
 
 
-ccamera_qhy9::~ccamera_qhy9()
+ccamera_ic8300::~ccamera_ic8300()
 {
 	stop();
 
@@ -53,34 +53,34 @@ ccamera_qhy9::~ccamera_qhy9()
 }
 
 
-camera_model::model ccamera_qhy9::get_model( void ) const
+camera_model::model ccamera_ic8300::get_model( void ) const
 {
-	return camera_model::qhy9;
+	return camera_model::ic8300;
 }
 
 
-int ccamera_qhy9::open_device( void )
+int ccamera_ic8300::open_device( void )
 {
 	int ret = EXIT_SUCCESS;
 //int a=ret/0;
 	if( m_initialized )
 		return EXIT_SUCCESS;
 
-#ifdef NO_QHY9
+#ifdef NO_ic8300
 	if( lusb::is_initialized() )
-		log_i( "ccamera_qhy9::open_device(): Success" );
+		log_i( "ccamera_ic8300::open_device(): Success" );
 #else
         ret = OpenCamera();
         if(ret <= 0)
         {
-            log_e( "ccamera_qhy9::open_device(): Could not open the QHY9 device" );
+            log_e( "ccamera_ic8300::open_device(): Could not open the ic8300 device" );
             return EXIT_FAILURE;
         }
         ret = EXIT_SUCCESS;
 
 #endif
         // set defaults
-        qhy9_params_t p;
+        ic8300_params_t p;
         p.exposure	= (int)m_high_params.Exposition;
         p.binn		= m_high_params.Binning;
         p.gain		= m_high_params.gain;
@@ -107,37 +107,37 @@ int ccamera_qhy9::open_device( void )
                         NULL );
         if( ret != EXIT_SUCCESS )
         {
-                log_e( "ccamera_qhy9::open_device(): set_params() failed" );
+                log_e( "ccamera_ic8300::open_device(): set_params() failed" );
                 return EXIT_FAILURE;
         }
 
         m_low_params  = p;
         m_initialized = true;
-        log_i( "Connected to QHY9 camera" );
+        log_i( "Connected to ic8300 camera" );
         return EXIT_SUCCESS;
 }
 
 
-void ccamera_qhy9::close_device( void )
+void ccamera_ic8300::close_device( void )
 {
 	m_initialized = false;
 	log_i( "Disconnected" );
 }
 
 
-cam_base_params *ccamera_qhy9::alloc_params_object( void ) const
+cam_base_params *ccamera_ic8300::alloc_params_object( void ) const
 {
-	return new cam_qhy9_params();
+	return new cam_ic8300_params();
 }
 
 
-bool ccamera_qhy9::set_params( cam_base_params *params )
+bool ccamera_ic8300::set_params( cam_base_params *params )
 {
-        cam_qhy9_params *h_params = NULL;
-        qhy9_params_t p;
+        cam_ic8300_params *h_params = NULL;
+        ic8300_params_t p;
         bool ret = false;
 
-	h_params = dynamic_cast<cam_qhy9_params *>(params);
+	h_params = dynamic_cast<cam_ic8300_params *>(params);
 
 	if( !m_initialized || !h_params )
 		return false;
@@ -155,10 +155,10 @@ bool ccamera_qhy9::set_params( cam_base_params *params )
 	p.out_frame_height = 0;
 	p.out_buffer_size = 0;
 
-	ret = set_thread_task( MK_CMD("@SETPAR"), (char*)&p, sizeof(qhy9_params_t), NULL, 0, true );
+	ret = set_thread_task( MK_CMD("@SETPAR"), (char*)&p, sizeof(ic8300_params_t), NULL, 0, true );
 	if( !ret )
 	{
-		log_e("ccamera_qhy9::set_params: set_thread_task error");
+		log_e("ccamera_ic8300::set_params: set_thread_task error");
 		return false;
 	}
 
@@ -169,10 +169,10 @@ bool ccamera_qhy9::set_params( cam_base_params *params )
 }
 
 
-bool ccamera_qhy9::get_params( cam_base_params *params )
+bool ccamera_ic8300::get_params( cam_base_params *params )
 {
 
- cam_qhy9_params *dst = dynamic_cast<cam_qhy9_params *>(params);
+ cam_ic8300_params *dst = dynamic_cast<cam_ic8300_params *>(params);
  bool ret = false;
 
 	if( !m_initialized || !dst )
@@ -181,7 +181,7 @@ bool ccamera_qhy9::get_params( cam_base_params *params )
 	dst->reset();
 
 	// goto thread
-	ret = set_thread_task( MK_CMD("@GETPAR"), NULL, 0, (char*)&m_low_params, sizeof(qhy9_params_t), true );
+	ret = set_thread_task( MK_CMD("@GETPAR"), NULL, 0, (char*)&m_low_params, sizeof(ic8300_params_t), true );
 	if( !ret )
 	{
 		log_e("ccamera_qhy6::get_params: set_thread_task error");
@@ -204,10 +204,10 @@ bool ccamera_qhy9::get_params( cam_base_params *params )
 }
 
 
-bool ccamera_qhy9::get_params_copy( cam_base_params *params ) const
+bool ccamera_ic8300::get_params_copy( cam_base_params *params ) const
 {
 
- cam_qhy9_params *dst = dynamic_cast<cam_qhy9_params *>(params);
+ cam_ic8300_params *dst = dynamic_cast<cam_ic8300_params *>(params);
 
 	if( !m_initialized || !dst )
 		return false;
@@ -218,13 +218,13 @@ bool ccamera_qhy9::get_params_copy( cam_base_params *params ) const
 }
 
 
-const cam_base_params &ccamera_qhy9::get_params_ref( void ) const
+const cam_base_params &ccamera_ic8300::get_params_ref( void ) const
 {
  return m_high_params;
 }
 
 
-bool ccamera_qhy9::exec_slow_ambiguous_synchronous_request( int req_num,
+bool ccamera_ic8300::exec_slow_ambiguous_synchronous_request( int req_num,
 														const std::map< std::string, std::string > &params,
 														std::map< std::string, std::string > *result )
 {
@@ -236,14 +236,14 @@ bool ccamera_qhy9::exec_slow_ambiguous_synchronous_request( int req_num,
 
 	switch( req_num )
 	{
-	case ccamera_qhy9::temp_req:
+	case ccamera_ic8300::temp_req:
 	{
 		(void)params;
 		struct info_s info_out = { 0, 0 };
 		ret = set_thread_task( MK_CMD("@GETTEMP"), NULL, 0, (char *)&info_out, sizeof(struct info_s), true );
 		if( !ret )
 		{
-			log_e("ccamera_qhy9::exec_slow_ambiguous_synchronous_request(): req_num = %d: set_thread_task error", req_num );
+			log_e("ccamera_ic8300::exec_slow_ambiguous_synchronous_request(): req_num = %d: set_thread_task error", req_num );
 			return false;
 		}
 		if( result )
@@ -252,11 +252,11 @@ bool ccamera_qhy9::exec_slow_ambiguous_synchronous_request( int req_num,
 			snprintf( buf, sizeof(buf)-1, "%f", info_out.temperature );
 			result->insert( std::make_pair( "temperature", std::string( buf ) ) );
 		}
-		log_i( "ccamera_qhy9::exec_slow_ambiguous_synchronous_request(): req = @GETTEMP: temp = %.1f", info_out.temperature );
+		log_i( "ccamera_ic8300::exec_slow_ambiguous_synchronous_request(): req = @GETTEMP: temp = %.1f", info_out.temperature );
 		break;
 	}
 	default:
-		log_e( "ccamera_qhy9::exec_slow_ambiguous_synchronous_request(): Unknown request nubler" );
+		log_e( "ccamera_ic8300::exec_slow_ambiguous_synchronous_request(): Unknown request nubler" );
 		return false;
 
 	}
@@ -265,7 +265,7 @@ bool ccamera_qhy9::exec_slow_ambiguous_synchronous_request( int req_num,
 }
 
 
-bool ccamera_qhy9::get_frame( void )
+bool ccamera_ic8300::get_frame( void )
 {
  frame_params_t frame_params;
  int len;
@@ -287,7 +287,7 @@ bool ccamera_qhy9::get_frame( void )
 	ret = set_thread_task( MK_CMD("@IMG"), NULL, 0, (char*)m_buffer.data, len*pixel_base::bytes_per_pixel(frame_params.bpp), false );
 	if( !ret )
 	{
-		log_e("ccamera_qhy9::get_frame: set_thread_task error");
+		log_e("ccamera_ic8300::get_frame: set_thread_task error");
 		return false;
 	}
 
@@ -295,7 +295,7 @@ bool ccamera_qhy9::get_frame( void )
 }
 
 
-bool ccamera_qhy9::get_frame_params( frame_params_t *params )
+bool ccamera_ic8300::get_frame_params( frame_params_t *params )
 {
  frame_params_t frame_params;
 
@@ -313,11 +313,11 @@ bool ccamera_qhy9::get_frame_params( frame_params_t *params )
 }
 
 
-int ccamera_qhy9::do_command( cam_task_t *task )
+int ccamera_ic8300::do_command( cam_task_t *task )
 {
 	ctimer progress_timer;
 	int nsec = 0;
-	qhy9_params_t *p = NULL;
+	ic8300_params_t *p = NULL;
 	unsigned long now;
 	int ret = EXIT_SUCCESS;
 
@@ -325,32 +325,32 @@ int ccamera_qhy9::do_command( cam_task_t *task )
 	// check that we are not in main thread!
 	if( strncmp( task->cmd, "@SETPAR", task->cmd_len ) == 0 )
 	{
-		if( task->param_len != sizeof(qhy9_params_t) || !(p = reinterpret_cast<qhy9_params_t *>(task->param)) )
+		if( task->param_len != sizeof(ic8300_params_t) || !(p = reinterpret_cast<ic8300_params_t *>(task->param)) )
 		{
-			log_e( "ccamera_qhy9::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
+			log_e( "ccamera_ic8300::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
 			return 1;
 		}
 
 		int res = set_params( p->exposure, p->binn, p->gain, p->offset, p->speed, p->amp, p->shutter, p->pwm, &p->out_frame_width, &p->out_frame_height, &p->out_buffer_size );
 		if( res != EXIT_SUCCESS )
 		{
-			log_e( "ccamera_qhy9::do_command(): CMD = %.*s failed.", task->cmd_len, task->cmd );
+			log_e( "ccamera_ic8300::do_command(): CMD = %.*s failed.", task->cmd_len, task->cmd );
 			return 2;
 		}
 	}
 	else
 	if( strncmp( task->cmd, "@GETPAR", task->cmd_len ) == 0 )
 	{
-		if( task->out_len != sizeof(qhy9_params_t) || !(p = reinterpret_cast<qhy9_params_t *>(task->out)) )
+		if( task->out_len != sizeof(ic8300_params_t) || !(p = reinterpret_cast<ic8300_params_t *>(task->out)) )
 		{
-			log_e( "ccamera_qhy9::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
+			log_e( "ccamera_ic8300::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
 			return 3;
 		}
 
-		qhy9_params_t lp;
+		ic8300_params_t lp;
 		lp = m_low_params;		// emulation of getting parameters (already got by @SETPAR)
 
-		memcpy( task->out, &lp, sizeof(qhy9_params_t) );
+		memcpy( task->out, &lp, sizeof(ic8300_params_t) );
 
 		log_i( "Config get_params OK" );
 	}
@@ -360,7 +360,7 @@ int ccamera_qhy9::do_command( cam_task_t *task )
                 uint16_t *raw = NULL;
 		if( task->out_len != m_low_params.out_buffer_size || !(raw = reinterpret_cast<uint16_t *>(task->out)) )
 		{
-			log_e( "ccamera_qhy9::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
+			log_e( "ccamera_ic8300::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
                         log_e("%d %d",task->out_len,m_low_params.out_buffer_size);
                         return 4;
 		}
@@ -399,7 +399,7 @@ int ccamera_qhy9::do_command( cam_task_t *task )
                 if( m_notify_wnd )
                         QApplication::postEvent( m_notify_wnd, new cam_progress_Event(progress_timer.gettime()) );
 
-#ifdef NO_QHY9
+#ifdef NO_ic8300
                 for( int i = 0;i < m_low_params.out_frame_width*m_low_params.out_frame_height;i++ )
                 {
                         raw[i] = rand() % 65535;
@@ -414,7 +414,7 @@ int ccamera_qhy9::do_command( cam_task_t *task )
 #endif
 
                 // flip vertical
-                uint16_t line[QHY9_MATRIX_WIDTH];
+                uint16_t line[ic8300_MATRIX_WIDTH];
                 uint8_t *raw_byte = (uint8_t*)raw;
                 int line_sz = m_low_params.out_frame_width*sizeof(uint16_t);
                 int line_cnt = m_low_params.out_frame_height >> 1;
@@ -444,7 +444,7 @@ int ccamera_qhy9::do_command( cam_task_t *task )
 		struct info_s *info_out = NULL;
 		if( task->out_len != sizeof(struct info_s) || !(info_out = reinterpret_cast<struct info_s *>(task->out)) )
 		{
-			log_e( "ccamera_qhy9::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
+			log_e( "ccamera_ic8300::do_command(): CMD = %.*s has inconsistent params.", task->cmd_len, task->cmd );
 			return 8;
 		}
 		ret = get_info( info_out );
@@ -456,7 +456,7 @@ int ccamera_qhy9::do_command( cam_task_t *task )
 }
 
 #if 0
-libusb_device_handle *ccamera_qhy9::locate_device( unsigned int vid, unsigned int pid )
+libusb_device_handle *ccamera_ic8300::locate_device( unsigned int vid, unsigned int pid )
 {
         libusb_device_handle *device_handle = NULL;
 
@@ -474,11 +474,11 @@ libusb_device_handle *ccamera_qhy9::locate_device( unsigned int vid, unsigned in
 }
 #endif
 
-int ccamera_qhy9::ctrl_msg( int request_type, int request, unsigned int value, unsigned int index, unsigned char *data, int len )
+int ccamera_ic8300::ctrl_msg( int request_type, int request, unsigned int value, unsigned int index, unsigned char *data, int len )
 {
         int result = 0;
 #if 0
-#ifdef NO_QHY9
+#ifdef NO_ic8300
 	if( m_handle == NULL )
 		return 0;
 #endif
@@ -491,7 +491,7 @@ int ccamera_qhy9::ctrl_msg( int request_type, int request, unsigned int value, u
 }
 
 
-unsigned char ccamera_qhy9::MSB(unsigned int i)
+unsigned char ccamera_ic8300::MSB(unsigned int i)
 {
 	unsigned int j;
 	j = (i&~0x00ff)>>8;
@@ -499,7 +499,7 @@ unsigned char ccamera_qhy9::MSB(unsigned int i)
 }
 
 
-unsigned char ccamera_qhy9::LSB( unsigned int i )
+unsigned char ccamera_ic8300::LSB( unsigned int i )
 {
 	unsigned int j;
 	j = i&~0xff00;
@@ -507,7 +507,7 @@ unsigned char ccamera_qhy9::LSB( unsigned int i )
 }
 
 
-int ccamera_qhy9::set_params( int exposuretime, int binn, int gain, int offset, int speed, int amp, int shutter, int pwm, int *out_width, int *out_height, int *out_buffer_size )
+int ccamera_ic8300::set_params( int exposuretime, int binn, int gain, int offset, int speed, int amp, int shutter, int pwm, int *out_width, int *out_height, int *out_buffer_size )
 {
 	unsigned char REG[64];
 	int PatchNumber, time, Vbin, Hbin, antiamp;
@@ -540,16 +540,16 @@ int ccamera_qhy9::set_params( int exposuretime, int binn, int gain, int offset, 
 	switch( binn )
 	{
 	case 1:
-		width = QHY9_WIDTH_B1; height = QHY9_HEIGHT_B1; Vbin = binn; Hbin = binn;
+		width = ic8300_WIDTH_B1; height = ic8300_HEIGHT_B1; Vbin = binn; Hbin = binn;
 		break;
 	case 2:
-		width = QHY9_WIDTH_B2; height = QHY9_HEIGHT_B2; Vbin = binn; Hbin = binn;
+		width = ic8300_WIDTH_B2; height = ic8300_HEIGHT_B2; Vbin = binn; Hbin = binn;
 		break;
 	case 3:
-		width = QHY9_WIDTH_B3; height = QHY9_HEIGHT_B3; Vbin = binn; Hbin = binn;
+		width = ic8300_WIDTH_B3; height = ic8300_HEIGHT_B3; Vbin = binn; Hbin = binn;
 		break;
 	case 4:
-		width = QHY9_WIDTH_B4; height = QHY9_HEIGHT_B4; Vbin = binn; Hbin = binn;
+		width = ic8300_WIDTH_B4; height = ic8300_HEIGHT_B4; Vbin = binn; Hbin = binn;
 		break;
 	default:
 		return 2;
@@ -572,7 +572,7 @@ int ccamera_qhy9::set_params( int exposuretime, int binn, int gain, int offset, 
         SetOffset(offset);
         SetResolution(width,height);
 
-#ifdef NO_QHY9
+#ifdef NO_ic8300
 	if( m_handle == NULL )
 		return EXIT_SUCCESS;
 #endif
@@ -580,7 +580,7 @@ int ccamera_qhy9::set_params( int exposuretime, int binn, int gain, int offset, 
 }
 
 
-int ccamera_qhy9::shutter( int cmd )
+int ccamera_ic8300::shutter( int cmd )
 {
 	unsigned char REG[1];
 	int ret = EXIT_FAILURE;
@@ -602,7 +602,7 @@ int ccamera_qhy9::shutter( int cmd )
 }
 
 
-int ccamera_qhy9::get_info( struct info_s *info_out, bool dump )
+int ccamera_ic8300::get_info( struct info_s *info_out, bool dump )
 {
 	short dc = 0;
 	int ret = EXIT_SUCCESS;
@@ -610,7 +610,7 @@ int ccamera_qhy9::get_info( struct info_s *info_out, bool dump )
 	ret = get_dc201( &dc );
 	if( ret != EXIT_SUCCESS )
 	{
-		log_e( "ccamera_qhy9::get_info(): get_dc201() failed" );
+		log_e( "ccamera_ic8300::get_info(): get_dc201() failed" );
 		return ret;
 	}
 	double temp = mv_to_degree( 1.024 * (float)dc );
@@ -626,7 +626,7 @@ int ccamera_qhy9::get_info( struct info_s *info_out, bool dump )
 }
 
 
-int ccamera_qhy9::get_dc201( short *dc )
+int ccamera_ic8300::get_dc201( short *dc )
 {
 #if 0
 	unsigned char REG[4] = {0, 0, 0, 0};
@@ -644,7 +644,7 @@ int ccamera_qhy9::get_dc201( short *dc )
 }
 
 
-double ccamera_qhy9::r_to_degree( double R ) const
+double ccamera_ic8300::r_to_degree( double R ) const
 {
 	double  T;
 	double LNR;
@@ -664,7 +664,7 @@ double ccamera_qhy9::r_to_degree( double R ) const
 }
 
 
-double ccamera_qhy9::mv_to_degree( double v ) const
+double ccamera_ic8300::mv_to_degree( double v ) const
 {
 	double R;
 	double T;
@@ -676,7 +676,7 @@ double ccamera_qhy9::mv_to_degree( double v ) const
 }
 
 
-int ccamera_qhy9::set_dc201( int pwm )
+int ccamera_ic8300::set_dc201( int pwm )
 {
 #if 0
 	unsigned char REG[3] = {0, 0, 0};
