@@ -88,9 +88,9 @@ ccd::ccd(QWidget *parent) : QWidget(parent)
 	case camera_model::qhy5:
 		m_camera = new ccamera_qhy5();
 		break;
-        case camera_model::qhy5lii:
-                m_camera = new ccamera_qhy5lii();
-                break;
+  case camera_model::qhy5lii:
+    m_camera = new ccamera_qhy5lii();
+    break;
 	case camera_model::qhy6:
 		m_camera = new ccamera_qhy6();
 		break;
@@ -130,6 +130,9 @@ ccd::ccd(QWidget *parent) : QWidget(parent)
 		break;
 	case camera_model::qhy5:
 		device_wnd = new cam_ui_qhy5( m_camera, this );
+		break;
+	case camera_model::qhy5lii:
+		device_wnd = new cam_ui_qhy5lii( m_camera, this );
 		break;
 	case camera_model::qhy6:
 		device_wnd = new cam_ui_qhy6( m_camera, this );
