@@ -215,6 +215,7 @@ int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
         
         switch(QCam.CAMERA)
         {
+        	  case DEVICETYPE_QHY9L:
             case DEVICETYPE_QHY5II:
             case DEVICETYPE_QHY5LII:
             {
