@@ -238,7 +238,7 @@ void SetGain(unsigned short gain)
 
 void SetOffset(unsigned char offset)
 {
-	  ccdreg.offset = offset;
+	  ccdreg.Offset = offset;
     QCam.camOffset = offset;
 }
 
