@@ -231,11 +231,14 @@ void SetGain(unsigned short gain)
     {
         SetQHY5IIGain(gain);
     }
+    ccdreg.Gain = gain;
     QCam.camGain = gain;
+    
 }
 
 void SetOffset(unsigned char offset)
 {
+	  ccdreg.offset = offset;
     QCam.camOffset = offset;
 }
 
