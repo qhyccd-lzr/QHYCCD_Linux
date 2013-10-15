@@ -1,6 +1,6 @@
 #include <stdio.h>
 #include <common.h>
-#include <oledcontrol.h>
+#include <interguider.h>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
@@ -13,11 +13,12 @@ int main(void)
     img->imageData = (char *)ImgData;
 
     int ret = OpenCamera();
+    
     if(ret > 0)
     {
         SetExposeTime(10.0);
         SetOffset(130);
-        SetGain(0):
+        SetGain(0);
         SetResolution(w,h);
         BeginLive();
         GetImageData(w,h,bpp,channels,ImgData); 

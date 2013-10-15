@@ -3,11 +3,13 @@ extern "C"
 {
 #endif /* __cplusplus */
 
-int   openoled();
-void  closeoled();
-void  send2speaker();
+int   openOled();
+void  closeOled();
+void  send2Speaker();
+void  sendStr2Oled(char message[]);
 void  interGuiderOled(int width,int height,int bpp,int channels,unsigned char *showdata);
-char  readoled();
+char  readOled();
+
 
 
 #ifdef __cplusplus
