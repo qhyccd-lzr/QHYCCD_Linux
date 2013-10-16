@@ -76,6 +76,8 @@ double GetTemp(void);
 
 void StopCooler(void);
 
+void StopLive(void);
+
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */

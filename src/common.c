@@ -29,6 +29,7 @@ extern "C"
 QHYCCD QCam;
 extern CCDREG ccdreg;
 extern int GainTable[73];
+int liveabort = 0;
 
 int OpenCamera(void)
 {   
@@ -156,6 +157,7 @@ void InitOthers(void)
     }
     QCam.isColor = false;//相机是否彩色 true:彩色 false:黑白
     QCam.transferspeed = 0;//传输速度0:低速 1:高速
+    liveabort = 0;
 }
 
 void SetBin(int w,int h)
@@ -366,6 +368,7 @@ void BeginLive(void)
         sendRegisterQHYCCDOld(QCam.ccd_handle,ccdreg,QCam.cameraW*QCam.cameraH*2,&Total_P,&PatchNumber);
 	beginVideo(QCam.ccd_handle);
     }
+    liveabort = 0;
 }
 
 void Bin2x2(unsigned char *ImgData,int w,int h)
@@ -432,7 +435,7 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
 
     if(QCam.CAMERA == DEVICETYPE_QHY5LII || QCam.CAMERA == DEVICETYPE_QHY5II)
     { 	
-        while(ret != (QCam.cameraW * QCam.cameraH + 5))
+        while((ret != (QCam.cameraW * QCam.cameraH + 5)) && (liveabort == 0))
         {
             ret = qhyccd_readUSB2B(QCam.ccd_handle,data,QCam.cameraW * QCam.cameraH + 5,1,&QCam.pos);
             #ifdef QHYCCD_DEBUG
@@ -693,6 +696,10 @@ double GetTemp()
 	return 0.0;
 }
 
+void StopLive(void)
+{
+        liveabort = 1;
+}
 
 void StopCooler()
 {

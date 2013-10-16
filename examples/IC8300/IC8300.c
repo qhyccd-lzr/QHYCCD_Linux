@@ -13,6 +13,13 @@ int main(void)
     img->imageData = (char *)ImgData;
 
     int ret = OpenCamera();
+    openOled();
+    while(1)
+    {
+       char ch = readOled();
+       if(ch != '\0')
+           printf("%c\n",ch);
+    }
     
     if(ret > 0)
     {
