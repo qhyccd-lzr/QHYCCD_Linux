@@ -714,7 +714,7 @@ PACKAGE_STRING='libqhyccd 0.1.0'
 PACKAGE_BUGREPORT='yangxudong.cn@gmail.com'
 PACKAGE_URL=''
 
-ac_unique_file="src/qhyccd.c"
+ac_unique_file="src/qhyccd.cpp"
 # Factoring default headers for most tests.
 ac_includes_default="\
 #include <stdio.h>
@@ -10790,7 +10790,7 @@ fi
 
 
 
-AM_CFLAGS="-Wall -Wundef -Wunused -Wstrict-prototypes -Werror-implicit-function-declaration -Wshadow"
+AM_CFLAGS="-Wall -Wundef -Wunused -Werror-implicit-function-declaration -Wshadow"
 
 
 

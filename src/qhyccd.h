@@ -16,9 +16,13 @@
 
 #define QHYCCD_DEVICE_LIST_SIZE 4    //最多连接的相机数量 
 
+#if 0
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
+#endif
+
+
 
 typedef libusb_device                qhyccd_device;
 typedef libusb_device_handle         qhyccd_device_handle;
@@ -84,33 +88,84 @@ typedef struct QHYCCDPara
     unsigned char camOffset;//传输速度0:低速 1:高速
     qhyccd_device_handle *ccd_handle;
     qhyccd_device **device_list;
-}QHYCCD;
+}QStruct;
 
-extern const qhyccd_device_model supported_models[];
+typedef struct ccdreg 
+{
+    char* devname;
+    unsigned char Gain;
+    unsigned char Offset;
+    unsigned long Exptime;
+    unsigned char HBIN;
+    unsigned char VBIN;
+    unsigned short LineSize;
+    unsigned short VerticalSize;
+    unsigned short SKIP_TOP;
+    unsigned short SKIP_BOTTOM;
+    unsigned short LiveVideo_BeginLine;
+    unsigned short AnitInterlace;
+    unsigned char MultiFieldBIN;
+    unsigned char AMPVOLTAGE;
+    unsigned char DownloadSpeed;
+    unsigned char TgateMode;
+    unsigned char ShortExposure;
+    unsigned char VSUB;
+    unsigned char CLAMP;
+    unsigned char TransferBIT;
+    unsigned char TopSkipNull;
+    unsigned short TopSkipPix;
+    unsigned char MechanicalShutterMode;
+    unsigned char DownloadCloseTEC;
+    unsigned char SDRAM_MAXSIZE;
+    unsigned short ClockADJ;
+    unsigned char Trig;
+    unsigned char MotorHeating;   //0,1,2
+    unsigned char WindowHeater;   //0-15
+    unsigned char ADCSEL;
+}CCDREG;
 
-int qhyccd_init(void);
-void qhyccd_exit(void);
-ssize_t qhyccd_get_device_list(qhyccd_device ***list);
-void qhyccd_free_device_list(qhyccd_device **list);
-qhyccd_device_model* qhyccd_get_device_model(qhyccd_device *device);
-int qhyccd_open(qhyccd_device *device, qhyccd_device_handle **device_handle);
-void qhyccd_close(qhyccd_device_handle *dev_handle);
-int qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
-int qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
-int qhyccd_iTXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
-int qhyccd_iRXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
-int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data, int p_size, int p_num, int* pos);
-int qhyccd_readUSB2(qhyccd_device_handle *dev_handle, unsigned char *data, int p_size, int p_num);
-int qhyccd_readUSB2_OnePackage3(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
-void beginVideo(qhyccd_device_handle *handle);
-void I2CTwoWrite(uint16_t addr,unsigned short value);
-unsigned short I2CTwoRead(uint16_t addr);
-unsigned char MSB(unsigned int i);
-unsigned char LSB(unsigned int i);
-void SWIFT_MSBLSB(unsigned char * Data, int x, int y);
+class QUsb
+{
+public:
+	int qhyccd_init(void);
+	void qhyccd_exit(void);
+	ssize_t qhyccd_get_device_list(qhyccd_device ***list);
+	void qhyccd_free_device_list(qhyccd_device **list);
+        int is_supported_device(libusb_device *device);
+	qhyccd_device_model* qhyccd_get_device_model(qhyccd_device *device);
+	int qhyccd_open(qhyccd_device *device, qhyccd_device_handle **device_handle);
+	void qhyccd_close(qhyccd_device_handle *dev_handle);
+	int qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
+	int qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
+	int qhyccd_iTXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
+	int qhyccd_iRXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
+	int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data, int p_size, int p_num, int* pos);
+	int qhyccd_readUSB2(qhyccd_device_handle *dev_handle, unsigned char *data, int p_size, int p_num);
+	int qhyccd_readUSB2_OnePackage3(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
+	void beginVideo(qhyccd_device_handle *handle);
+	void I2CTwoWrite(uint16_t addr,unsigned short value);
+	unsigned short I2CTwoRead(uint16_t addr);
+	unsigned char MSB(unsigned int i);
+	unsigned char LSB(unsigned int i);
+	void SWIFT_MSBLSB(unsigned char * Data, int x, int y);
 
+        QUsb(void)
+        {
+            liveabort = 0;       
+        }
+        ~QUsb(void){}
+
+       QStruct QCam;
+       CCDREG ccdreg;
+       int liveabort;
+private:
+       libusb_context *ctx;
+};
+
+
+#if 0
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
-
+#endif
 #endif /* __QHYCCD_H__ */

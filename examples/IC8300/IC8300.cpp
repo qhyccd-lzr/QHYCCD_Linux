@@ -1,12 +1,12 @@
 #include <stdio.h>
-#include <common.h>
-#include <interguider.h>
+#include <libqhyccd/common.h>
+#include <libqhyccd/interguider.h>
 #include <opencv/cv.h>
 #include <opencv/highgui.h>
 
 
 unsigned char ImgData[3584*2574*2];
-int w = 3584,h = 2574,bpp = 8,channels = 1;
+int w = 1280,h = 1024,bpp = 8,channels = 1;
 int main(void)
 {
     IplImage *img = cvCreateImage(cvSize(w,h),bpp,channels);
@@ -14,15 +14,10 @@ int main(void)
 
     int ret = OpenCamera();
     openOled();
-    while(1)
-    {
-       char ch = readOled();
-       if(ch != '\0')
-           printf("%c\n",ch);
-    }
     
     if(ret > 0)
     {
+        printf("found\n");
         SetExposeTime(10.0);
         SetOffset(130);
         SetGain(0);

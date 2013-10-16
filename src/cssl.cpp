@@ -161,7 +161,7 @@ cssl_t *cssl_open(const char *fname,
     }
     
     /* create new cssl_t structure */
-    serial=calloc(1,sizeof(cssl_t));
+    serial=(cssl_t *)calloc(1,sizeof(cssl_t));
 
     /* oops, no memory */
     if (!serial) {

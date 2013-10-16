@@ -10,11 +10,11 @@
 #define DEVICETYPE_QHY22   694
 #define DEVICETYPE_UNKOWN 0
 
+#if 0
 #ifdef __cplusplus
 extern "C" {
 #endif /* __cplusplus */
-
-
+#endif 
 
 int OpenCamera(void);
 
@@ -77,7 +77,8 @@ double GetTemp(void);
 void StopCooler(void);
 
 void StopLive(void);
-
+#if 0
 #ifdef __cplusplus
 }
 #endif /* __cplusplus */
+#endif

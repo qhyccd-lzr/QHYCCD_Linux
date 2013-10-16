@@ -1,17 +1,18 @@
 #include "qhy9l.h"
-#include "QHYCAM.h"
+#include "qhycam.h"
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <opencv/cv.h>
 
+#if 0
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+#endif 
 
-extern QHYCCD QCam;
-extern CCDREG ccdreg;
+extern QUsb *qhyusb;
 
 void  CorrectQHY9LWH(int *w,int *h)
 {
@@ -37,68 +38,68 @@ void  CorrectQHY9LWH(int *w,int *h)
 
 void initQHY9L_regs(void)
 {
-    ccdreg.devname = "QHY9L-0";
-    ccdreg.Gain = QCam.camGain;
-    ccdreg.Offset = QCam.camOffset;
-    ccdreg.Exptime = QCam.camTime;       //unit: ms
-    ccdreg.SKIP_TOP = 0;
-    ccdreg.SKIP_BOTTOM = 0;
-    ccdreg.AMPVOLTAGE = 1;
-    ccdreg.LiveVideo_BeginLine = 0;
-    ccdreg.AnitInterlace = 0;
-    ccdreg.MultiFieldBIN = 0;
-    ccdreg.TgateMode = 0;
-    ccdreg.ShortExposure = 0;
-    ccdreg.VSUB = 0;
-    ccdreg.TransferBIT = 0;
-    ccdreg.TopSkipNull = 30;
-    ccdreg.TopSkipPix = 0;
-    ccdreg.MechanicalShutterMode = 0;
-    ccdreg.DownloadCloseTEC = 0;
-    ccdreg.SDRAM_MAXSIZE = 100;
-    ccdreg.ClockADJ = 0x0000;
-    ccdreg.CLAMP = 0;
-    ccdreg.MotorHeating = 1;
+    qhyusb->ccdreg.devname = (char *)"QHY9L-0";
+    qhyusb->ccdreg.Gain = qhyusb->QCam.camGain;
+    qhyusb->ccdreg.Offset = qhyusb->QCam.camOffset;
+    qhyusb->ccdreg.Exptime = qhyusb->QCam.camTime;       //unit: ms
+    qhyusb->ccdreg.SKIP_TOP = 0;
+    qhyusb->ccdreg.SKIP_BOTTOM = 0;
+    qhyusb->ccdreg.AMPVOLTAGE = 1;
+    qhyusb->ccdreg.LiveVideo_BeginLine = 0;
+    qhyusb->ccdreg.AnitInterlace = 0;
+    qhyusb->ccdreg.MultiFieldBIN = 0;
+    qhyusb->ccdreg.TgateMode = 0;
+    qhyusb->ccdreg.ShortExposure = 0;
+    qhyusb->ccdreg.VSUB = 0;
+    qhyusb->ccdreg.TransferBIT = 0;
+    qhyusb->ccdreg.TopSkipNull = 30;
+    qhyusb->ccdreg.TopSkipPix = 0;
+    qhyusb->ccdreg.MechanicalShutterMode = 0;
+    qhyusb->ccdreg.DownloadCloseTEC = 0;
+    qhyusb->ccdreg.SDRAM_MAXSIZE = 100;
+    qhyusb->ccdreg.ClockADJ = 0x0000;
+    qhyusb->ccdreg.CLAMP = 0;
+    qhyusb->ccdreg.MotorHeating = 1;
 }
 
 void initQHY9L_896x644(void)
 {
-    ccdreg.HBIN = 2;
-    ccdreg.VBIN = 4;
-    ccdreg.LineSize = 1792;
-    ccdreg.VerticalSize = 644;
-    ccdreg.DownloadSpeed = QCam.transferspeed;
-    QCam.cameraW = 896;
-    QCam.cameraH = 644;
+    qhyusb->ccdreg.HBIN = 2;
+    qhyusb->ccdreg.VBIN = 4;
+    qhyusb->ccdreg.LineSize = 1792;
+    qhyusb->ccdreg.VerticalSize = 644;
+    qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
+    qhyusb->QCam.cameraW = 896;
+    qhyusb->QCam.cameraH = 644;
    
 }
 
 void initQHY9L_1792x1287(void)
 {
-    ccdreg.HBIN = 2;
-    ccdreg.VBIN = 2;
-    ccdreg.LineSize = 1792;
-    ccdreg.VerticalSize = 1287;
-    ccdreg.DownloadSpeed = QCam.transferspeed;
-    QCam.cameraW = 1792;
-    QCam.cameraH = 1287;
+    qhyusb->ccdreg.HBIN = 2;
+    qhyusb->ccdreg.VBIN = 2;
+    qhyusb->ccdreg.LineSize = 1792;
+    qhyusb->ccdreg.VerticalSize = 1287;
+    qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
+    qhyusb->QCam.cameraW = 1792;
+    qhyusb->QCam.cameraH = 1287;
 }
 void initQHY9L_3584x2574(void)
 {
-    ccdreg.HBIN = 1;
-    ccdreg.VBIN = 1;
-    ccdreg.LineSize = 3584;
-    ccdreg.VerticalSize = 2574;
-    ccdreg.DownloadSpeed = QCam.transferspeed;
-    QCam.cameraW = 3584;
-    QCam.cameraH = 2574;
+    qhyusb->ccdreg.HBIN = 1;
+    qhyusb->ccdreg.VBIN = 1;
+    qhyusb->ccdreg.LineSize = 3584;
+    qhyusb->ccdreg.VerticalSize = 2574;
+    qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
+    qhyusb->QCam.cameraW = 3584;
+    qhyusb->QCam.cameraH = 2574;
 }
 
 void ConvertQHY9LDataBIN11(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
 {
      unsigned char *Buf = NULL;
 
-     SWIFT_MSBLSB(ImgData,x,y);
+     qhyusb->SWIFT_MSBLSB(ImgData,x,y);
 
      Buf=(unsigned char *)malloc(x*y*2);
      
@@ -113,7 +114,7 @@ void ConvertQHY9LDataBIN22(unsigned char *ImgData,int x, int y, unsigned short T
 {
     unsigned char *Buf = NULL;
 
-    SWIFT_MSBLSB(ImgData,x,y );
+    qhyusb->SWIFT_MSBLSB(ImgData,x,y );
 
     Buf=(unsigned char *) malloc(x*y*2);
     memcpy(Buf,ImgData+TopSkipPix*2,x*y*2);
@@ -126,20 +127,20 @@ void ConvertQHY9LDataBIN44(unsigned char *ImgData,int x, int y, unsigned short T
      unsigned char * Buf = NULL;
      unsigned int pix;
 
-     SWIFT_MSBLSB(ImgData,x*2 ,y);
+     qhyusb->SWIFT_MSBLSB(ImgData,x*2 ,y);
 
      Buf=(unsigned char *) malloc(x*y*2);
 
      unsigned long k=0;
      unsigned long s=TopSkipPix*2;
 
-     while(k < x*y*2)
+     while((int)k < x*y*2)
      {
          pix=(ImgData[s]+ImgData[s+1]*256+ImgData[s+2]+ImgData[s+3]*256)/2;
          if (pix>65535) pix=65535;
 
-         Buf[k]  =LSB(pix);
-         Buf[k+1]=MSB(pix);
+         Buf[k]  =qhyusb->LSB(pix);
+         Buf[k+1]=qhyusb->MSB(pix);
          s=s+4;
          k=k+2;
      }
@@ -150,22 +151,22 @@ void ConvertQHY9LDataBIN44(unsigned char *ImgData,int x, int y, unsigned short T
 
 void writec(unsigned char value)
 {
-	char data[1];
+	unsigned char data[1];
 	data[0]=value;
-        libusb_control_transfer(QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0,data,1, 0);
+        libusb_control_transfer(qhyusb->QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0,data,1, 0);
 	//vendTXD_Ex("QHY9L-0",0XBB,1,0x00,0x78,data);
 }
 
 void writed(unsigned char value)
 {
-	char data[1];
+	unsigned char data[1];
 	data[0]=value;
-	 libusb_control_transfer(QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0x40,data,1, 0);
+	 libusb_control_transfer(qhyusb->QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0x40,data,1, 0);
        //vendTXD_Ex("QHY9L-0",0XBB,1,0x40,0x78,data);
 }
 void oled(unsigned char buffer[])
 {
-	unsigned char i,j;
+	unsigned char i;
 	unsigned char byte;
 
 	writec(0xAF);
@@ -195,7 +196,7 @@ void send2oled(char message[])
 	memset(data,0,128*16);
 
 	IplImage *img = cvCreateImage(cvSize(128,16),8,1);
-  img->imageData = data;
+  img->imageData = (char *)data;
   CvFont font;
 	cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX,0.4,0.4,0,0,1);
 	cvPutText(img,message,cvPoint(0,15),&font,CV_RGB(255,255,255));
@@ -205,7 +206,6 @@ void send2oled(char message[])
   int e = 0;
 	int s = 0;
   int k = 0;
-  int i;
 	CvScalar pix;
   memset(data8,0,256);
 
@@ -247,8 +247,8 @@ void send2oled(char message[])
 
 	oled(data8);
 }
-
-
+#if 0
 #ifdef __cplusplus
 }
+#endif
 #endif

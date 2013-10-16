@@ -4,7 +4,7 @@
 AC_PREREQ([2.65])
 AC_INIT([libqhyccd], [0.1.0], [yangxudong.cn@gmail.com])
 AM_INIT_AUTOMAKE
-AC_CONFIG_SRCDIR([src/qhyccd.c], [src/qhyccd.h])
+AC_CONFIG_SRCDIR([src/qhyccd.cpp], [src/qhyccd.h])
 AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 

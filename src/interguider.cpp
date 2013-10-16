@@ -89,7 +89,7 @@ void interGuiderOled(int width,int height,int bpp,int channels,unsigned char *sh
     int e = 0;
     int s = 0;
     int k = 0;
-    int i;
+ 
 	CvScalar pix;
     memset(data8,0,533);
 
@@ -179,7 +179,7 @@ void sendStr2Oled(char message[])
     memset(data,0,132 * 32);
 
     IplImage *img = cvCreateImage(cvSize(132,32),8,1);
-    img->imageData = data;
+    img->imageData = (char *)data;
     CvFont font;
     cvInitFont(&font,CV_FONT_HERSHEY_SIMPLEX,1,1,0,0,1);
     cvPutText(img,message,cvPoint(0,31),&font,CV_RGB(255,255,255));
@@ -190,7 +190,7 @@ void sendStr2Oled(char message[])
     int e = 0;
     int s = 0;
     int k = 0;
-    int i; 
+ 
     CvScalar pix;
     memset(data8,0,533);
 

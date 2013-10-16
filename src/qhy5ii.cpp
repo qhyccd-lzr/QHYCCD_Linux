@@ -6,12 +6,14 @@
 #include "qhy5ii.h"
 #include "common.h"
 
+#if 0
 #ifdef __cplusplus
 extern "C"
 {
 #endif
+#endif
+extern QUsb *qhyusb;
 
-extern QHYCCD QCam;
 bool qhy5iiDeNoise;
 bool longExpMode;
 
@@ -38,20 +40,20 @@ void SetQHY5IIGain(unsigned short gain)
     int Gain_Min = 0;
     int Gain_Max = 72;
     i = (Gain_Max - Gain_Min) * gain / 1000;
-    I2CTwoWrite(0x35, GainTable[i]);
+    qhyusb->I2CTwoWrite(0x35, GainTable[i]);
 }
 
 void QHY5IISetResolution(int x, int y)
 {
-    if (QCam.CAMERA == DEVICETYPE_QHY5II) 
+    if (qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II) 
     {
-	I2CTwoWrite(0x09, 200);
-	I2CTwoWrite(0x01, 8 + (1024 - y) / 2); // y start
-	I2CTwoWrite(0x02, 16 + (1280 - x) / 2); // x start
-	I2CTwoWrite(0x03, (unsigned short)(y - 1)); // y size
-	I2CTwoWrite(0x04, (unsigned short)(x - 1)); // x size
-	I2CTwoWrite(0x22, 0x00); // normal bin
-	I2CTwoWrite(0x23, 0x00); // normal bin
+	qhyusb->I2CTwoWrite(0x09, 200);
+	qhyusb->I2CTwoWrite(0x01, 8 + (1024 - y) / 2); // y start
+	qhyusb->I2CTwoWrite(0x02, 16 + (1280 - x) / 2); // x start
+	qhyusb->I2CTwoWrite(0x03, (unsigned short)(y - 1)); // y size
+	qhyusb->I2CTwoWrite(0x04, (unsigned short)(x - 1)); // x size
+	qhyusb->I2CTwoWrite(0x22, 0x00); // normal bin
+	qhyusb->I2CTwoWrite(0x23, 0x00); // normal bin
     }
 }
 
@@ -118,7 +120,7 @@ void  QHY5IIDeNoise(unsigned char *ImgData, int x, int y)
 	unsigned short ob;
 	unsigned char cutOff;
 
-	if (QCam.camGain > 800)
+	if (qhyusb->QCam.camGain > 800)
 		cutOff = 200;
 	else
 		cutOff = 245;
@@ -204,22 +206,22 @@ void  initQHY5II_SXGA(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 1024;
-		QCam.ShowImgX = 1280;
-		QCam.ShowImgY = 1024;
-		QCam.ShowImgX_Start = 14;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 1024;
+		qhyusb->QCam.ShowImgX = 1280;
+		qhyusb->QCam.ShowImgY = 1024;
+		qhyusb->QCam.ShowImgX_Start = 14;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(1312, 1024);
 	}
 	else 
 	{
-		QCam.ImgX = 1280;
-		QCam.ImgY = 1024;
-		QCam.ShowImgX = 1280;
-		QCam.ShowImgY = 1024;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 1280;
+		qhyusb->QCam.ImgY = 1024;
+		qhyusb->QCam.ShowImgX = 1280;
+		qhyusb->QCam.ShowImgY = 1024;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(1280, 1024);
 	}
 
@@ -229,22 +231,22 @@ void  initQHY5II_XGA(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 768;
-		QCam.ShowImgX = 1024;
-		QCam.ShowImgY = 768;
-		QCam.ShowImgX_Start = (1312 - 1024) / 2;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 768;
+		qhyusb->QCam.ShowImgX = 1024;
+		qhyusb->QCam.ShowImgY = 768;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 1024) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(1312, 768);
 	}
 	else 
 	{
-		QCam.ImgX = 1024;
-		QCam.ImgY = 768;
-		QCam.ShowImgX = 1024;
-		QCam.ShowImgY = 768;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 1024;
+		qhyusb->QCam.ImgY = 768;
+		qhyusb->QCam.ShowImgX = 1024;
+		qhyusb->QCam.ShowImgY = 768;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 	    QHY5IISetResolution(1024, 768);
 	}
 }
@@ -253,22 +255,22 @@ void  initQHY5II_SVGA(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 600;
-		QCam.ShowImgX = 800;
-		QCam.ShowImgY = 600;
-		QCam.ShowImgX_Start = (1312 - 800) / 2;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 600;
+		qhyusb->QCam.ShowImgX = 800;
+		qhyusb->QCam.ShowImgY = 600;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 800) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(1312, 600);
 	}
 	else 
 	{
-		QCam.ImgX = 800;
-		QCam.ImgY = 600;
-		QCam.ShowImgX = 800;
-		QCam.ShowImgY = 600;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 800;
+		qhyusb->QCam.ImgY = 600;
+		qhyusb->QCam.ShowImgX = 800;
+		qhyusb->QCam.ShowImgY = 600;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(800, 600);
 	}
 }
@@ -277,22 +279,22 @@ void  initQHY5II_VGA(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 480;
-		QCam.ShowImgX = 640;
-		QCam.ShowImgY = 480;
-		QCam.ShowImgX_Start = (1312 - 640) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 480;
+		qhyusb->QCam.ShowImgX = 640;
+		qhyusb->QCam.ShowImgY = 480;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 640) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 480);
 	}
 	else 
 	{
-		QCam.ImgX = 640;
-		QCam.ImgY = 480;
-		QCam.ShowImgX = 640;
-		QCam.ShowImgY = 480;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 640;
+		qhyusb->QCam.ImgY = 480;
+		qhyusb->QCam.ShowImgX = 640;
+		qhyusb->QCam.ShowImgY = 480;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(640, 480);
 	}
 }
@@ -301,22 +303,22 @@ void  initQHY5II_QVGA(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 240;
-		QCam.ShowImgX = 320;
-		QCam.ShowImgY = 240;
-		QCam.ShowImgX_Start = (1312 - 320) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 240;
+		qhyusb->QCam.ShowImgX = 320;
+		qhyusb->QCam.ShowImgY = 240;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 320) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 240);
 	}
 	else 
 	{
-		QCam.ImgX = 320;
-		QCam.ImgY = 240;
-		QCam.ShowImgX = 320;
-		QCam.ShowImgY = 240;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;	
+		qhyusb->QCam.ImgX = 320;
+		qhyusb->QCam.ImgY = 240;
+		qhyusb->QCam.ShowImgX = 320;
+		qhyusb->QCam.ShowImgY = 240;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;	
 		QHY5IISetResolution(320, 240);
 	}
 }
@@ -325,22 +327,22 @@ void  initQHY5II_R1024(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 1024;
-		QCam.ShowImgX = 1024;
-		QCam.ShowImgY = 1024;
-		QCam.ShowImgX_Start = (1312 - 1024) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 1024;
+		qhyusb->QCam.ShowImgX = 1024;
+		qhyusb->QCam.ShowImgY = 1024;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 1024) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 1024);
 	}
 	else 
 	{
-		QCam.ImgX = 1024;
-		QCam.ImgY = 1024;
-		QCam.ShowImgX = 1024;
-		QCam.ShowImgY = 1024;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1024;
+		qhyusb->QCam.ImgY = 1024;
+		qhyusb->QCam.ShowImgX = 1024;
+		qhyusb->QCam.ShowImgY = 1024;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1024, 1024);
 	}
 
@@ -350,22 +352,22 @@ void  initQHY5II_R800(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 800;
-		QCam.ShowImgX = 800;
-		QCam.ShowImgY = 800;
-		QCam.ShowImgX_Start = (1312 - 800) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 800;
+		qhyusb->QCam.ShowImgX = 800;
+		qhyusb->QCam.ShowImgY = 800;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 800) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 800);
 	}
 	else 
 	{
-		QCam.ImgX = 800;
-		QCam.ImgY = 800;
-		QCam.ShowImgX = 800;
-		QCam.ShowImgY = 800;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 800;
+		qhyusb->QCam.ImgY = 800;
+		qhyusb->QCam.ShowImgX = 800;
+		qhyusb->QCam.ShowImgY = 800;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(800, 800);
 	}
 }
@@ -374,22 +376,22 @@ void  initQHY5II_R400(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 400;
-		QCam.ShowImgX = 400;
-		QCam.ShowImgY = 400;
-		QCam.ShowImgX_Start = (1312 - 400) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 400;
+		qhyusb->QCam.ShowImgX = 400;
+		qhyusb->QCam.ShowImgY = 400;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 400) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 400);
 	}
 	else 
 	{
-		QCam.ImgX = 400;
-		QCam.ImgY = 400;
-		QCam.ShowImgX = 400;
-		QCam.ShowImgY = 400;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 400;
+		qhyusb->QCam.ImgY = 400;
+		qhyusb->QCam.ShowImgX = 400;
+		qhyusb->QCam.ShowImgY = 400;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(400, 400);
 	}
 }
@@ -398,22 +400,22 @@ void  initQHY5II_1280X720(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 720;
-		QCam.ShowImgX = 1280;
-		QCam.ShowImgY = 720;
-		QCam.ShowImgX_Start = (1312 - 1280) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 720;
+		qhyusb->QCam.ShowImgX = 1280;
+		qhyusb->QCam.ShowImgY = 720;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 1280) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 720);
 	}
 	else 
 	{
-		QCam.ImgX = 1280;
-		QCam.ImgY = 720;
-		QCam.ShowImgX = 1280;
-		QCam.ShowImgY = 720;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1280;
+		qhyusb->QCam.ImgY = 720;
+		qhyusb->QCam.ShowImgX = 1280;
+		qhyusb->QCam.ShowImgY = 720;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1280, 720);
 	}
 }
@@ -423,22 +425,22 @@ void  initQHY5II_960X720(void)
 {
 	if (qhy5iiDeNoise) 
 	{
-		QCam.ImgX = 1312;
-		QCam.ImgY = 720;
-		QCam.ShowImgX = 960;
-		QCam.ShowImgY = 720;
-		QCam.ShowImgX_Start = (1312 - 960) / 2;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 1312;
+		qhyusb->QCam.ImgY = 720;
+		qhyusb->QCam.ShowImgX = 960;
+		qhyusb->QCam.ShowImgY = 720;
+		qhyusb->QCam.ShowImgX_Start = (1312 - 960) / 2;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(1312, 720);
 	}
 	else 
 	{
-		QCam.ImgX = 960;
-		QCam.ImgY = 720;
-		QCam.ShowImgX = 960;
-		QCam.ShowImgY = 720;
-		QCam.ShowImgX_Start = 0;
-		QCam.ShowImgY_Start = 0;
+		qhyusb->QCam.ImgX = 960;
+		qhyusb->QCam.ImgY = 720;
+		qhyusb->QCam.ShowImgX = 960;
+		qhyusb->QCam.ShowImgY = 720;
+		qhyusb->QCam.ShowImgX_Start = 0;
+		qhyusb->QCam.ShowImgY_Start = 0;
 		QHY5IISetResolution(960, 720);
 	}
 }
@@ -449,7 +451,7 @@ void  SetExposureTime_QHY5II(unsigned long i)
 
 	double CMOSCLK;
 
-	if (QCam.transferspeed == 1)
+	if (qhyusb->QCam.transferspeed == 1)
 		CMOSCLK = 48;
 	else
 		CMOSCLK = 24;
@@ -464,10 +466,10 @@ void  SetExposureTime_QHY5II(unsigned long i)
 	unsigned short REG04, REG05, REG0C, REG09;
 	double MaxShortExpTime;
 
-	REG04 = I2CTwoRead(0x04);
-	REG05 = I2CTwoRead(0x05);
-	REG09 = I2CTwoRead(0x09);
-	REG0C = I2CTwoRead(0x0C);
+	REG04 = qhyusb->I2CTwoRead(0x04);
+	REG05 = qhyusb->I2CTwoRead(0x05);
+	REG09 = qhyusb->I2CTwoRead(0x09);
+	REG0C = qhyusb->I2CTwoRead(0x0C);
 	ExpTime = i;
 
 	A = REG04 + 1;
@@ -482,7 +484,7 @@ void  SetExposureTime_QHY5II(unsigned long i)
 	unsigned char buf[4];
 
 	if (ExpTime > MaxShortExpTime) {
-		I2CTwoWrite(0x09, 15000);
+		qhyusb->I2CTwoWrite(0x09, 15000);
 
 		ExpTime = (unsigned long )(ExpTime - MaxShortExpTime);
 
@@ -490,7 +492,7 @@ void  SetExposureTime_QHY5II(unsigned long i)
 		buf[1] = (unsigned char) (((ExpTime / 1000)&~0xff00ffff) >> 16);
 		buf[2] = ((ExpTime / 1000)&~0xffff00ff) >> 8;
 		buf[3] = ((ExpTime / 1000)&~0xffffff00);
-                libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+                libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 		ExpTime = (unsigned long)(ExpTime + MaxShortExpTime);
 		longExpMode = true;
 	}
@@ -500,19 +502,19 @@ void  SetExposureTime_QHY5II(unsigned long i)
 		buf[1] = 0;
 		buf[2] = 0;
 		buf[3] = 0;
-		libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 		usleep(100);
 		REG09 = (unsigned short)((ExpTime + 180 * pixelPeriod + 4 * REG0C * pixelPeriod)/ RowTime);
 		if (REG09 < 1)
 			REG09 = 1;
-		I2CTwoWrite(0x09, REG09);
+		qhyusb->I2CTwoWrite(0x09, REG09);
 		ExpTime = (unsigned long)(REG09 * RowTime - 180 * pixelPeriod - 4 * REG0C * pixelPeriod);
 		longExpMode = false;
 	}
 }
 
-
+#if 0
 #ifdef __cplusplus
 }
 #endif
-
+#endif

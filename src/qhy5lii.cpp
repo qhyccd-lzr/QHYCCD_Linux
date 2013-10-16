@@ -6,27 +6,28 @@
 #include "qhy5lii.h"
 #include "common.h"
 
+#if 0
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-extern QHYCCD QCam;
+#endif
 QHY5LII QCam5LII;
+extern QUsb *qhyusb;
 
 void SetQHY5LIIGain(unsigned short gain)
 {
      if(gain == 1000)
-          I2CTwoWrite(0x3100,0x0004);
+          qhyusb->I2CTwoWrite(0x3100,0x0004);
      else
      {
-         I2CTwoWrite(0x3100,0);
+         qhyusb->I2CTwoWrite(0x3100,0);
 
-         if(QCam.isColor)
+         if(qhyusb->QCam.isColor)
          {
              double RG,BG;
-             RG = (double)QCam.wbred / 100;
-             BG = (double)QCam.wbblue / 100;
+             RG = (double)qhyusb->QCam.wbred / 100;
+             BG = (double)qhyusb->QCam.wbblue / 100;
              SetGainColorQHY5LII(gain,RG,BG);
          }
          else
@@ -42,13 +43,13 @@ void SetSpeedQHY5LII(int i)
     unsigned char buf[2];
     buf[0] = i;
 
-    libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc8, 0x00, 0x00, buf, 1,0);
+    libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc8, 0x00, 0x00, buf, 1,0);
 }
 
 void SWIFT_MSBLSBQHY5LII(unsigned char *ImgData)
 {
 	int i = 0;
-	while(i<QCam.cameraW*QCam.cameraH*2)
+	while(i<qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2)
 	{
 		ImgData[i] = ImgData[i+1];
 		ImgData[i+1] = ImgData[i] << 4;
@@ -158,9 +159,9 @@ double setQHY5LREG_PLL(unsigned char clk)
 void SetQHY5LIIHDR(bool on) 
 {
 	if (on)
-		I2CTwoWrite(0x3082, 0x0028);
+		qhyusb->I2CTwoWrite(0x3082, 0x0028);
 	else
-		I2CTwoWrite(0x3082, 0x0001);
+		qhyusb->I2CTwoWrite(0x3082, 0x0001);
 }
 
 void SetGainMonoQHY5LII(double gain)
@@ -410,19 +411,19 @@ void Set14Bit(int i)
 	unsigned char buf[2];
 	buf[0] = i;
 
-        libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xcd, 0x00, 0x00, buf, 1,0);
+        libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xcd, 0x00, 0x00, buf, 1,0);
 }
 
 void initQHY5LII_XGA(void) 
 {
 	int x = 1024;
 	int y = 768;
-	QCam.ImgX = 1024;
-	QCam.ImgY = 768;
-	QCam.ShowImgX = 1024;
-	QCam.ShowImgY = 768;
-	QCam.ShowImgX_Start = 0;
-	QCam.ShowImgY_Start = 0;
+	qhyusb->QCam.ImgX = 1024;
+	qhyusb->QCam.ImgY = 768;
+	qhyusb->QCam.ShowImgX = 1024;
+	qhyusb->QCam.ShowImgY = 768;
+	qhyusb->QCam.ShowImgX_Start = 0;
+	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
 	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
@@ -446,12 +447,12 @@ void initQHY5LII_1280X960(void)
 {
 	int x = 1280;
 	int y = 960;
-	QCam.ImgX = 1280;
-	QCam.ImgY = 960;
-	QCam.ShowImgX = 1280;
-	QCam.ShowImgY = 960;
-	QCam.ShowImgX_Start = 0;
-	QCam.ShowImgY_Start = 0;
+	qhyusb->QCam.ImgX = 1280;
+	qhyusb->QCam.ImgY = 960;
+	qhyusb->QCam.ShowImgX = 1280;
+	qhyusb->QCam.ShowImgY = 960;
+	qhyusb->QCam.ShowImgX_Start = 0;
+	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
 	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
@@ -475,12 +476,12 @@ void initQHY5LII_SVGA(void)
 {
 	int x = 800;
 	int y = 600;
-	QCam.ImgX = 800;
-	QCam.ImgY = 600;
-	QCam.ShowImgX = 800;
-	QCam.ShowImgY = 600;
-	QCam.ShowImgX_Start = 0;
-	QCam.ShowImgY_Start = 0;
+	qhyusb->QCam.ImgX = 800;
+	qhyusb->QCam.ImgY = 600;
+	qhyusb->QCam.ShowImgX = 800;
+	qhyusb->QCam.ShowImgY = 600;
+	qhyusb->QCam.ShowImgX_Start = 0;
+	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
         QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(2);
@@ -505,12 +506,12 @@ void initQHY5LII_VGA(void)
 	int x = 640;
 	int y = 480;
 	
-	QCam.ImgX = 640;
-	QCam.ImgY = 480;
-	QCam.ShowImgX = 640;
-	QCam.ShowImgY = 480;
-	QCam.ShowImgX_Start = 0;
-	QCam.ShowImgY_Start = 0;
+	qhyusb->QCam.ImgX = 640;
+	qhyusb->QCam.ImgY = 480;
+	qhyusb->QCam.ShowImgX = 640;
+	qhyusb->QCam.ShowImgY = 480;
+	qhyusb->QCam.ShowImgX_Start = 0;
+	qhyusb->QCam.ShowImgY_Start = 0;
 
         InitQHY5LIIRegs();
 	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
@@ -534,12 +535,12 @@ void initQHY5LII_QVGA(void)
 	int x = 320;
 	int y = 240;
 
-	QCam.ImgX = 320;
-	QCam.ImgY = 240;
-	QCam.ShowImgX = 320;
-	QCam.ShowImgY = 240;
-	QCam.ShowImgX_Start = 0;
-	QCam.ShowImgY_Start = 0;
+	qhyusb->QCam.ImgX = 320;
+	qhyusb->QCam.ImgY = 240;
+	qhyusb->QCam.ShowImgX = 320;
+	qhyusb->QCam.ShowImgY = 240;
+	qhyusb->QCam.ShowImgX_Start = 0;
+	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
 	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
@@ -606,7 +607,7 @@ void SetExposureTime_QHY5LII(unsigned long i)
 	// 需要输入的参数: CMOSCLK
 	double CMOSCLK;
 
-	if (QCam.transferspeed == 1)
+	if (qhyusb->QCam.transferspeed == 1)
 		CMOSCLK = 48;
 	else
 		CMOSCLK = 24;
@@ -626,7 +627,7 @@ void SetExposureTime_QHY5LII(unsigned long i)
 			i = 2 * 1000 * 1000;
 	}
 
-	REG300C = I2CTwoRead(0x300C);
+	REG300C = qhyusb->I2CTwoRead(0x300C);
 
 	RowTime = REG300C * pixelPeriod;
 
@@ -638,7 +639,7 @@ void SetExposureTime_QHY5LII(unsigned long i)
 
 	if (ExpTime > MaxShortExpTime) 
 	{
-		I2CTwoWrite(0x3012, 65000);
+		qhyusb->I2CTwoWrite(0x3012, 65000);
 
 		ExpTime = ExpTime - MaxShortExpTime;
 
@@ -646,7 +647,7 @@ void SetExposureTime_QHY5LII(unsigned long i)
 		buf[1] = (((long)(ExpTime / 1000)) & (~0xff00ffff)) >> 16;
 		buf[2] = ((long)((ExpTime / 1000))&~0xffff00ff) >> 8;
 		buf[3] = ((long)((ExpTime / 1000))&~0xffffff00);
-		libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 		ExpTime = ExpTime + MaxShortExpTime;
 		REG3012 = 65000;
 		QCam5LII.longExpMode = true;
@@ -662,12 +663,12 @@ void SetExposureTime_QHY5LII(unsigned long i)
 			buf[1] = 0;
 			buf[2] = 0;
 			buf[3] = 0;
-			libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+			libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 			usleep(100);
 			REG3012 = (unsigned short)(ExpTime / RowTime);
 			if (REG3012 < 1)
 				REG3012 = 1;
-			I2CTwoWrite(0x3012, REG3012);
+			qhyusb->I2CTwoWrite(0x3012, REG3012);
 			ExpTime = REG3012 * RowTime;
 			QCam5LII.longExpMode = false;
 
@@ -677,12 +678,12 @@ void SetExposureTime_QHY5LII(unsigned long i)
 		buf[1] = 0;
 		buf[2] = 0;
 		buf[3] = 0;
-		libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 		usleep(100);
 		REG3012 = (unsigned short)(ExpTime / RowTime);
 		if (REG3012 < 1)
 			REG3012 = 1;
-		I2CTwoWrite(0x3012, REG3012);
+		qhyusb->I2CTwoWrite(0x3012, REG3012);
 		ExpTime = REG3012 * RowTime;
 		QCam5LII.longExpMode = false;
 	}
@@ -692,12 +693,12 @@ void SetExposureTime_QHY5LII(unsigned long i)
 
 void  W_I2C_MICRON_Address16_OneRegister(unsigned short adr, unsigned short dat)
 {
-    I2CTwoWrite(adr, dat);
+    qhyusb->I2CTwoWrite(adr, dat);
 }
 
 unsigned short R_I2C_MICRON_Address16_OneRegister(unsigned short adr)
 {
-    return I2CTwoRead(adr);
+    return qhyusb->I2CTwoRead(adr);
 }
 
 double GetQHY5LIITemp(void){
@@ -1056,8 +1057,8 @@ void InitQHY5LIIRegs(void)
 	W_I2C_MICRON_Address16_OneRegister(0x300c, 1650); // line  length
 	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x10DC); // RESET_REGISTER
 }
-
+#if 0
 #ifdef __cplusplus
 }
 #endif
-
+#endif

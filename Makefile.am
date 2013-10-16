@@ -5,7 +5,7 @@ SUBDIRS = firmware udev
 lib_LTLIBRARIES = libqhyccd.la
 
 libqhyccd_la_CFLAGS = $(VISIBILITY_CFLAGS) $(AM_CFLAGS)
-libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.c src/common.h src/common.c src/qhy5lii.c src/qhy5lii.h src/qhy5ii.c src/qhy5ii.h src/qhy9.c src/qhy9.h src/QHYCAM.c src/QHYCAM.h src/qhy9l.c src/qhy9l.h src/qhy22.c src/qhy22.h src/interguider.c src/interguider.h src/cssl.c src/cssl.h
+libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.cpp src/common.h src/common.cpp src/qhy5lii.cpp src/qhy5lii.h src/qhy5ii.cpp src/qhy5ii.h src/qhy9.cpp src/qhy9.h src/qhycam.cpp src/qhycam.h src/qhy9l.cpp src/qhy9l.h src/qhy22.cpp src/qhy22.h src/interguider.cpp src/interguider.h src/cssl.c src/cssl.h
 
 #pkginclude_DATA = src/qhyccd.h src/common.h
 

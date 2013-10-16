@@ -279,7 +279,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = firmware udev
 lib_LTLIBRARIES = libqhyccd.la
 libqhyccd_la_CFLAGS = $(VISIBILITY_CFLAGS) $(AM_CFLAGS)
-libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.c src/common.h src/common.c src/qhy5lii.c src/qhy5lii.h src/qhy5ii.c src/qhy5ii.h src/qhy9.c src/qhy9.h src/QHYCAM.c src/QHYCAM.h src/qhy9l.c src/qhy9l.h src/qhy22.c src/qhy22.h src/interguider.c src/interguider.h src/cssl.c src/cssl.h
+libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.cpp src/common.h src/common.cpp src/qhy5lii.cpp src/qhy5lii.h src/qhy5ii.cpp src/qhy5ii.h src/qhy9.cpp src/qhy9.h src/QHYCAM.cpp src/QHYCAM.h src/qhy9l.cpp src/qhy9l.h src/qhy22.cpp src/qhy22.h src/interguider.cpp src/interguider.h src/cssl.cpp src/cssl.h
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
 
@@ -406,75 +406,75 @@ distclean-compile:
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCC_FALSE@	$(LTCOMPILE) -c -o $@ $<
 
-libqhyccd_la-qhyccd.lo: src/qhyccd.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhyccd.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhyccd.Tpo -c -o libqhyccd_la-qhyccd.lo `test -f 'src/qhyccd.c' || echo '$(srcdir)/'`src/qhyccd.c
+libqhyccd_la-qhyccd.lo: src/qhyccd.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhyccd.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhyccd.Tpo -c -o libqhyccd_la-qhyccd.lo `test -f 'src/qhyccd.cpp' || echo '$(srcdir)/'`src/qhyccd.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhyccd.Tpo $(DEPDIR)/libqhyccd_la-qhyccd.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhyccd.c' object='libqhyccd_la-qhyccd.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhyccd.cpp' object='libqhyccd_la-qhyccd.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhyccd.lo `test -f 'src/qhyccd.c' || echo '$(srcdir)/'`src/qhyccd.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhyccd.lo `test -f 'src/qhyccd.cpp' || echo '$(srcdir)/'`src/qhyccd.cpp
 
-libqhyccd_la-common.lo: src/common.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-common.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-common.Tpo -c -o libqhyccd_la-common.lo `test -f 'src/common.c' || echo '$(srcdir)/'`src/common.c
+libqhyccd_la-common.lo: src/common.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-common.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-common.Tpo -c -o libqhyccd_la-common.lo `test -f 'src/common.cpp' || echo '$(srcdir)/'`src/common.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-common.Tpo $(DEPDIR)/libqhyccd_la-common.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/common.c' object='libqhyccd_la-common.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/common.cpp' object='libqhyccd_la-common.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-common.lo `test -f 'src/common.c' || echo '$(srcdir)/'`src/common.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-common.lo `test -f 'src/common.cpp' || echo '$(srcdir)/'`src/common.cpp
 
-libqhyccd_la-qhy5lii.lo: src/qhy5lii.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy5lii.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy5lii.Tpo -c -o libqhyccd_la-qhy5lii.lo `test -f 'src/qhy5lii.c' || echo '$(srcdir)/'`src/qhy5lii.c
+libqhyccd_la-qhy5lii.lo: src/qhy5lii.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy5lii.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy5lii.Tpo -c -o libqhyccd_la-qhy5lii.lo `test -f 'src/qhy5lii.cpp' || echo '$(srcdir)/'`src/qhy5lii.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhy5lii.Tpo $(DEPDIR)/libqhyccd_la-qhy5lii.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy5lii.c' object='libqhyccd_la-qhy5lii.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy5lii.cpp' object='libqhyccd_la-qhy5lii.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy5lii.lo `test -f 'src/qhy5lii.c' || echo '$(srcdir)/'`src/qhy5lii.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy5lii.lo `test -f 'src/qhy5lii.cpp' || echo '$(srcdir)/'`src/qhy5lii.cpp
 
-libqhyccd_la-qhy5ii.lo: src/qhy5ii.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy5ii.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy5ii.Tpo -c -o libqhyccd_la-qhy5ii.lo `test -f 'src/qhy5ii.c' || echo '$(srcdir)/'`src/qhy5ii.c
+libqhyccd_la-qhy5ii.lo: src/qhy5ii.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy5ii.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy5ii.Tpo -c -o libqhyccd_la-qhy5ii.lo `test -f 'src/qhy5ii.cpp' || echo '$(srcdir)/'`src/qhy5ii.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhy5ii.Tpo $(DEPDIR)/libqhyccd_la-qhy5ii.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy5ii.c' object='libqhyccd_la-qhy5ii.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy5ii.cpp' object='libqhyccd_la-qhy5ii.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy5ii.lo `test -f 'src/qhy5ii.c' || echo '$(srcdir)/'`src/qhy5ii.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy5ii.lo `test -f 'src/qhy5ii.cpp' || echo '$(srcdir)/'`src/qhy5ii.cpp
 
-libqhyccd_la-qhy9.lo: src/qhy9.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy9.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy9.Tpo -c -o libqhyccd_la-qhy9.lo `test -f 'src/qhy9.c' || echo '$(srcdir)/'`src/qhy9.c
+libqhyccd_la-qhy9.lo: src/qhy9.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy9.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy9.Tpo -c -o libqhyccd_la-qhy9.lo `test -f 'src/qhy9.cpp' || echo '$(srcdir)/'`src/qhy9.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhy9.Tpo $(DEPDIR)/libqhyccd_la-qhy9.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy9.c' object='libqhyccd_la-qhy9.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy9.cpp' object='libqhyccd_la-qhy9.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy9.lo `test -f 'src/qhy9.c' || echo '$(srcdir)/'`src/qhy9.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy9.lo `test -f 'src/qhy9.cpp' || echo '$(srcdir)/'`src/qhy9.cpp
 
-libqhyccd_la-QHYCAM.lo: src/QHYCAM.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-QHYCAM.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-QHYCAM.Tpo -c -o libqhyccd_la-QHYCAM.lo `test -f 'src/QHYCAM.c' || echo '$(srcdir)/'`src/QHYCAM.c
+libqhyccd_la-QHYCAM.lo: src/qhycam.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-QHYCAM.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-QHYCAM.Tpo -c -o libqhyccd_la-QHYCAM.lo `test -f 'src/qhycam.cpp' || echo '$(srcdir)/'`src/qhycam.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-QHYCAM.Tpo $(DEPDIR)/libqhyccd_la-QHYCAM.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/QHYCAM.c' object='libqhyccd_la-QHYCAM.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhycam.cpp' object='libqhyccd_la-QHYCAM.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-QHYCAM.lo `test -f 'src/QHYCAM.c' || echo '$(srcdir)/'`src/QHYCAM.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-QHYCAM.lo `test -f 'src/qhycam.cpp' || echo '$(srcdir)/'`src/qhycam.cpp
 
-libqhyccd_la-qhy9l.lo: src/qhy9l.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy9l.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy9l.Tpo -c -o libqhyccd_la-qhy9l.lo `test -f 'src/qhy9l.c' || echo '$(srcdir)/'`src/qhy9l.c
+libqhyccd_la-qhy9l.lo: src/qhy9l.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy9l.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy9l.Tpo -c -o libqhyccd_la-qhy9l.lo `test -f 'src/qhy9l.cpp' || echo '$(srcdir)/'`src/qhy9l.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhy9l.Tpo $(DEPDIR)/libqhyccd_la-qhy9l.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy9l.c' object='libqhyccd_la-qhy9l.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy9l.cpp' object='libqhyccd_la-qhy9l.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy9l.lo `test -f 'src/qhy9l.c' || echo '$(srcdir)/'`src/qhy9l.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy9l.lo `test -f 'src/qhy9l.cpp' || echo '$(srcdir)/'`src/qhy9l.cpp
 
-libqhyccd_la-qhy22.lo: src/qhy22.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy22.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy22.Tpo -c -o libqhyccd_la-qhy22.lo `test -f 'src/qhy22.c' || echo '$(srcdir)/'`src/qhy22.c
+libqhyccd_la-qhy22.lo: src/qhy22.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-qhy22.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-qhy22.Tpo -c -o libqhyccd_la-qhy22.lo `test -f 'src/qhy22.cpp' || echo '$(srcdir)/'`src/qhy22.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-qhy22.Tpo $(DEPDIR)/libqhyccd_la-qhy22.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy22.c' object='libqhyccd_la-qhy22.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/qhy22.cpp' object='libqhyccd_la-qhy22.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy22.lo `test -f 'src/qhy22.c' || echo '$(srcdir)/'`src/qhy22.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-qhy22.lo `test -f 'src/qhy22.cpp' || echo '$(srcdir)/'`src/qhy22.cpp
 
-libqhyccd_la-interguider.lo: src/interguider.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-interguider.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-interguider.Tpo -c -o libqhyccd_la-interguider.lo `test -f 'src/interguider.c' || echo '$(srcdir)/'`src/interguider.c
+libqhyccd_la-interguider.lo: src/interguider.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-interguider.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-interguider.Tpo -c -o libqhyccd_la-interguider.lo `test -f 'src/interguider.cpp' || echo '$(srcdir)/'`src/interguider.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-interguider.Tpo $(DEPDIR)/libqhyccd_la-interguider.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/interguider.c' object='libqhyccd_la-interguider.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/interguider.cpp' object='libqhyccd_la-interguider.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-interguider.lo `test -f 'src/interguider.c' || echo '$(srcdir)/'`src/interguider.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-interguider.lo `test -f 'src/interguider.cpp' || echo '$(srcdir)/'`src/interguider.cpp
 
-libqhyccd_la-cssl.lo: src/cssl.c
-@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-cssl.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-cssl.Tpo -c -D_GNU_SOURCE -o libqhyccd_la-cssl.lo `test -f 'src/cssl.c' || echo '$(srcdir)/'`src/cssl.c
+libqhyccd_la-cssl.lo: src/cssl.cpp
+@am__fastdepCC_TRUE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -MT libqhyccd_la-cssl.lo -MD -MP -MF $(DEPDIR)/libqhyccd_la-cssl.Tpo -c -D_GNU_SOURCE -o libqhyccd_la-cssl.lo `test -f 'src/cssl.cpp' || echo '$(srcdir)/'`src/cssl.cpp
 @am__fastdepCC_TRUE@	$(am__mv) $(DEPDIR)/libqhyccd_la-cssl.Tpo $(DEPDIR)/libqhyccd_la-cssl.Plo
-@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/cssl.c' object='libqhyccd_la-cssl.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCC_FALSE@	source='src/cssl.cpp' object='libqhyccd_la-cssl.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCC_FALSE@	DEPDIR=$(DEPDIR) $(CCDEPMODE) $(depcomp) @AMDEPBACKSLASH@
-@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-cssl.lo `test -f 'src/cssl.c' || echo '$(srcdir)/'`src/cssl.c
+@am__fastdepCC_FALSE@	$(LIBTOOL)  --tag=CC $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CC) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(libqhyccd_la_CFLAGS) $(CFLAGS) -c -o libqhyccd_la-cssl.lo `test -f 'src/cssl.cpp' || echo '$(srcdir)/'`src/cssl.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo

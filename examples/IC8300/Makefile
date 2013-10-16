@@ -10,8 +10,8 @@ endif
 # sources directories
 srcdir=.
 libdir=/usr/lib
-incdir=/usr/include/libqhyccd/
-vpath %.c $(srcdir)
+incdir=/usr/include/
+vpath %.cpp $(srcdir)
 vpath %.h $(srcdir) : $(incdir) 
 
 main=IC8300
@@ -31,17 +31,17 @@ CFLAGS += -Wall -Wextra -fpack-struct -Wno-main
 LDFLAGS+= `pkg-config --libs --cflags opencv`
 
 # rule for compilation of c files
-%.o: %.c $(includes)
+%.o: %.cpp $(includes)
 	@echo
 	@echo "* compiling $<"
-	$(CC) -I$(incdir) -c $(FLAG_DEBUG) $(CFLAGS) $(CPPFLAGS) $<
+	$(CXX) -I$(incdir) -c $(FLAG_DEBUG) $(CFLAGS) $(CPPFLAGS) $<
 	@echo
 
 # creation of executable binary
 $(bin): $(objects)
 	@echo
 	@echo "* linking $@"
-	$(CC) -o $@ $^ $(LDFLAGS) -lqhyccd -lusb-1.0
+	$(CXX) -o $@ $^ -lqhyccd -lusb-1.0 $(LDFLAGS)
 	@echo
 
 # removing files to force rebuilding

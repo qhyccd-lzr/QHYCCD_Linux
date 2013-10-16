@@ -1,5 +1,5 @@
 /*
- * qhyusb.c
+ * qhyusb->c
  *
  * libqhyusb program
  * 
@@ -13,43 +13,42 @@
 #include "qhyccd.h"
 #include "common.h"
 
+#if 0
 #ifdef __cplusplus
-extern "C" 
+extern "C"
 {
 #endif
+#endif
+QUsb *qhyusb;
 
-extern QHYCCD QCam;
-static int is_supported_device(libusb_device *device);
-libusb_context *ctx = NULL;
-
-const qhyccd_device_model supported_models[] =
+qhyccd_device_model supported_models[] =
 {
-        {QHYCCD_IMG2S, "IMG2S", 0x1618, 0xA285},
-        {QHYCCD_IMG50, "IMG50", 0x1618, 0x6669},
-        {QHYCCD_QHY2E, "QHY2E", 0x1618, 0x2859},
-        {QHYCCD_QHY5II,"QHY5II", 0x1618, 0x0921},
-        {QHYCCD_QHY6,  "QHY6", 0x1618, 0x025A},
-        {QHYCCD_QHY7,  "QHY7", 0x1618, 0x4023},
-        {QHYCCD_QHY8M, "QHY8M", 0x1618, 0x6007},
-        {QHYCCD_QHY9L, "QHY9L", 0x1618, 0x8311},
-        {QHYCCD_QHY11, "QHY11", 0x1618, 0x1111},
-        {QHYCCD_QHY16, "QHY16", 0x1618, 0x1601},
-        {QHYCCD_QHY20, "QHY20", 0x1618, 0x8051},
-        {QHYCCD_QHY21, "QHY21", 0x1618, 0x6741},
-        {QHYCCD_QHY22, "QHY22", 0x1618, 0x6941},
-        {QHYCCD_QHY9,  "QHY9",  0x1618, 0x8301},
+        {QHYCCD_IMG2S, (char *)"IMG2S", 0x1618, 0xA285},
+        {QHYCCD_IMG50, (char *)"IMG50", 0x1618, 0x6669},
+        {QHYCCD_QHY2E, (char *)"QHY2E", 0x1618, 0x2859},
+        {QHYCCD_QHY5II,(char *)"QHY5II", 0x1618, 0x0921},
+        {QHYCCD_QHY6,  (char *)"QHY6", 0x1618, 0x025A},
+        {QHYCCD_QHY7,  (char *)"QHY7", 0x1618, 0x4023},
+        {QHYCCD_QHY8M, (char *)"QHY8M", 0x1618, 0x6007},
+        {QHYCCD_QHY9L, (char *)"QHY9L", 0x1618, 0x8311},
+        {QHYCCD_QHY11, (char *)"QHY11", 0x1618, 0x1111},
+        {QHYCCD_QHY16, (char *)"QHY16", 0x1618, 0x1601},
+        {QHYCCD_QHY20, (char *)"QHY20", 0x1618, 0x8051},
+        {QHYCCD_QHY21, (char *)"QHY21", 0x1618, 0x6741},
+        {QHYCCD_QHY22, (char *)"QHY22", 0x1618, 0x6941},
+        {QHYCCD_QHY9,  (char *)"QHY9",  0x1618, 0x8301},
         {0, NULL, 0, 0}
 };
 
 
-int qhyccd_init(void)
+int QUsb::qhyccd_init(void)
 {
         int ret;
-        ret = libusb_init(&ctx);
+        ret = libusb_init(&(qhyusb->ctx));
         return ret;
 }
 
-ssize_t qhyccd_get_device_list(qhyccd_device ***list)
+ssize_t QUsb::qhyccd_get_device_list(qhyccd_device ***list)
 {
         ssize_t length = 0;
         libusb_device **usb_devices;
@@ -59,7 +58,7 @@ ssize_t qhyccd_get_device_list(qhyccd_device ***list)
         *list = (qhyccd_device**)malloc(sizeof(qhyccd_device*));
         (*list)[length] = NULL;
         
-        usb_devices_num = libusb_get_device_list(ctx, &usb_devices);
+        usb_devices_num = libusb_get_device_list(qhyusb->ctx, &usb_devices);
         
         if (usb_devices_num < 0) {
                 return -1;
@@ -83,7 +82,7 @@ ssize_t qhyccd_get_device_list(qhyccd_device ***list)
 }
 
 
-int is_supported_device(libusb_device *device)
+int QUsb::is_supported_device(libusb_device *device)
 {
         struct libusb_device_descriptor dev_desc;
         if (libusb_get_device_descriptor(device, &dev_desc) < 0) {
@@ -102,7 +101,8 @@ int is_supported_device(libusb_device *device)
         return 0;
 }
 
-void qhyccd_free_device_list(qhyccd_device **list)
+
+void QUsb::qhyccd_free_device_list(qhyccd_device **list)
 {
         qhyccd_device **cur = list;
         while (*cur != NULL) {
@@ -114,12 +114,12 @@ void qhyccd_free_device_list(qhyccd_device **list)
         }
 }
 
-void qhyccd_exit(void)
+void QUsb::qhyccd_exit(void)
 {   
-    libusb_exit(ctx);
+    libusb_exit(qhyusb->ctx);
 }
 
-qhyccd_device_model* qhyccd_get_device_model(qhyccd_device *device)
+qhyccd_device_model* QUsb::qhyccd_get_device_model(qhyccd_device *device)
 {
         struct libusb_device_descriptor dev_desc;
         if (libusb_get_device_descriptor(device, &dev_desc) < 0) {
@@ -143,20 +143,20 @@ qhyccd_device_model* qhyccd_get_device_model(qhyccd_device *device)
 }
 
 
-int qhyccd_open(qhyccd_device *device,
+int QUsb::qhyccd_open(qhyccd_device *device,
                              qhyccd_device_handle **device_handle)
 {
         return libusb_open(device, device_handle);
 }
 
 
-void qhyccd_close(qhyccd_device_handle *dev_handle)
+void QUsb::qhyccd_close(qhyccd_device_handle *dev_handle)
 {
         libusb_close(dev_handle);
 }
 
 
-int qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req,
+int QUsb::qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req,
                 unsigned char* data, uint16_t length)
 {
         int ret;
@@ -166,7 +166,7 @@ int qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req,
 }
 
 
-int qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req,
+int QUsb::qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req,
                 unsigned char* data, uint16_t length)
 {
         int ret;
@@ -176,7 +176,7 @@ int qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req,
 }
 
 
-int qhyccd_iTXD(qhyccd_device_handle *dev_handle,
+int QUsb::qhyccd_iTXD(qhyccd_device_handle *dev_handle,
                 unsigned char *data, int length)
 {
         int ret;
@@ -189,7 +189,7 @@ int qhyccd_iTXD(qhyccd_device_handle *dev_handle,
 }
 
 
-int qhyccd_iRXD(qhyccd_device_handle *dev_handle,
+int QUsb::qhyccd_iRXD(qhyccd_device_handle *dev_handle,
                 unsigned char *data, int length)
 {
         int ret;
@@ -202,7 +202,7 @@ int qhyccd_iRXD(qhyccd_device_handle *dev_handle,
 }
 
 
-int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
+int QUsb::qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
                      int p_size, int p_num, int* pos)
 {
         int ret;
@@ -213,7 +213,7 @@ int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
 
         int dataEndpoint;
         
-        switch(QCam.CAMERA)
+        switch(qhyusb->QCam.CAMERA)
         {
         	  case DEVICETYPE_QHY9L:
             case DEVICETYPE_QHY5II:
@@ -253,7 +253,7 @@ int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data,
 }
 
 
-int qhyccd_readUSB2(qhyccd_device_handle *dev_handle, unsigned char *data,
+int QUsb::qhyccd_readUSB2(qhyccd_device_handle *dev_handle, unsigned char *data,
                     int p_size, int p_num)
 {
         int ret;
@@ -267,7 +267,7 @@ int qhyccd_readUSB2(qhyccd_device_handle *dev_handle, unsigned char *data,
 }
 
 
-int qhyccd_readUSB2_OnePackage3(qhyccd_device_handle *dev_handle,
+int QUsb::qhyccd_readUSB2_OnePackage3(qhyccd_device_handle *dev_handle,
                                 unsigned char *data, int length)
 {
         int ret;
@@ -278,7 +278,7 @@ int qhyccd_readUSB2_OnePackage3(qhyccd_device_handle *dev_handle,
         return ret;
 }
 
-void beginVideo(qhyccd_device_handle *handle)
+void QUsb::beginVideo(qhyccd_device_handle *handle)
 {
         unsigned char buf[1];
         buf[0] = 100;
@@ -287,39 +287,39 @@ void beginVideo(qhyccd_device_handle *handle)
         i = qhyccd_vTXD(handle, 0xb3, buf, 1);
 }
 
-void I2CTwoWrite(uint16_t addr,unsigned short value)
+void QUsb::I2CTwoWrite(uint16_t addr,unsigned short value)
 {
     unsigned char data[2];
     data[0] = MSB(value);
     data[1] = LSB(value);
 
-    libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_WRITE,0xbb,0,addr,data,2,0);
+    libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE,0xbb,0,addr,data,2,0);
 }
 
-unsigned short I2CTwoRead(uint16_t addr)
+unsigned short QUsb::I2CTwoRead(uint16_t addr)
 {
     unsigned char data[2];
 
-    libusb_control_transfer(QCam.ccd_handle,QHYCCD_REQUEST_READ,0xb7,0,addr,data,2,0);
+    libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_READ,0xb7,0,addr,data,2,0);
 
     return data[0] * 256 + data[1];
 }
 
-unsigned char MSB(unsigned int i)
+unsigned char QUsb::MSB(unsigned int i)
 {
         unsigned int j;
         j=(i&~0x00ff)>>8;
         return j;
 }
 
-unsigned char LSB(unsigned int i)
+unsigned char QUsb::LSB(unsigned int i)
 {
         unsigned int j;
         j=i&~0xff00;
         return j;
 }
 
-void SWIFT_MSBLSB(unsigned char * Data, int x, int y)
+void QUsb::SWIFT_MSBLSB(unsigned char * Data, int x, int y)
 {
     int i,j;
     unsigned char tempData;
@@ -338,7 +338,8 @@ void SWIFT_MSBLSB(unsigned char * Data, int x, int y)
         }
     }
 }
-
+#if 0
 #ifdef __cplusplus
 }
+#endif
 #endif

@@ -1,12 +1,13 @@
-#include "QHYCAM.h"
+#include "qhycam.h"
 #include <math.h>
 
+#if 0
 #ifdef __cplusplus
 extern "C"
 {
 #endif
-
-CCDREG ccdreg;
+#endif
+extern QUsb *qhyusb;
 
 void sendRegisterQHYCCDOld(qhyccd_device_handle *handle, 
                   CCDREG reg, int P_Size, int *Total_P, int *PatchNumber)
@@ -41,28 +42,28 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         REG[5]=reg.HBIN ;
         REG[6]=reg.VBIN ;
         
-        REG[7]=MSB(reg.LineSize );
-        REG[8]=LSB(reg.LineSize );
+        REG[7]=qhyusb->MSB(reg.LineSize );
+        REG[8]=qhyusb->LSB(reg.LineSize );
         
-        REG[9]= MSB(reg.VerticalSize );
-        REG[10]=LSB(reg.VerticalSize );
+        REG[9]= qhyusb->MSB(reg.VerticalSize );
+        REG[10]=qhyusb->LSB(reg.VerticalSize );
         
-        REG[11]=MSB(reg.SKIP_TOP );
-        REG[12]=LSB(reg.SKIP_TOP );
+        REG[11]=qhyusb->MSB(reg.SKIP_TOP );
+        REG[12]=qhyusb->LSB(reg.SKIP_TOP );
         
-        REG[13]=MSB(reg.SKIP_BOTTOM );
-        REG[14]=LSB(reg.SKIP_BOTTOM );
+        REG[13]=qhyusb->MSB(reg.SKIP_BOTTOM );
+        REG[14]=qhyusb->LSB(reg.SKIP_BOTTOM );
         
-        REG[15]=MSB(reg.LiveVideo_BeginLine );
-        REG[16]=LSB(reg.LiveVideo_BeginLine );
+        REG[15]=qhyusb->MSB(reg.LiveVideo_BeginLine );
+        REG[16]=qhyusb->LSB(reg.LiveVideo_BeginLine );
         
-        REG[19]=MSB(reg.AnitInterlace );
-        REG[20]=LSB(reg.AnitInterlace );
+        REG[19]=qhyusb->MSB(reg.AnitInterlace );
+        REG[20]=qhyusb->LSB(reg.AnitInterlace );
         
         REG[22]=reg.MultiFieldBIN ;
         
-        REG[29]=MSB(reg.ClockADJ );
-        REG[30]=LSB(reg.ClockADJ );
+        REG[29]=qhyusb->MSB(reg.ClockADJ );
+        REG[30]=qhyusb->LSB(reg.ClockADJ );
         
         REG[32]=reg.AMPVOLTAGE ;
         
@@ -77,8 +78,8 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         
         REG[46]=reg.TopSkipNull ;
         
-        REG[47]=MSB(reg.TopSkipPix );
-        REG[48]=LSB(reg.TopSkipPix );
+        REG[47]=qhyusb->MSB(reg.TopSkipPix );
+        REG[48]=qhyusb->LSB(reg.TopSkipPix );
         
         REG[51]=reg.MechanicalShutterMode ;
         REG[52]=reg.DownloadCloseTEC ;
@@ -87,16 +88,16 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         
         REG[63]=reg.Trig ;
         
-        REG[17]=MSB(*PatchNumber);
-        REG[18]=LSB(*PatchNumber);
+        REG[17]=qhyusb->MSB(*PatchNumber);
+        REG[18]=qhyusb->LSB(*PatchNumber);
         
         REG[53]=(reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0);
         
         REG[57]=reg.ADCSEL ;
         
-        qhyccd_vTXD(handle, 0xb5, REG, 64);
+        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
 
-        qhyccd_vTXD(handle, 0xb5, REG, 64);
+        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
 }
 
 void sendRegisterQHYCCDNew(qhyccd_device_handle *handle, 
@@ -132,28 +133,28 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         REG[5]=reg.HBIN ;
         REG[6]=reg.VBIN ;
         
-        REG[7]=MSB(reg.LineSize );
-        REG[8]=LSB(reg.LineSize );
+        REG[7]=qhyusb->MSB(reg.LineSize );
+        REG[8]=qhyusb->LSB(reg.LineSize );
         
-        REG[9]= MSB(reg.VerticalSize );
-        REG[10]=LSB(reg.VerticalSize );
+        REG[9]= qhyusb->MSB(reg.VerticalSize );
+        REG[10]=qhyusb->LSB(reg.VerticalSize );
         
-        REG[11]=MSB(reg.SKIP_TOP );
-        REG[12]=LSB(reg.SKIP_TOP );
+        REG[11]=qhyusb->MSB(reg.SKIP_TOP );
+        REG[12]=qhyusb->LSB(reg.SKIP_TOP );
         
-        REG[13]=MSB(reg.SKIP_BOTTOM );
-        REG[14]=LSB(reg.SKIP_BOTTOM );
+        REG[13]=qhyusb->MSB(reg.SKIP_BOTTOM );
+        REG[14]=qhyusb->LSB(reg.SKIP_BOTTOM );
         
-        REG[15]=MSB(reg.LiveVideo_BeginLine );
-        REG[16]=LSB(reg.LiveVideo_BeginLine );
+        REG[15]=qhyusb->MSB(reg.LiveVideo_BeginLine );
+        REG[16]=qhyusb->LSB(reg.LiveVideo_BeginLine );
         
-        REG[19]=MSB(reg.AnitInterlace );
-        REG[20]=LSB(reg.AnitInterlace );
+        REG[19]=qhyusb->MSB(reg.AnitInterlace );
+        REG[20]=qhyusb->LSB(reg.AnitInterlace );
         
         REG[22]=reg.MultiFieldBIN ;
         
-        REG[29]=MSB(reg.ClockADJ );
-        REG[30]=LSB(reg.ClockADJ );
+        REG[29]=qhyusb->MSB(reg.ClockADJ );
+        REG[30]=qhyusb->LSB(reg.ClockADJ );
         
         REG[32]=reg.AMPVOLTAGE ;
         
@@ -168,8 +169,8 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         
         REG[46]=reg.TopSkipNull ;
         
-        REG[47]=MSB(reg.TopSkipPix );
-        REG[48]=LSB(reg.TopSkipPix );
+        REG[47]=qhyusb->MSB(reg.TopSkipPix );
+        REG[48]=qhyusb->LSB(reg.TopSkipPix );
         
         REG[51]=reg.MechanicalShutterMode ;
         REG[52]=reg.DownloadCloseTEC ;
@@ -178,16 +179,16 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         
         REG[63]=reg.Trig ;
         
-        REG[17]=MSB(*PatchNumber);
-        REG[18]=LSB(*PatchNumber);
+        REG[17]=qhyusb->MSB(*PatchNumber);
+        REG[18]=qhyusb->LSB(*PatchNumber);
         
         REG[53]=(reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0);
         
         REG[57]=reg.ADCSEL ;
         
-        qhyccd_vTXD(handle, 0xb5, REG, 64);
+        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
 
-        qhyccd_vTXD(handle, 0xb5, REG, 64);
+        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
 }
 
 void setDC201FromInterrupt(qhyccd_device_handle *handle,unsigned char PWM,unsigned char FAN)
@@ -228,7 +229,7 @@ signed short getDC201FromInterrupt(qhyccd_device_handle *handle)
 unsigned char sendInterrupt(qhyccd_device_handle *handle,unsigned char length,unsigned char *data)
 {
 	unsigned char i;
-	i = qhyccd_iTXD(handle,data,length);
+	i = qhyusb->qhyccd_iTXD(handle,data,length);
 	return i;
 }
 
@@ -236,7 +237,7 @@ unsigned char getFromInterrupt(qhyccd_device_handle *handle,unsigned char length
 {
 	unsigned char i;
 	
-	i = qhyccd_iRXD(handle,data,length);
+	i = qhyusb->qhyccd_iRXD(handle,data,length);
 	return i;
 }
 
@@ -272,7 +273,8 @@ double mVToDegree(double V)
 
 	return T;
 }
-
+#if 0
 #ifdef __cplusplus
 }
+#endif
 #endif
