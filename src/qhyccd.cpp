@@ -175,6 +175,21 @@ int QUsb::qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req,
         return ret;
 }
 
+int QUsb::qhyccd_vTXD_Ex(qhyccd_device_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+{
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_WRITE, req,
+                                      value, index, data, length, 0);
+        return ret;
+}
+
+int QUsb::qhyccd_vRXD_Ex(qhyccd_device_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+{
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_READ, req,
+                                      value, index, data, length, 0);
+        return ret;
+}
 
 int QUsb::qhyccd_iTXD(qhyccd_device_handle *dev_handle,
                 unsigned char *data, int length)
@@ -282,9 +297,8 @@ void QUsb::beginVideo(qhyccd_device_handle *handle)
 {
         unsigned char buf[1];
         buf[0] = 100;
-        int i;
 
-        i = qhyccd_vTXD(handle, 0xb3, buf, 1);
+        qhyccd_vTXD(handle, 0xb3, buf, 1);
 }
 
 void QUsb::I2CTwoWrite(uint16_t addr,unsigned short value)

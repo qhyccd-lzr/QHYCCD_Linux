@@ -10,13 +10,23 @@
 #define DEVICETYPE_QHY22   694
 #define DEVICETYPE_UNKOWN 0
 
-#if 0
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-#endif 
+enum CONTROL_ID
+{
+    CONTROL_WBR=0,
+    CONTROL_WBB,
+    CONTROL_WBG,
+    CONTROL_GAIN,
+    CONTROL_OFFSET,
+    CONTROL_EXPOSURE,
+    CONTROL_SPEED,
+    CONTROL_TRANSFERBIT,
+    CONTROL_USBTRAFFIC,
+    CONTROL_ROWNOISERE,
+    CONTROL_HDRMODE,
+    CONTROL_COOLER
+};
 
-int OpenCamera(void);
+int OpenCameraByID(int camid);
 
 void InitCamera(void);
 
@@ -46,7 +56,6 @@ void SetWBGreen(int green);
 
 void SetWBRed(int red);
 
-
 void BeginLive(void);
 
 void Bin2x2(unsigned char *ImgData,int w,int h);
@@ -58,7 +67,6 @@ void GetImageData(int w,int h,int bpp,int channels,unsigned char *rawArray);
 void GetROIImageData(int w,int h,int bpp,int channels,unsigned char *rawArray);
 
 int GetMaxFrameLength(void);
-
 
 bool IsAstroCcd(int m_devType);
 
@@ -77,8 +85,4 @@ double GetTemp(void);
 void StopCooler(void);
 
 void StopLive(void);
-#if 0
-#ifdef __cplusplus
-}
-#endif /* __cplusplus */
-#endif
+

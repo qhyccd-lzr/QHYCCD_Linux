@@ -484,7 +484,7 @@ void  QHY5II::SetExposureTime_QHY5II(unsigned long i)
 		buf[1] = (unsigned char) (((ExpTime / 1000)&~0xff00ffff) >> 16);
 		buf[2] = ((ExpTime / 1000)&~0xffff00ff) >> 8;
 		buf[3] = ((ExpTime / 1000)&~0xffffff00);
-                libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+                qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf,4);
 		ExpTime = (unsigned long)(ExpTime + MaxShortExpTime);
 		longExpMode = true;
 	}
@@ -494,7 +494,7 @@ void  QHY5II::SetExposureTime_QHY5II(unsigned long i)
 		buf[1] = 0;
 		buf[2] = 0;
 		buf[3] = 0;
-		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf,4);
 		usleep(100);
 		REG09 = (unsigned short)((ExpTime + 180 * pixelPeriod + 4 * REG0C * pixelPeriod)/ RowTime);
 		if (REG09 < 1)

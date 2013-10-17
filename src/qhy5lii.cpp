@@ -52,7 +52,7 @@ void QHY5LII::SetSpeedQHY5LII(int i)
     unsigned char buf[2];
     buf[0] = i;
 
-    libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc8, 0x00, 0x00, buf, 1,0);
+    qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc8,buf, 1);
 }
 
 void QHY5LII::SWIFT_MSBLSBQHY5LII(unsigned char *ImgData)
@@ -177,7 +177,7 @@ void QHY5LII::SetGainMonoQHY5LII(double gain)
 {
 	// gain input range 0-1000  输入范围已经归一化到0-1000
 
-	int Gain_Min, Gain_Max;
+	int Gain_Min = 0, Gain_Max = 0;
 
 	Gain_Min = 0;
 	Gain_Max = 796;
@@ -420,7 +420,7 @@ void QHY5LII::Set14Bit(int i)
 	unsigned char buf[2];
 	buf[0] = i;
 
-        libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xcd, 0x00, 0x00, buf, 1,0);
+        qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xcd,buf,1);
 }
 
 void QHY5LII::initQHY5LII_XGA(void) 
@@ -664,7 +664,7 @@ void QHY5LII::SetExposureTime_QHY5LII(unsigned long i)
 		buf[1] = (unsigned char)(((ExpTime / 1000) & ~0xff00ffff) >> 16);
 		buf[2] = (unsigned char)(((ExpTime / 1000) & ~0xffff00ff) >> 8);
 		buf[3] = (unsigned char)((ExpTime / 1000) & ~0xffffff00);
-		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf, 4);
 		ExpTime = ExpTime + MaxShortExpTime;
 		REG3012 = 65000;
 		longExpMode = true;
@@ -680,7 +680,7 @@ void QHY5LII::SetExposureTime_QHY5LII(unsigned long i)
 			buf[1] = 0;
 			buf[2] = 0;
 			buf[3] = 0;
-			libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+			qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf, 4);
 			usleep(100);
 			REG3012 = (unsigned short)(ExpTime / RowTime);
 			if (REG3012 < 1)
@@ -695,7 +695,7 @@ void QHY5LII::SetExposureTime_QHY5LII(unsigned long i)
 		buf[1] = 0;
 		buf[2] = 0;
 		buf[3] = 0;
-		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
+		qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf, 4);
 		usleep(100);
 		REG3012 = (unsigned short)(ExpTime / RowTime);
 		if (REG3012 < 1)

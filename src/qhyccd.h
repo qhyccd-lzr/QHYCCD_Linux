@@ -82,11 +82,15 @@ typedef struct QHYCCDPara
     int cameraW;//宽
     int cameraH;//高
     int pos;
+    int brightness;
+    int curbrightness;
     double camTime;//曝光时间(us)
     bool isColor;//相机是否彩色 true:彩色 false:黑白
     bool expModeChanged;
     unsigned char transferspeed;//传输速度0:低速 1:高速
     unsigned char camOffset;//传输速度0:低速 1:高速
+    double contrast;
+    double gama;
     qhyccd_device_handle *ccd_handle;
     qhyccd_device **device_list;
 }QStruct;
@@ -138,6 +142,8 @@ public:
 	void qhyccd_close(qhyccd_device_handle *dev_handle);
 	int qhyccd_vTXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
 	int qhyccd_vRXD(qhyccd_device_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
+	int qhyccd_vTXD_Ex(qhyccd_device_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
+	int qhyccd_vRXD_Ex(qhyccd_device_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
 	int qhyccd_iTXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
 	int qhyccd_iRXD(qhyccd_device_handle *dev_handle, unsigned char *data, int length);
 	int qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data, int p_size, int p_num, int* pos);
@@ -152,8 +158,7 @@ public:
 
         QUsb(void)
         {
-            liveabort = 0;   
-            QCam.expModeChanged = false;    
+   
         }
         ~QUsb(void){}
 

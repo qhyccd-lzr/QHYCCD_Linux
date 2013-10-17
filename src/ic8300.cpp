@@ -1,4 +1,4 @@
-#include "qhy9l.h"
+#include "ic8300.h"
 #include "qhycam.h"
 #include <stdio.h>
 #include <stdlib.h>

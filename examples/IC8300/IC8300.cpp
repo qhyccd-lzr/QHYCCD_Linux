@@ -12,7 +12,7 @@ int main(void)
     IplImage *img = cvCreateImage(cvSize(w,h),bpp,channels);
     img->imageData = (char *)ImgData;
 
-    int ret = OpenCamera();
+    int ret = OpenCamera(DEVICETYPE_QHY9);
     openOled();
     cvNamedWindow("IC8300",CV_WINDOW_AUTOSIZE);
     
