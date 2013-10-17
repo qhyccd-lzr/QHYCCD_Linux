@@ -121,7 +121,7 @@ void InitCamera(void)
             qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf,4);
             SetResolution(1280,960);
             q5lii->SetExposureTime_QHY5LII(1000);
-            SetUSBTraffic(50);
+            SetUSBTraffic(30);
             SetSpeed(false);
 	    break;
     	}
@@ -179,10 +179,7 @@ void InitOthers(void)
     qhyusb->QCam.transferspeed = 0;//传输速度0:低速 1:高速
     qhyusb->liveabort = 0;
     qhyusb->QCam.expModeChanged = false;
-    qhyusb->QCam.brightness = 0;
-    qhyusb->QCam.contrast = 1.0;
-    qhyusb->QCam.gama = 1.0;
-    qhyusb->QCam.curbrightness = 0;
+    qhyusb->QCam.usbtraffic = 30;
 }
 
 void SetBin(int w,int h)
@@ -334,15 +331,15 @@ void SetResolution(int x,int y)
     qhyusb->QCam.cameraH = y;
     SetExposeTime(qhyusb->QCam.camTime);
     SetGain(qhyusb->QCam.camGain);
+    SetUSBTraffic(qhyusb->QCam.usbtraffic);
     if(qhyusb->QCam.isColor)
     {
         SetWBGreen(qhyusb->QCam.wbgreen);
         SetWBRed(qhyusb->QCam.wbred);
         SetWBBlue(qhyusb->QCam.wbblue);
     }
+
 }
-
-
 void SetSpeed(bool isHigh)
 {
     if(isHigh)
@@ -397,6 +394,7 @@ void SetUSBTraffic(int i)
 	else
 	    qhyusb->I2CTwoWrite(0x300c, 1388 + i*50);
     }
+    qhyusb->QCam.usbtraffic = i;
 }
 
 void SetWBBlue(int blue)

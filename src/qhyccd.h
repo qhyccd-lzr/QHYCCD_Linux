@@ -82,15 +82,12 @@ typedef struct QHYCCDPara
     int cameraW;//宽
     int cameraH;//高
     int pos;
-    int brightness;
-    int curbrightness;
+    unsigned char usbtraffic;
     double camTime;//曝光时间(us)
     bool isColor;//相机是否彩色 true:彩色 false:黑白
     bool expModeChanged;
     unsigned char transferspeed;//传输速度0:低速 1:高速
     unsigned char camOffset;//传输速度0:低速 1:高速
-    double contrast;
-    double gama;
     qhyccd_device_handle *ccd_handle;
     qhyccd_device **device_list;
 }QStruct;

@@ -18,7 +18,6 @@ int main(void)
     
     if(ret > 0)
     {
-        printf("found\n");
         
         SetExposeTime(100000.0);
         SetUSBTraffic(100);
