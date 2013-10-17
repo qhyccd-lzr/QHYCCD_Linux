@@ -12,7 +12,7 @@ int main(void)
     IplImage *img = cvCreateImage(cvSize(w,h),bpp,channels);
     img->imageData = (char *)ImgData;
 
-    int ret = OpenCamera(DEVICETYPE_QHY9);
+    int ret = OpenCameraByID(DEVICETYPE_QHY5LII);
     openOled();
     cvNamedWindow("IC8300",CV_WINDOW_AUTOSIZE);
     
@@ -25,10 +25,12 @@ int main(void)
         SetGain(300);
         SetResolution(w,h);
         BeginLive();
-
-        GetImageData(w,h,bpp,channels,ImgData); 
-        cvShowImage("IC8300",img);
-        cvWaitKey(0);
+        while(1)
+        {
+            GetImageData(w,h,bpp,channels,ImgData); 
+            cvShowImage("IC8300",img);
+            cvWaitKey(30);
+        }
        
         cvDestroyWindow("IC8300");
     }

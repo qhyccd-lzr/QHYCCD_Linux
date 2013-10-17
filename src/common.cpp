@@ -58,7 +58,7 @@ int OpenCameraByID(int camid)
         dev = qhyusb->QCam.device_list[i];
         qhyusb->qhyccd_open(dev,&(qhyusb->QCam.ccd_handle));
 
-        if(model->model_id == QHYCCD_QHY5II && camid == DEVICETYPE_QHY5II)
+        if(model->model_id == QHYCCD_QHY5II)
         {            
             unsigned char buf[16];
             EepromRead(0x10,buf,16);
@@ -67,14 +67,14 @@ int OpenCameraByID(int camid)
             else 
                 qhyusb->QCam.isColor = false;
 
-            if(buf[0] == 6)
+            if(buf[0] == 6 && camid == DEVICETYPE_QHY5LII)
             {
                 qhyusb->QCam.CAMERA = DEVICETYPE_QHY5LII;   
                 q5lii = new QHY5LII();
                 InitCamera();
                 return DEVICETYPE_QHY5LII;
             }
-            else if(buf[0] == 1)
+            else if(buf[0] == 1 && camid == DEVICETYPE_QHY5II)
             {
                 qhyusb->QCam.CAMERA = DEVICETYPE_QHY5II;
                 q5ii = new QHY5II();
@@ -121,7 +121,7 @@ void InitCamera(void)
             qhyusb->qhyccd_vTXD(qhyusb->QCam.ccd_handle,0xc1,buf,4);
             SetResolution(1280,960);
             q5lii->SetExposureTime_QHY5LII(1000);
-            SetUSBTraffic(30);
+            SetUSBTraffic(50);
             SetSpeed(false);
 	    break;
     	}
