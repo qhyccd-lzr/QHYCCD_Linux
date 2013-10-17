@@ -9,7 +9,7 @@ AC_CONFIG_MACRO_DIR([m4])
 AC_CONFIG_HEADERS([config.h])
 
 # Checks for programs.
-AC_PROG_CC
+AC_PROG_CXX
 AC_PROG_LIBTOOL
 
 # Checks for fxload, which is used to load the firmware into the ram
