@@ -6,38 +6,47 @@
 #include "qhy5lii.h"
 #include "common.h"
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif
-QHY5LII QCam5LII;
 extern QUsb *qhyusb;
+QHY5LII *q5lii;
 
-void SetQHY5LIIGain(unsigned short gain)
+void QHY5LII::SetQHY5LIIGain(unsigned short gain)
 {
-     if(gain == 1000)
-          qhyusb->I2CTwoWrite(0x3100,0x0004);
+     int Gain_Min, Gain_Max;
+     
+     if(CheckBoxQHY5LIILoneExpMode)
+     {
+	SetExposureTime_QHY5LII(1);
+	if(qhyusb->QCam.isColor == 1)
+	{
+		double RG,BG;
+		RG = double(qhyusb->QCam.wbred) / 100;
+		BG = double(qhyusb->QCam.wbblue) / 100;
+		SetGainColorQHY5LII(gain,RG,BG);
+	}
+	else
+	{
+		SetGainMonoQHY5LII(gain);
+	}
+	usleep(500000);
+	SetExposureTime_QHY5LII((unsigned long)qhyusb->QCam.camTime);
+     }
      else
      {
-         qhyusb->I2CTwoWrite(0x3100,0);
-
-         if(qhyusb->QCam.isColor)
-         {
-             double RG,BG;
-             RG = (double)qhyusb->QCam.wbred / 100;
-             BG = (double)qhyusb->QCam.wbblue / 100;
-             SetGainColorQHY5LII(gain,RG,BG);
-         }
-         else
-         {
-             SetGainMonoQHY5LII(gain);
-         }
-    }
+	if(qhyusb->QCam.isColor == 1)
+	{
+		double RG,BG;
+		RG = double(qhyusb->QCam.wbred) / 100;
+		BG = double(qhyusb->QCam.wbblue) / 100;
+		SetGainColorQHY5LII(gain,RG,BG);
+	}
+	else
+	{
+		SetGainMonoQHY5LII(gain);
+	}
+     }
 }
 
-void SetSpeedQHY5LII(int i)
+void QHY5LII::SetSpeedQHY5LII(int i)
 {
     // i=0,1,2    0=12M  1=24M  2=48M
     unsigned char buf[2];
@@ -46,7 +55,7 @@ void SetSpeedQHY5LII(int i)
     libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc8, 0x00, 0x00, buf, 1,0);
 }
 
-void SWIFT_MSBLSBQHY5LII(unsigned char *ImgData)
+void QHY5LII::SWIFT_MSBLSBQHY5LII(unsigned char *ImgData)
 {
 	int i = 0;
 	while(i<qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2)
@@ -57,7 +66,7 @@ void SWIFT_MSBLSBQHY5LII(unsigned char *ImgData)
 	}
 }
 
-double setQHY5LREG_PLL(unsigned char clk)
+double QHY5LII::setQHY5LREG_PLL(unsigned char clk)
 {
 	double i = 0;
 
@@ -72,7 +81,7 @@ double setQHY5LREG_PLL(unsigned char clk)
 		W_I2C_MICRON_Address16_OneRegister(0x3082, 0x0029);
 		// OPERATION_MODE_CTRL
 
-		if (QCam5LII.CheckBoxQHY5LIILoneExpMode) {
+		if (CheckBoxQHY5LIILoneExpMode) {
 			W_I2C_MICRON_Address16_OneRegister(0x30B0, 0x5330);
 			// DIGITAL_TEST    5370: PLL BYPASS   1370  USE PLL
 			i = 1.0;
@@ -103,14 +112,14 @@ double setQHY5LREG_PLL(unsigned char clk)
 		W_I2C_MICRON_Address16_OneRegister(0x3082, 0x0029);
 		// OPERATION_MODE_CTRL
 
-		if (QCam5LII.CheckBoxQHY5LIILoneExpMode) {
+		if (CheckBoxQHY5LIILoneExpMode) {
 			W_I2C_MICRON_Address16_OneRegister(0x30B0, 0x5330);
 			// DIGITAL_TEST    5370: PLL BYPASS   1370  USE PLL
 			i = 1.0;
 		}
 		else {
 			W_I2C_MICRON_Address16_OneRegister(0x30B0, 0x1330);
-			i = 65 / 14 / 3;
+			i = ((double)65) / 14 / 3;
 		}
 		W_I2C_MICRON_Address16_OneRegister(0x305e, 0x00ff); // gain
 		W_I2C_MICRON_Address16_OneRegister(0x3012, 0x0020);
@@ -133,14 +142,14 @@ double setQHY5LREG_PLL(unsigned char clk)
 		W_I2C_MICRON_Address16_OneRegister(0x3082, 0x0029);
 		// OPERATION_MODE_CTRL
 
-		if (QCam5LII.CheckBoxQHY5LIILoneExpMode) {
+		if (CheckBoxQHY5LIILoneExpMode) {
 			W_I2C_MICRON_Address16_OneRegister(0x30B0, 0x5330);
 			// DIGITAL_TEST    5370: PLL BYPASS   1370  USE PLL
 			i = 1.0;
 		}
 		else {
 			W_I2C_MICRON_Address16_OneRegister(0x30B0, 0x1330);
-			i = 57 / 14 / 3;
+			i = ((double)57) / 14 / 3;
 		}
 
 		W_I2C_MICRON_Address16_OneRegister(0x305e, 0x00ff); // gain
@@ -156,7 +165,7 @@ double setQHY5LREG_PLL(unsigned char clk)
 	return i;
 }
 
-void SetQHY5LIIHDR(bool on) 
+void QHY5LII::SetQHY5LIIHDR(bool on) 
 {
 	if (on)
 		qhyusb->I2CTwoWrite(0x3082, 0x0028);
@@ -164,7 +173,7 @@ void SetQHY5LIIHDR(bool on)
 		qhyusb->I2CTwoWrite(0x3082, 0x0001);
 }
 
-void SetGainMonoQHY5LII(double gain)
+void QHY5LII::SetGainMonoQHY5LII(double gain)
 {
 	// gain input range 0-1000  输入范围已经归一化到0-1000
 
@@ -179,7 +188,7 @@ void SetGainMonoQHY5LII(double gain)
 
 	unsigned short REG30B0;
 
-	if (QCam5LII.CheckBoxQHY5LIILoneExpMode)
+	if (CheckBoxQHY5LIILoneExpMode)
 		REG30B0 = 0X5330;
 	else
 		REG30B0 = 0X1330;
@@ -282,7 +291,7 @@ void SetGainMonoQHY5LII(double gain)
 
 }
 
-void SetGainColorQHY5LII(double gain, double RG, double BG)
+void QHY5LII::SetGainColorQHY5LII(double gain, double RG, double BG)
 {
 	// gain input range 0-1000  输入范围已经归一化到0-1000
 	int Gain_Min, Gain_Max;
@@ -299,7 +308,7 @@ void SetGainColorQHY5LII(double gain, double RG, double BG)
 
 	unsigned short REG30B0;
 
-	if (QCam5LII.CheckBoxQHY5LIILoneExpMode)
+	if (CheckBoxQHY5LIILoneExpMode)
 		REG30B0 = 0x5330;
 	else
 		REG30B0 = 0x1330;
@@ -406,7 +415,7 @@ void SetGainColorQHY5LII(double gain, double RG, double BG)
 	W_I2C_MICRON_Address16_OneRegister(0x3056, baseDGain);
 }
 
-void Set14Bit(int i)
+void QHY5LII::Set14Bit(int i)
 {
 	unsigned char buf[2];
 	buf[0] = i;
@@ -414,7 +423,7 @@ void Set14Bit(int i)
         libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xcd, 0x00, 0x00, buf, 1,0);
 }
 
-void initQHY5LII_XGA(void) 
+void QHY5LII::initQHY5LII_XGA(void) 
 {
 	int x = 1024;
 	int y = 768;
@@ -426,7 +435,7 @@ void initQHY5LII_XGA(void)
 	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
-	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
+	QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
 
 	int xstart = 4 + (1280 - 1024) / 2;
 	int ystart = 4 + (960 - 768) / 2;
@@ -443,7 +452,7 @@ void initQHY5LII_XGA(void)
 
 }
 
-void initQHY5LII_1280X960(void)
+void QHY5LII::initQHY5LII_1280X960(void)
 {
 	int x = 1280;
 	int y = 960;
@@ -455,7 +464,7 @@ void initQHY5LII_1280X960(void)
 	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
-	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
+	QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(0);
 
 	int xstart = 4;
 	int ystart = 4;
@@ -472,7 +481,7 @@ void initQHY5LII_1280X960(void)
 
 }
 
-void initQHY5LII_SVGA(void)
+void QHY5LII::initQHY5LII_SVGA(void)
 {
 	int x = 800;
 	int y = 600;
@@ -484,7 +493,7 @@ void initQHY5LII_SVGA(void)
 	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
-        QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(2);
+        QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(2);
 
 	int xstart = 4 + (1280 - 800) / 2; ;
 	int ystart = 4 + (960 - 600) / 2; ;
@@ -501,7 +510,7 @@ void initQHY5LII_SVGA(void)
 }
 
 
-void initQHY5LII_VGA(void)
+void QHY5LII::initQHY5LII_VGA(void)
 {
 	int x = 640;
 	int y = 480;
@@ -514,10 +523,10 @@ void initQHY5LII_VGA(void)
 	qhyusb->QCam.ShowImgY_Start = 0;
 
         InitQHY5LIIRegs();
-	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
+	QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
 
-	int xstart = 4 + (1280 - 640) / 2; ;
-	int ystart = 4 + (960 - 480) / 2; ;
+	int xstart = 4 + (1280 - 640) / 2;
+	int ystart = 4 + (960 - 480) / 2;
 	int xsize = x - 1;
 	int ysize = y - 1;
 
@@ -530,7 +539,7 @@ void initQHY5LII_VGA(void)
 	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x10DC); // RESET_REGISTER
 }
 
-void initQHY5LII_QVGA(void) 
+void QHY5LII::initQHY5LII_QVGA(void) 
 {
 	int x = 320;
 	int y = 240;
@@ -543,7 +552,7 @@ void initQHY5LII_QVGA(void)
 	qhyusb->QCam.ShowImgY_Start = 0;
 
 	InitQHY5LIIRegs();
-	QCam5LII.QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
+	QHY5L_PLL_Ratio = (int)setQHY5LREG_PLL(1);
 
 	int xstart = 4 + (1280 - 320) / 2; ;
 	int ystart = 4 + (960 - 320) / 2; ;
@@ -559,7 +568,7 @@ void initQHY5LII_QVGA(void)
 	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x10DC); // RESET_REGISTER
 }
 
-void CorrectQHY5LIIWH(int *w,int *h)
+void QHY5LII::CorrectQHY5LIIWH(int *w,int *h)
 {
     if(*w <= 320 && *h <=240)
 	{
@@ -593,45 +602,53 @@ void CorrectQHY5LIIWH(int *w,int *h)
 	}
 }
 
-void SetExposureTime_QHY5LII(unsigned long i) 
+void QHY5LII::SetExposureTime_QHY5LII(unsigned long i) 
 {
+	if(qhyusb->QCam.expModeChanged)
+	{
+		//when exposure mode changed, reset resolution to get the new value of QHY5L_PLL_Ratio
+		CorrectQHY5LIIWH(&qhyusb->QCam.cameraW,&qhyusb->QCam.cameraH);
+		qhyusb->QCam.expModeChanged = false;
+	}
 
-	if(i >= 1200000)
-	{
-		QCam5LII.CheckBoxQHY5LIILoneExpMode = true;
-	}
-	else 
-	{
-		QCam5LII.CheckBoxQHY5LIILoneExpMode = false;
-	}
 	// 需要输入的参数: CMOSCLK
 	double CMOSCLK;
 
 	if (qhyusb->QCam.transferspeed == 1)
-		CMOSCLK = 48;
+	{
+		if(qhyusb->QCam.transferBit == 16)
+			CMOSCLK = 24;
+		else
+			CMOSCLK = 48;
+	}
 	else
-		CMOSCLK = 24;
+	{
+		if(qhyusb->QCam.transferBit == 16)
+			CMOSCLK = 12;
+		else
+			CMOSCLK = 24;
+	}
 
 	double pixelPeriod;
-	pixelPeriod = 1 / (CMOSCLK * QCam5LII.QHY5L_PLL_Ratio); // unit: us
+	pixelPeriod = 1 / (CMOSCLK * QHY5L_PLL_Ratio); // unit: us
 
 	double RowTime;
-	double ExpTime;
+	unsigned long ExpTime;
 	unsigned short REG300C, REG3012;
 
 	double MaxShortExpTime;
-
-	if (!QCam5LII.CheckBoxQHY5LIILoneExpMode) 
-	{
-		if (i > 2 * 1000 * 1000)
-			i = 2 * 1000 * 1000;
-	}
 
 	REG300C = qhyusb->I2CTwoRead(0x300C);
 
 	RowTime = REG300C * pixelPeriod;
 
 	MaxShortExpTime = 65000 * RowTime;
+
+	if (!CheckBoxQHY5LIILoneExpMode) 
+	{
+		if (i > MaxShortExpTime)//2 * 1000 * 1000)
+			i = MaxShortExpTime;//2 * 1000 * 1000;
+	}
 
 	ExpTime = i;
 
@@ -644,20 +661,20 @@ void SetExposureTime_QHY5LII(unsigned long i)
 		ExpTime = ExpTime - MaxShortExpTime;
 
 		buf[0] = 0;
-		buf[1] = (((long)(ExpTime / 1000)) & (~0xff00ffff)) >> 16;
-		buf[2] = ((long)((ExpTime / 1000))&~0xffff00ff) >> 8;
-		buf[3] = ((long)((ExpTime / 1000))&~0xffffff00);
+		buf[1] = (unsigned char)(((ExpTime / 1000) & ~0xff00ffff) >> 16);
+		buf[2] = (unsigned char)(((ExpTime / 1000) & ~0xffff00ff) >> 8);
+		buf[3] = (unsigned char)((ExpTime / 1000) & ~0xffffff00);
 		libusb_control_transfer(qhyusb->QCam.ccd_handle,QHYCCD_REQUEST_WRITE, 0xc1, 0x00, 0x00, buf, 4,0);
 		ExpTime = ExpTime + MaxShortExpTime;
 		REG3012 = 65000;
-		QCam5LII.longExpMode = true;
+		longExpMode = true;
 	}
 	else 
 	{
 
-		if (QCam5LII.longExpMode == true) 
+		if (longExpMode == true) 
 		{
-			QCam5LII.longExpMode = false;
+			longExpMode = false;
 			// 切换过来以后,应该多执行一次
 			buf[0] = 0;
 			buf[1] = 0;
@@ -669,8 +686,8 @@ void SetExposureTime_QHY5LII(unsigned long i)
 			if (REG3012 < 1)
 				REG3012 = 1;
 			qhyusb->I2CTwoWrite(0x3012, REG3012);
-			ExpTime = REG3012 * RowTime;
-			QCam5LII.longExpMode = false;
+			ExpTime = (unsigned long)(REG3012 * RowTime);
+			longExpMode = false;
 
 		}
 
@@ -684,24 +701,24 @@ void SetExposureTime_QHY5LII(unsigned long i)
 		if (REG3012 < 1)
 			REG3012 = 1;
 		qhyusb->I2CTwoWrite(0x3012, REG3012);
-		ExpTime = REG3012 * RowTime;
-		QCam5LII.longExpMode = false;
+		ExpTime = (unsigned long)(REG3012 * RowTime);
+		longExpMode = false;
 	}
 }
 
 
 
-void  W_I2C_MICRON_Address16_OneRegister(unsigned short adr, unsigned short dat)
+void QHY5LII::W_I2C_MICRON_Address16_OneRegister(unsigned short adr, unsigned short dat)
 {
     qhyusb->I2CTwoWrite(adr, dat);
 }
 
-unsigned short R_I2C_MICRON_Address16_OneRegister(unsigned short adr)
+unsigned short QHY5LII::R_I2C_MICRON_Address16_OneRegister(unsigned short adr)
 {
     return qhyusb->I2CTwoRead(adr);
 }
 
-double GetQHY5LIITemp(void){
+double QHY5LII::GetQHY5LIITemp(void){
 	double slope;
 	double T0;
 	uint16_t sensed, calib1, calib2;
@@ -725,12 +742,12 @@ double GetQHY5LIITemp(void){
 }
 
 
-void InitQHY5LIIRegs(void)
+void QHY5LII::InitQHY5LIIRegs(void)
 {
 	// [720p, 25fps input27Mhz,output50Mhz, ]
 	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x0001); // RESET_REGISTER
 	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x10D8); // RESET_REGISTER
-	usleep(100);
+	usleep(100000);
 	/////Linear sequencer
 	W_I2C_MICRON_Address16_OneRegister(0x3088, 0x8000); // SEQ_CTRL_PORT
 	W_I2C_MICRON_Address16_OneRegister(0x3086, 0x0025); // SEQ_DATA_PORT
@@ -1042,23 +1059,6 @@ void InitQHY5LIIRegs(void)
 	// coarse integration time
 	W_I2C_MICRON_Address16_OneRegister(0x3064, 0x1802);
 
-	int x = 1280;
-	int y = 960;
-	int xstart = 4;
-	int ystart = 4;
-	int xsize = x - 1;
-	int ysize = y - 1;
 
-	W_I2C_MICRON_Address16_OneRegister(0x3002, ystart); // y start
-	W_I2C_MICRON_Address16_OneRegister(0x3004, xstart); // x start
-	W_I2C_MICRON_Address16_OneRegister(0x3006, ystart + ysize); // y end
-	W_I2C_MICRON_Address16_OneRegister(0x3008, xstart + xsize); // x end
-	W_I2C_MICRON_Address16_OneRegister(0x300a, 990); // frame length
-	W_I2C_MICRON_Address16_OneRegister(0x300c, 1650); // line  length
-	W_I2C_MICRON_Address16_OneRegister(0x301A, 0x10DC); // RESET_REGISTER
 }
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif
+

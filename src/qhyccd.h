@@ -84,6 +84,7 @@ typedef struct QHYCCDPara
     int pos;
     double camTime;//曝光时间(us)
     bool isColor;//相机是否彩色 true:彩色 false:黑白
+    bool expModeChanged;
     unsigned char transferspeed;//传输速度0:低速 1:高速
     unsigned char camOffset;//传输速度0:低速 1:高速
     qhyccd_device_handle *ccd_handle;
@@ -151,7 +152,8 @@ public:
 
         QUsb(void)
         {
-            liveabort = 0;       
+            liveabort = 0;   
+            QCam.expModeChanged = false;    
         }
         ~QUsb(void){}
 

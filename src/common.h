@@ -1,7 +1,7 @@
 #include <stdbool.h>
 #include "qhyccd.h"
 
-//#define QHYCCD_DEBUG
+#define QHYCCD_DEBUG
 
 #define DEVICETYPE_QHY5II  51
 #define DEVICETYPE_QHY5LII 56

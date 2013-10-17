@@ -27,6 +27,8 @@ extern "C"
 #endif
 
 extern QUsb *qhyusb;
+extern QHY5II *q5ii;
+extern QHY5LII *q5lii;
 
 extern int GainTable[73];
 
@@ -68,12 +70,14 @@ int OpenCamera(void)
             if(buf[0] == 6)
             {
                 qhyusb->QCam.CAMERA = DEVICETYPE_QHY5LII;   
+                q5lii = new QHY5LII();
                 InitCamera();
                 return DEVICETYPE_QHY5LII;
             }
             else if(buf[0] == 1)
             {
                 qhyusb->QCam.CAMERA = DEVICETYPE_QHY5II;
+                q5ii = new QHY5II();
                 InitCamera();
                 return DEVICETYPE_QHY5II;
             }
@@ -114,14 +118,14 @@ void InitCamera(void)
         unsigned char buf[4];
         libusb_control_transfer(qhyusb->QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xc1,0,0,buf,4, 0);
         SetResolution(1280,960);
-        SetExposureTime_QHY5LII(1000);
+        q5lii->SetExposureTime_QHY5LII(1000);
         SetUSBTraffic(30);
         SetSpeed(false);
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II)
     {
         SetResolution(1280,1024);
-	SetExposureTime_QHY5II(1000);
+	q5ii->SetExposureTime_QHY5II(1000);
 	SetUSBTraffic(30);
 	SetSpeed(false);
     }
@@ -185,11 +189,11 @@ void SetTransferBit(int Bit)
         qhyusb->QCam.transferBit = Bit;
 	if(Bit == 16)
 	{
-	    Set14Bit(1);
+	    q5lii->Set14Bit(1);
 	}
 	else 
 	{
-	    Set14Bit(0);
+	    q5lii->Set14Bit(0);
 	}
 	if(qhyusb->QCam.transferspeed == 1)
 	{
@@ -215,11 +219,11 @@ void SetExposeTime(double exptime)
 {
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        SetExposureTime_QHY5LII(exptime);
+        q5lii->SetExposureTime_QHY5LII(exptime);
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II)
     {
-        SetExposureTime_QHY5II(exptime);
+        q5ii->SetExposureTime_QHY5II(exptime);
     }
     qhyusb->ccdreg.Exptime = exptime;       //unit: ms
     qhyusb->QCam.camTime = exptime;
@@ -229,11 +233,11 @@ void SetGain(unsigned short gain)
 {
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        SetQHY5LIIGain(gain);
+        q5lii->SetQHY5LIIGain(gain);
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II)
     {
-        SetQHY5IIGain(gain);
+        q5ii->SetQHY5IIGain(gain);
     }
     qhyusb->ccdreg.Gain = gain;
     qhyusb->QCam.camGain = gain;
@@ -242,7 +246,7 @@ void SetGain(unsigned short gain)
 
 void SetOffset(unsigned char offset)
 {
-	  qhyusb->ccdreg.Offset = offset;
+    qhyusb->ccdreg.Offset = offset;
     qhyusb->QCam.camOffset = offset;
 }
 
@@ -250,11 +254,11 @@ void SetResolution(int x,int y)
 {
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        CorrectQHY5LIIWH(&x,&y);
+        q5lii->CorrectQHY5LIIWH(&x,&y);
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II)
     {
-        CorrectQHY5IIWH(&x,&y);
+        q5ii->CorrectQHY5IIWH(&x,&y);
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9)
     {
@@ -296,22 +300,22 @@ void SetSpeed(bool isHigh)
 	{
 	    if(qhyusb->QCam.transferBit == 16)
 	    {
-		SetSpeedQHY5LII(1);
+		q5lii->SetSpeedQHY5LII(1);
 	    }
 	    else                             
 	    {
-		SetSpeedQHY5LII(2);
+		q5lii->SetSpeedQHY5LII(2);
 	    }
         }
         else 
         {
 	    if(qhyusb->QCam.transferBit == 16)
 	    {
-	        SetSpeedQHY5LII(0);
+	        q5lii->SetSpeedQHY5LII(0);
 	    }
 	    else           
 	    {
-		SetSpeedQHY5LII(1);
+		q5lii->SetSpeedQHY5LII(1);
 	    }
 	}
     }
@@ -335,7 +339,7 @@ void SetWBBlue(int blue)
 
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
+        q5lii->SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
     }
 }
 
@@ -345,7 +349,7 @@ void SetWBGreen(int green)
 
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
+        q5lii->SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
     }
 }
 
@@ -355,7 +359,7 @@ void SetWBRed(int red)
 
     if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
+        q5lii->SetGainColorQHY5LII(qhyusb->QCam.camGain,qhyusb->QCam.wbred,qhyusb->QCam.wbblue);
     }
 }
 
@@ -447,19 +451,20 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
 
 	if(qhyusb->QCam.transferBit == 16 && qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
 	{
-            SWIFT_MSBLSBQHY5LII((unsigned char *)data);
+            q5lii->SWIFT_MSBLSBQHY5LII((unsigned char *)data);
 	}
 		
 	IplImage *cvImg, *cropImg;
 	cvImg = cvCreateImage(cvSize(qhyusb->QCam.ImgX, qhyusb->QCam.ImgY), qhyusb->QCam.transferBit, 1);
 	cropImg = cvCreateImage(cvSize(qhyusb->QCam.ShowImgX, qhyusb->QCam.ShowImgY), qhyusb->QCam.transferBit, 1);
-	cvImg->imageData = (char *)data + 5;
+	cvImg->imageData = (char *)data;
 	cvSetImageROI(cvImg, cvRect(qhyusb->QCam.ShowImgX_Start, qhyusb->QCam.ShowImgY_Start, qhyusb->QCam.ShowImgX,qhyusb->QCam.ShowImgY));
 	cvCopy(cvImg, cropImg, NULL);
 	cvResetImageROI(cvImg);
 	memcpy(data,cropImg->imageData,cropImg->imageSize);
 	cvReleaseImage(&cvImg);
 	cvReleaseImage(&cropImg);
+        
     }
     else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9 || qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
     {
@@ -689,7 +694,7 @@ void BeginCooler(unsigned char PWM)
 double GetTemp()
 {
 	if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII){
-		return GetQHY5LIITemp();
+		return q5lii->GetQHY5LIITemp();
 	}
 	if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9 || qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
 	{

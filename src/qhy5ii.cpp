@@ -6,18 +6,10 @@
 #include "qhy5ii.h"
 #include "common.h"
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif
 extern QUsb *qhyusb;
+QHY5II *q5ii;
 
-bool qhy5iiDeNoise;
-bool longExpMode;
-
-int GainTable[73] = 
+const int GainTable[73] = 
 {
 	0x004, 0x005, 0x006, 0x007, 0x008, 0x009, 0x00A, 0x00B, 0x00C, 0x00D, 0x00E,
 	0x00F, 0x010, 0x011, 0x012, 0x013, 0x014, 0x015, 0x016, 0x017, 0x018, 0x019,
@@ -29,12 +21,12 @@ int GainTable[73] =
 };
 
 
-void  QHY5II_DeNoise(bool on)
+void QHY5II::QHY5II_DeNoise(bool on)
 {
-    qhy5iiDeNoise = on;
+    q5ii->qhy5iiDeNoise = on;
 }
 
-void SetQHY5IIGain(unsigned short gain)
+void QHY5II::SetQHY5IIGain(unsigned short gain)
 {
     int i = 0;
     int Gain_Min = 0;
@@ -43,7 +35,7 @@ void SetQHY5IIGain(unsigned short gain)
     qhyusb->I2CTwoWrite(0x35, GainTable[i]);
 }
 
-void QHY5IISetResolution(int x, int y)
+void QHY5II::QHY5IISetResolution(int x, int y)
 {
     if (qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II) 
     {
@@ -57,7 +49,7 @@ void QHY5IISetResolution(int x, int y)
     }
 }
 
-void  CorrectQHY5IIWH(int *w,int *h)
+void  QHY5II::CorrectQHY5IIWH(int *w,int *h)
 {
     if(*w <= 320 && *h <=240)
 	{
@@ -115,7 +107,7 @@ void  CorrectQHY5IIWH(int *w,int *h)
 	}
 }
 
-void  QHY5IIDeNoise(unsigned char *ImgData, int x, int y) 
+void  QHY5II::QHY5IIDeNoise(unsigned char *ImgData, int x, int y) 
 {
 	unsigned short ob;
 	unsigned char cutOff;
@@ -202,7 +194,7 @@ void  QHY5IIDeNoise(unsigned char *ImgData, int x, int y)
 	}
 }
 
-void  initQHY5II_SXGA(void) 
+void  QHY5II::initQHY5II_SXGA(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -227,7 +219,7 @@ void  initQHY5II_SXGA(void)
 
 }
 
-void  initQHY5II_XGA(void) 
+void  QHY5II::initQHY5II_XGA(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -251,7 +243,7 @@ void  initQHY5II_XGA(void)
 	}
 }
 
-void  initQHY5II_SVGA(void) 
+void  QHY5II::initQHY5II_SVGA(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -275,7 +267,7 @@ void  initQHY5II_SVGA(void)
 	}
 }
 
-void  initQHY5II_VGA(void) 
+void  QHY5II::initQHY5II_VGA(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -299,7 +291,7 @@ void  initQHY5II_VGA(void)
 	}
 }
 
-void  initQHY5II_QVGA(void) 
+void  QHY5II::initQHY5II_QVGA(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -323,7 +315,7 @@ void  initQHY5II_QVGA(void)
 	}
 }
 
-void  initQHY5II_R1024(void) 
+void  QHY5II::initQHY5II_R1024(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -348,7 +340,7 @@ void  initQHY5II_R1024(void)
 
 }
 
-void  initQHY5II_R800(void) 
+void  QHY5II::initQHY5II_R800(void) 
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -372,7 +364,7 @@ void  initQHY5II_R800(void)
 	}
 }
 
-void  initQHY5II_R400(void)
+void  QHY5II::initQHY5II_R400(void)
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -396,7 +388,7 @@ void  initQHY5II_R400(void)
 	}
 }
 
-void  initQHY5II_1280X720(void)
+void  QHY5II::initQHY5II_1280X720(void)
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -421,7 +413,7 @@ void  initQHY5II_1280X720(void)
 }
 
 
-void  initQHY5II_960X720(void)
+void  QHY5II::initQHY5II_960X720(void)
 {
 	if (qhy5iiDeNoise) 
 	{
@@ -445,9 +437,9 @@ void  initQHY5II_960X720(void)
 	}
 }
 
-void  SetExposureTime_QHY5II(unsigned long i) 
+void  QHY5II::SetExposureTime_QHY5II(unsigned long i) 
 {
-	// 需要输入的参数: CMOSCLK  REG04  REG05 REG0C REG09
+// 需要输入的参数: CMOSCLK  REG04  REG05 REG0C REG09
 
 	double CMOSCLK;
 
@@ -512,9 +504,3 @@ void  SetExposureTime_QHY5II(unsigned long i)
 		longExpMode = false;
 	}
 }
-
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif
