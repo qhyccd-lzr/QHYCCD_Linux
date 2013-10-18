@@ -19,11 +19,11 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
         #ifdef QHYCCD_DEBUG
-        printf("sendRegisterOld,LineSize %ld\n",reg.LineSize);
-        printf("sendRegisterOld,VSize %ld\n",reg.VerticalSize);
-        printf("sendRegisterOld,TopSkipPix, %ld\n",reg.TopSkipPix);
+        printf("sendRegisterOld,LineSize %d\n",reg.LineSize);
+        printf("sendRegisterOld,VSize %d\n",reg.VerticalSize);
+        printf("sendRegisterOld,TopSkipPix, %d\n",reg.TopSkipPix);
         printf("sendRegisterOld,T %ld\n",T);
-        printf("sendRegisterOld,P_Size %ld\n",P_Size);
+        printf("sendRegisterOld,P_Size %d\n",P_Size);
         #endif
         if (T % P_Size) {
                 *Total_P = T / P_Size+1;
@@ -37,6 +37,7 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         time_M=(reg.Exptime-time_L)/256;
         time_H=(reg.Exptime-time_L-time_M*256)/65536;
          #ifdef QHYCCD_DEBUG
+        printf("sendRegisterOld,Exptime %d\n",reg.Exptime);
         printf("sendRegisterOld,time_L, %d\n",time_L);
         printf("sendRegisterOld,time_M, %d\n",time_M);
         printf("sendRegisterOld,time_H, %d\n",time_H);
@@ -121,11 +122,11 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
 
         #ifdef QHYCCD_DEBUG
-        printf("sendRegisterNew,LineSize %ld\n",reg.LineSize);
-        printf("sendRegisterNew,VSize %ld\n",reg.VerticalSize);
-        printf("sendRegisterNew,TopSkipPix, %ld\n",reg.TopSkipPix);
+        printf("sendRegisterNew,LineSize %d\n",reg.LineSize);
+        printf("sendRegisterNew,VSize %d\n",reg.VerticalSize);
+        printf("sendRegisterNew,TopSkipPix, %d\n",reg.TopSkipPix);
         printf("sendRegisterNew,T %ld\n",T);
-        printf("sendRegisterNew,P_Size %ld\n",P_Size);
+        printf("sendRegisterNew,P_Size %d\n",P_Size);
         #endif
 
         if (T % P_Size) {

@@ -1,10 +1,11 @@
 #include <stdbool.h>
 #include "qhyccd.h"
 
-//#define QHYCCD_DEBUG
+#define QHYCCD_DEBUG
 
 #define DEVICETYPE_QHY5II  51
 #define DEVICETYPE_QHY5LII 56
+#define DEVICETYPE_QHY6    60
 #define DEVICETYPE_QHY9    390
 #define DEVICETYPE_QHY9L   391
 #define DEVICETYPE_QHY22   694
@@ -40,7 +41,7 @@ void SetTransferBit(int Bit);
 
 void SetResolution(int x,int y);
 
-void SetExposeTime(double time);
+void SetExposeTime(double exptime);
 
 void SetGain(unsigned short gain);
 

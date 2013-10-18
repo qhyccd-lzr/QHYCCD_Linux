@@ -14,6 +14,7 @@
 
 #include "qhy5lii.h"
 #include "qhy5ii.h"
+#include "qhy6.h"
 #include "qhy9.h"
 #include "ic8300.h"
 #include "qhy22.h"
@@ -24,6 +25,7 @@ extern QUsb    *qhyusb;
 extern QHY5II  *q5ii;
 extern QHY5LII *q5lii;
 extern QHY9    *qhy9;
+extern QHY6    *qhy6;
 
 extern int GainTable[73];
 
@@ -79,6 +81,10 @@ int OpenCameraByID(int camid)
         }
         else if(model->model_id == QHYCCD_QHY9 && camid == DEVICETYPE_QHY9)
         {
+            #ifdef QHYCCD_DEBUG
+            printf("QHY9 Found\n");
+            #endif
+            qhy9 = new QHY9();
             qhyusb->QCam.CAMERA = DEVICETYPE_QHY9;
             InitCamera();
             return DEVICETYPE_QHY9;
@@ -95,13 +101,36 @@ int OpenCameraByID(int camid)
             InitCamera();
             return DEVICETYPE_QHY22;
         }
+        else if(model->model_id == QHYCCD_QHY6 && camid == DEVICETYPE_QHY6)
+        {
+            #ifdef QHYCCD_DEBUG
+            printf("QHY6 Found\n");
+            #endif
+            qhy6 = new QHY6();
+            qhyusb->QCam.CAMERA = DEVICETYPE_QHY6;
+            InitCamera();
+            return DEVICETYPE_QHY6;
+        }
     }
+    #ifdef QHYCCD_DEBUG
     printf("please check USB link or camid\n");
+    #endif
     return DEVICETYPE_UNKOWN;   
 }
 
 void CloseCamera(void)
 {
+    if(qhyusb)
+        delete(qhyusb);
+    else if(qhy6)
+        delete(qhy6);
+    else if(qhy9)
+        delete(qhy9);
+    else if(q5lii)
+        delete(q5lii);
+    else if(q5ii)
+        delete(q5ii);
+
     qhyusb->qhyccd_free_device_list(qhyusb->QCam.device_list);
     qhyusb->qhyccd_close(qhyusb->QCam.ccd_handle);
 }
@@ -131,7 +160,7 @@ void InitCamera(void)
     	case DEVICETYPE_QHY9:
 	case DEVICETYPE_QHY9L:
     	{
-            SetExposeTime(10.0);
+            SetExposeTime(1000.0);
             SetGain(30);
             SetOffset(120);
 	    SetSpeed(false);
@@ -140,13 +169,22 @@ void InitCamera(void)
     	}
     	case DEVICETYPE_QHY22:
     	{
-    	    SetExposeTime(10);
+    	    SetExposeTime(1000.0);
     	    SetGain(0);
     	    SetOffset(120);
     	    SetSpeed(false);
     	    SetResolution(3072,2240);
 	    break;
     	}
+        case DEVICETYPE_QHY6:
+        {
+    	    SetExposeTime(1000.0);
+    	    SetGain(0);
+    	    SetOffset(130);
+    	    SetSpeed(false);
+    	    SetResolution(800,298);
+	    break;
+        }
     }
     InitOthers();
 }
@@ -163,11 +201,13 @@ void InitOthers(void)
             qhyusb->QCam.bin = 11;//软件上BIN模式，11:原始模式 22:2x2合并模式
             break;
         }
+        case DEVICETYPE_QHY6:
         case DEVICETYPE_QHY9:
         case DEVICETYPE_QHY9L:
         case DEVICETYPE_QHY22:
         {
             qhyusb->QCam.transferBit = 16; 
+            break;
         }
     }
     qhyusb->QCam.isColor = false;//相机是否彩色 true:彩色 false:黑白
@@ -222,6 +262,7 @@ void SetTransferBit(int Bit)
 		}
 		break;
 	}
+        case DEVICETYPE_QHY6:
 	case DEVICETYPE_QHY9:
 	case DEVICETYPE_QHY9L:
 	case DEVICETYPE_QHY22:
@@ -262,7 +303,7 @@ void SetExposeTime(double exptime)
 		break;
 	}
     }
-    qhyusb->QCam.camTime = (exptime/1000);
+    qhyusb->QCam.camTime = (unsigned long)exptime/10;
 }
 
 void SetGain(unsigned short gain)
@@ -302,6 +343,11 @@ void SetResolution(int x,int y)
        	    q5lii->CorrectQHY5LIIWH(&x,&y);
 	    break;
     	}
+        case DEVICETYPE_QHY6:
+        {
+            qhy6->CorrectQHY6WH(&x,&y);
+            break;
+        }
     	case DEVICETYPE_QHY9:
     	{
 	    qhy9->CorrectQHY9WH(&x,&y);
@@ -431,12 +477,24 @@ void SetWBRed(int red)
 
 void BeginLive(void)
 {
+    #ifdef QHYCCD_DEBUG
+    printf("BeginExpose\n");
+    #endif
     switch(qhyusb->QCam.CAMERA)
     {
 	case DEVICETYPE_QHY5LII:
 	case DEVICETYPE_QHY5II:
         {
 	    qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
+            break;
+        }
+        case DEVICETYPE_QHY6:
+        {          
+            int Total_P,PatchNumber;
+            qhy6->initQHY6_regs();
+            sendRegisterQHYCCDOld(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);
+	    qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
+            break;
         }
 	case DEVICETYPE_QHY9L:
 	case DEVICETYPE_QHY22:
@@ -535,62 +593,71 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
     *pH = qhyusb->QCam.cameraH;
     *pBpp = qhyusb->QCam.transferBit;
 
-    if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII || qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II)
-    { 	
-        while((ret != (qhyusb->QCam.cameraW * qhyusb->QCam.cameraH + 5)) && (qhyusb->liveabort == 0))
-        {
-            ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->QCam.cameraW * qhyusb->QCam.cameraH + 5,1,&qhyusb->QCam.pos);
-            #ifdef QHYCCD_DEBUG
-            printf("%d\n",ret);
-            #endif
-        }
 
-	if(qhyusb->QCam.transferBit == 16 && qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
-	{
-            q5lii->SWIFT_MSBLSBQHY5LII((unsigned char *)data);
-	}
-		
-	IplImage *cvImg, *cropImg;
-	cvImg = cvCreateImage(cvSize(qhyusb->QCam.ImgX, qhyusb->QCam.ImgY), qhyusb->QCam.transferBit, 1);
-	cropImg = cvCreateImage(cvSize(qhyusb->QCam.ShowImgX, qhyusb->QCam.ShowImgY), qhyusb->QCam.transferBit, 1);
-	cvImg->imageData = (char *)data;
-	cvSetImageROI(cvImg, cvRect(qhyusb->QCam.ShowImgX_Start, qhyusb->QCam.ShowImgY_Start, qhyusb->QCam.ShowImgX,qhyusb->QCam.ShowImgY));
-	cvCopy(cvImg, cropImg, NULL);
-	cvResetImageROI(cvImg);
-	memcpy(data,cropImg->imageData,cropImg->imageSize);
-	cvReleaseImage(&cvImg);
-	cvReleaseImage(&cropImg);
-        
-    }
-    else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9 || qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
+    switch(qhyusb->QCam.CAMERA)
     {
-        while(ret != (qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize *2))
+        case DEVICETYPE_QHY5LII:
+        case DEVICETYPE_QHY5II:
         {
-            #ifdef QHYCCD_DEBUG
-            printf("begin ReadUSB\nW %d H %d\n",qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
-            printf("%d\n",ret);
-            #endif
-            ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize * 2,1,&qhyusb->QCam.pos);
+            while((ret != (qhyusb->QCam.cameraW * qhyusb->QCam.cameraH + 5)) && (qhyusb->liveabort == 0))
+            {
+                ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->QCam.cameraW * qhyusb->QCam.cameraH + 5,1,&qhyusb->QCam.pos);
+                #ifdef QHYCCD_DEBUG
+                printf("%d\n",ret);
+                #endif
+            }
 
+	    if(qhyusb->QCam.transferBit == 16 && qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
+	    {
+                q5lii->SWIFT_MSBLSBQHY5LII((unsigned char *)data);
+	    }
+		
+	    IplImage *cvImg, *cropImg;
+	    cvImg = cvCreateImage(cvSize(qhyusb->QCam.ImgX, qhyusb->QCam.ImgY), qhyusb->QCam.transferBit, 1);
+	    cropImg = cvCreateImage(cvSize(qhyusb->QCam.ShowImgX, qhyusb->QCam.ShowImgY), qhyusb->QCam.transferBit, 1);
+	    cvImg->imageData = (char *)data;
+	    cvSetImageROI(cvImg, cvRect(qhyusb->QCam.ShowImgX_Start, qhyusb->QCam.ShowImgY_Start, qhyusb->QCam.ShowImgX,qhyusb->QCam.ShowImgY));
+	    cvCopy(cvImg, cropImg, NULL);
+	    cvResetImageROI(cvImg);
+	    memcpy(data,cropImg->imageData,cropImg->imageSize);
+	    cvReleaseImage(&cvImg);
+	    cvReleaseImage(&cropImg);
+            break;
         }
-        if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
+        case DEVICETYPE_QHY9:
+        case DEVICETYPE_QHY9L:
+        case DEVICETYPE_QHY22:
+        case DEVICETYPE_QHY6:
         {
-            if(qhyusb->ccdreg.VBIN == 1)
+  
+            while(ret != (qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize *2))
             {
-                ConvertQHY9LDataBIN11((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                #ifdef QHYCCD_DEBUG
+                printf("begin ReadUSB\nW %d H %d\n",qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
+                printf("%d\n",ret);
+                #endif
+                ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize * 2,1,&qhyusb->QCam.pos);
             }
-            else if(qhyusb->ccdreg.VBIN == 2)
+            
+            if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
             {
-                ConvertQHY9LDataBIN22((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                if(qhyusb->ccdreg.VBIN == 1)
+                {
+                    ConvertQHY9LDataBIN11((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                }
+                else if(qhyusb->ccdreg.VBIN == 2)
+                {
+                    ConvertQHY9LDataBIN22((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                }
+                else if(qhyusb->ccdreg.VBIN == 4)
+                {
+                    ConvertQHY9LDataBIN44((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                }
             }
-            else if(qhyusb->ccdreg.VBIN == 4)
-            {
-                ConvertQHY9LDataBIN44((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
-            }
-        }
-        
+            break;
+        } 
     }
-	
+    
     if(qhyusb->QCam.bin == 22)
     {
 	Bin2x2((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
@@ -601,13 +668,20 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
 
 void GetImageData(int w,int h,int bpp,int channels,unsigned char *rawArray)
 {
+
     int nWidth,nHeight,nBpp;
 
     unsigned char *ImgData = (unsigned char *)malloc(qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*3*bpp/2);
+    #ifdef QHYCCD_DEBUG
+    printf("GetImageData:Malloc memory Size %d\n",qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*3*bpp/2);
+    #endif
+
     GetFrame(ImgData, &nWidth, &nHeight, &nBpp, NULL, NULL, NULL, NULL);
+    #ifdef QHYCCD_DEBUG
+    printf("GetImageData:nWidth %d nHeight %d nBpp %d\n",nWidth,nHeight,nBpp);
+    #endif
 
-    memcpy(rawArray, ImgData, nWidth*nHeight*nBpp/8);
-
+    memcpy(rawArray, ImgData,nWidth*nHeight*nBpp/8);
     
     if(bpp != nBpp)
     {
@@ -666,6 +740,7 @@ void GetImageData(int w,int h,int bpp,int channels,unsigned char *rawArray)
     cvReleaseImage(&rszimg);
     cvReleaseImage(&img);   
     free(ImgData);
+
 }
 
 void GetROIImageData(int w,int h,int bpp,int channels,unsigned char *rawArray)
@@ -771,10 +846,14 @@ int GetMaxFrameLength(void)
 	case DEVICETYPE_QHY5LII:
 	case DEVICETYPE_QHY5II:
 	    return 1280*1024*3*2;
+        case DEVICETYPE_QHY6:
+            return 800*298*3;
 	case DEVICETYPE_QHY9:
 	case DEVICETYPE_QHY9L:
+            return 3584*2574*3;
 	case DEVICETYPE_QHY22:
-            return 3584*2574*3*2;
+            return 3072*2240*3;
+
     }
     return 0;
 }
@@ -867,6 +946,13 @@ void GetImageFormat(int *w,int *h,int *bpp,int *channels)
 		*channels = 1;
 		break;
 	}
+        case DEVICETYPE_QHY6:
+        {
+                *w = 800;
+                *h = 298;
+                *channels = 1;
+                break;
+        }
 	case DEVICETYPE_QHY9:
 	case DEVICETYPE_QHY9L:
 	{
