@@ -19,16 +19,11 @@
 #include "qhy22.h"
 #include "qhycam.h"
 
-#if 0
-#ifdef __cplusplus
-extern "C" 
-{
-#endif
-#endif
 
-extern QUsb *qhyusb;
-extern QHY5II *q5ii;
+extern QUsb    *qhyusb;
+extern QHY5II  *q5ii;
 extern QHY5LII *q5lii;
+extern QHY9    *qhy9;
 
 extern int GainTable[73];
 
@@ -267,8 +262,7 @@ void SetExposeTime(double exptime)
 		break;
 	}
     }
-    qhyusb->ccdreg.Exptime = exptime/1000;
-    qhyusb->QCam.camTime = exptime/1000;
+    qhyusb->QCam.camTime = (exptime/1000);
 }
 
 void SetGain(unsigned short gain)
@@ -286,13 +280,11 @@ void SetGain(unsigned short gain)
 		break;
     	}
     }
-    qhyusb->ccdreg.Gain = gain;
     qhyusb->QCam.camGain = gain;
 }
 
 void SetOffset(unsigned char offset)
 {
-    qhyusb->ccdreg.Offset = offset;
     qhyusb->QCam.camOffset = offset;
 }
 
@@ -312,7 +304,7 @@ void SetResolution(int x,int y)
     	}
     	case DEVICETYPE_QHY9:
     	{
-	    CorrectQHY9WH(&x,&y);
+	    qhy9->CorrectQHY9WH(&x,&y);
 	    break;
     	}
     	case DEVICETYPE_QHY9L:
@@ -443,7 +435,9 @@ void BeginLive(void)
     {
 	case DEVICETYPE_QHY5LII:
 	case DEVICETYPE_QHY5II:
-	case DEVICETYPE_QHY9:
+        {
+	    qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
+        }
 	case DEVICETYPE_QHY9L:
 	case DEVICETYPE_QHY22:
     	{
@@ -452,6 +446,14 @@ void BeginLive(void)
 	    qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
 	    break;
     	}
+        case DEVICETYPE_QHY9:
+        {
+            int Total_P,PatchNumber;
+            qhy9->initQHY9_regs();
+            sendRegisterQHYCCDNew(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);    
+            qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
+	    break;           
+        }
     }
 }
 
@@ -564,11 +566,12 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
     {
         while(ret != (qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize *2))
         {
-            ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize * 2,1,&qhyusb->QCam.pos);
             #ifdef QHYCCD_DEBUG
-            printf("W %d H %d\n",qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
+            printf("begin ReadUSB\nW %d H %d\n",qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
             printf("%d\n",ret);
             #endif
+            ret = qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->ccdreg.LineSize * qhyusb->ccdreg.VerticalSize * 2,1,&qhyusb->QCam.pos);
+
         }
         if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY9L || qhyusb->QCam.CAMERA == DEVICETYPE_QHY22)
         {

@@ -1,5 +1,6 @@
 #include "qhycam.h"
 #include <math.h>
+#include <stdio.h>
 
 #if 0
 #ifdef __cplusplus
@@ -17,7 +18,13 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         unsigned char time_H,time_M,time_L;
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
-
+        #ifdef QHYCCD_DEBUG
+        printf("sendRegisterOld,LineSize %ld\n",reg.LineSize);
+        printf("sendRegisterOld,VSize %ld\n",reg.VerticalSize);
+        printf("sendRegisterOld,TopSkipPix, %ld\n",reg.TopSkipPix);
+        printf("sendRegisterOld,T %ld\n",T);
+        printf("sendRegisterOld,P_Size %ld\n",P_Size);
+        #endif
         if (T % P_Size) {
                 *Total_P = T / P_Size+1;
                 *PatchNumber = *Total_P * P_Size - T;
@@ -29,7 +36,11 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         time_L=(reg.Exptime % 256);
         time_M=(reg.Exptime-time_L)/256;
         time_H=(reg.Exptime-time_L-time_M*256)/65536;
-        
+         #ifdef QHYCCD_DEBUG
+        printf("sendRegisterOld,time_L, %d\n",time_L);
+        printf("sendRegisterOld,time_M, %d\n",time_M);
+        printf("sendRegisterOld,time_H, %d\n",time_H);
+        #endif        
         
         REG[0]=reg.Gain ;
         
@@ -109,6 +120,14 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
 
+        #ifdef QHYCCD_DEBUG
+        printf("sendRegisterNew,LineSize %ld\n",reg.LineSize);
+        printf("sendRegisterNew,VSize %ld\n",reg.VerticalSize);
+        printf("sendRegisterNew,TopSkipPix, %ld\n",reg.TopSkipPix);
+        printf("sendRegisterNew,T %ld\n",T);
+        printf("sendRegisterNew,P_Size %ld\n",P_Size);
+        #endif
+
         if (T % P_Size) {
                 *Total_P = T / P_Size+1;
                 *PatchNumber = (*Total_P * P_Size - T) / 2 + 16;
@@ -120,7 +139,11 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         time_L=(reg.Exptime % 256);
         time_M=(reg.Exptime-time_L)/256;
         time_H=(reg.Exptime-time_L-time_M*256)/65536;
-        
+        #ifdef QHYCCD_DEBUG
+        printf("sendRegisterNew,time_L, %d\n",time_L);
+        printf("sendRegisterNew,time_M, %d\n",time_M);
+        printf("sendRegisterNew,time_H, %d\n",time_H);
+        #endif        
         
         REG[0]=reg.Gain ;
         
