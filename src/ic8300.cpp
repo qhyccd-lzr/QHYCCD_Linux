@@ -5,40 +5,35 @@
 #include <string.h>
 #include <opencv/cv.h>
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif 
 
 extern QUsb *qhyusb;
+IC8300 *ic8300;
 
-void  CorrectQHY9LWH(int *w,int *h)
+void  IC8300::CorrectIC8300WH(int *w,int *h)
 {
     if(*w <= 896 && *h <= 644)
     {
 	*w = 896;
 	*h = 644;
-	initQHY9L_896x644();
+	initIC8300_896x644();
     }
     else if(*w <= 1792 && *h <= 1287)
     {
 	*w = 1792;
 	*h = 1287;
-	initQHY9L_1792x1287();
+	initIC8300_1792x1287();
     }
     else 
     {
 	*w = 3584;
 	*h = 2574;
-	initQHY9L_3584x2574();
+	initIC8300_3584x2574();
     }
 }
 
-void initQHY9L_regs(void)
+void IC8300::initIC8300_regs(void)
 {
-    qhyusb->ccdreg.devname = (char *)"QHY9L-0";
+    qhyusb->ccdreg.devname = (char *)"IC8300-0";
     qhyusb->ccdreg.Gain = qhyusb->QCam.camGain;
     qhyusb->ccdreg.Offset = qhyusb->QCam.camOffset;
     qhyusb->ccdreg.Exptime = qhyusb->QCam.camTime;       //unit: ms
@@ -53,7 +48,6 @@ void initQHY9L_regs(void)
     qhyusb->ccdreg.VSUB = 0;
     qhyusb->ccdreg.TransferBIT = 0;
     qhyusb->ccdreg.TopSkipNull = 30;
-    qhyusb->ccdreg.TopSkipPix = 0;
     qhyusb->ccdreg.MechanicalShutterMode = 0;
     qhyusb->ccdreg.DownloadCloseTEC = 0;
     qhyusb->ccdreg.SDRAM_MAXSIZE = 100;
@@ -62,40 +56,46 @@ void initQHY9L_regs(void)
     qhyusb->ccdreg.MotorHeating = 1;
 }
 
-void initQHY9L_896x644(void)
+void IC8300::initIC8300_896x644(void)
 {
     qhyusb->ccdreg.HBIN = 2;
     qhyusb->ccdreg.VBIN = 4;
     qhyusb->ccdreg.LineSize = 1792;
     qhyusb->ccdreg.VerticalSize = 644;
+    qhyusb->ccdreg.TopSkipPix = 0;
     qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
     qhyusb->QCam.cameraW = 896;
     qhyusb->QCam.cameraH = 644;
+    qhyusb->QCam.P_Size = 1024;
    
 }
 
-void initQHY9L_1792x1287(void)
+void IC8300::initIC8300_1792x1287(void)
 {
     qhyusb->ccdreg.HBIN = 2;
     qhyusb->ccdreg.VBIN = 2;
     qhyusb->ccdreg.LineSize = 1792;
     qhyusb->ccdreg.VerticalSize = 1287;
+    qhyusb->ccdreg.TopSkipPix = 1100;
     qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
     qhyusb->QCam.cameraW = 1792;
     qhyusb->QCam.cameraH = 1287;
+    qhyusb->QCam.P_Size = 3584*2;
 }
-void initQHY9L_3584x2574(void)
+void IC8300::initIC8300_3584x2574(void)
 {
     qhyusb->ccdreg.HBIN = 1;
     qhyusb->ccdreg.VBIN = 1;
     qhyusb->ccdreg.LineSize = 3584;
     qhyusb->ccdreg.VerticalSize = 2574;
+    qhyusb->ccdreg.TopSkipPix = 1150;
     qhyusb->ccdreg.DownloadSpeed = qhyusb->QCam.transferspeed;
     qhyusb->QCam.cameraW = 3584;
     qhyusb->QCam.cameraH = 2574;
+    qhyusb->QCam.P_Size = 3584*14;
 }
 
-void ConvertQHY9LDataBIN11(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
+void IC8300::ConvertIC8300DataBIN11(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
 {
      unsigned char *Buf = NULL;
 
@@ -110,7 +110,7 @@ void ConvertQHY9LDataBIN11(unsigned char *ImgData,int x, int y, unsigned short T
 
 
 
-void ConvertQHY9LDataBIN22(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
+void IC8300::ConvertIC8300DataBIN22(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
 {
     unsigned char *Buf = NULL;
 
@@ -122,7 +122,7 @@ void ConvertQHY9LDataBIN22(unsigned char *ImgData,int x, int y, unsigned short T
     free(Buf);
 }
 
-void ConvertQHY9LDataBIN44(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
+void IC8300::ConvertIC8300DataBIN44(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix)
 {
      unsigned char * Buf = NULL;
      unsigned int pix;
@@ -149,22 +149,22 @@ void ConvertQHY9LDataBIN44(unsigned char *ImgData,int x, int y, unsigned short T
     free(Buf);
 }
 
-void writec(unsigned char value)
+void IC8300::writec(unsigned char value)
 {
 	unsigned char data[1];
 	data[0]=value;
         libusb_control_transfer(qhyusb->QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0,data,1, 0);
-	//vendTXD_Ex("QHY9L-0",0XBB,1,0x00,0x78,data);
+	//vendTXD_Ex("IC8300-0",0XBB,1,0x00,0x78,data);
 }
 
-void writed(unsigned char value)
+void IC8300::writed(unsigned char value)
 {
 	unsigned char data[1];
 	data[0]=value;
 	 libusb_control_transfer(qhyusb->QCam.ccd_handle, QHYCCD_REQUEST_WRITE, 0xbb,0x78,0x40,data,1, 0);
-       //vendTXD_Ex("QHY9L-0",0XBB,1,0x40,0x78,data);
+       //vendTXD_Ex("IC8300-0",0XBB,1,0x40,0x78,data);
 }
-void oled(unsigned char buffer[])
+void IC8300::oled(unsigned char buffer[])
 {
 	unsigned char i;
 	unsigned char byte;
@@ -190,7 +190,7 @@ void oled(unsigned char buffer[])
 	};
 }
 
-void send2oled(char message[])
+void IC8300::send2oled(char message[])
 {
 	unsigned char data[128*16];
 	memset(data,0,128*16);
@@ -247,8 +247,3 @@ void send2oled(char message[])
 
 	oled(data8);
 }
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif

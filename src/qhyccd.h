@@ -41,7 +41,7 @@ enum qhyccd_model_id
         QHYCCD_QHY6,
         QHYCCD_QHY7,
         QHYCCD_QHY8M,
-        QHYCCD_QHY9L,
+        QHYCCD_IC8300,
         QHYCCD_QHY11,
         QHYCCD_QHY16,
         QHYCCD_QHY20,

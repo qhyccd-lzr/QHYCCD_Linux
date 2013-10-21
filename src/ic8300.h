@@ -1,16 +1,30 @@
+class IC8300
+{
+public:
+        void initIC8300_regs(void);
 
-void initQHY9L_896x644(void);
+	void initIC8300_896x644(void);
 
-void initQHY9L_1792x1287(void);
+	void initIC8300_1792x1287(void);
 
-void initQHY9L_3584x2574(void);
+	void initIC8300_3584x2574(void);
 
-void CorrectQHY9LWH(int *w,int *h);
+	void CorrectIC8300WH(int *w,int *h);
 
-void ConvertQHY9LDataBIN11(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
+	void ConvertIC8300DataBIN11(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
 
-void ConvertQHY9LDataBIN22(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
+	void ConvertIC8300DataBIN22(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
 
-void ConvertQHY9LDataBIN44(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
+	void ConvertIC8300DataBIN44(unsigned char *ImgData,int x, int y, unsigned short TopSkipPix);
 
-void send2oled(char message[]);
+        void oled(unsigned char buffer[]);
+
+	void send2oled(char message[]);
+
+        void writed(unsigned char value);
+
+        void writec(unsigned char value);
+ 
+        IC8300(void){}
+        ~IC8300(void){}
+};

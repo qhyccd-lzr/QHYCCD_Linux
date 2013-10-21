@@ -18,21 +18,21 @@ QUsb *qhyusb;
 
 qhyccd_device_model supported_models[] =
 {
-        {QHYCCD_IMG2S, (char *)"IMG2S", 0x1618, 0xA285},
-        {QHYCCD_IMG50, (char *)"IMG50", 0x1618, 0x6669},
-        {QHYCCD_QHY2E, (char *)"QHY2E", 0x1618, 0x2859},
-        {QHYCCD_QHY5II,(char *)"QHY5II", 0x1618, 0x0921},
-        {QHYCCD_QHY6,  (char *)"QHY6", 0x1618, 0x025A},
-        {QHYCCD_QHY7,  (char *)"QHY7", 0x1618, 0x4023},
-        {QHYCCD_QHY8M, (char *)"QHY8M", 0x1618, 0x6007},
-        {QHYCCD_QHY9L, (char *)"QHY9L", 0x1618, 0x8311},
-        {QHYCCD_QHY11, (char *)"QHY11", 0x1618, 0x1111},
-        {QHYCCD_QHY16, (char *)"QHY16", 0x1618, 0x1601},
-        {QHYCCD_QHY20, (char *)"QHY20", 0x1618, 0x8051},
-        {QHYCCD_QHY21, (char *)"QHY21", 0x1618, 0x6741},
-        {QHYCCD_QHY22, (char *)"QHY22", 0x1618, 0x6941},
-        {QHYCCD_QHY23, (char *)"QHY23", 0x1618, 0x8141},
-        {QHYCCD_QHY9,  (char *)"QHY9",  0x1618, 0x8301},
+        {QHYCCD_IMG2S,  (char *)"IMG2S",  0x1618, 0xA285},
+        {QHYCCD_IMG50,  (char *)"IMG50",  0x1618, 0x6669},
+        {QHYCCD_QHY2E,  (char *)"QHY2E",  0x1618, 0x2859},
+        {QHYCCD_QHY5II, (char *)"QHY5II", 0x1618, 0x0921},
+        {QHYCCD_QHY6,   (char *)"QHY6",   0x1618, 0x025A},
+        {QHYCCD_QHY7,   (char *)"QHY7",   0x1618, 0x4023},
+        {QHYCCD_QHY8M,  (char *)"QHY8M",  0x1618, 0x6007},
+        {QHYCCD_IC8300, (char *)"IC8300", 0x1618, 0x8311},
+        {QHYCCD_QHY11,  (char *)"QHY11",  0x1618, 0x1111},
+        {QHYCCD_QHY16,  (char *)"QHY16",  0x1618, 0x1601},
+        {QHYCCD_QHY20,  (char *)"QHY20",  0x1618, 0x8051},
+        {QHYCCD_QHY21,  (char *)"QHY21",  0x1618, 0x6741},
+        {QHYCCD_QHY22,  (char *)"QHY22",  0x1618, 0x6941},
+        {QHYCCD_QHY23,  (char *)"QHY23",  0x1618, 0x8141},
+        {QHYCCD_QHY9,   (char *)"QHY9",   0x1618, 0x8301},
         {0, NULL, 0, 0}
 };
 
@@ -227,7 +227,7 @@ int QUsb::qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data
         switch(qhyusb->QCam.CAMERA)
         {
             case DEVICETYPE_QHY6:
-            case DEVICETYPE_QHY9L:
+            case DEVICETYPE_IC8300:
             case DEVICETYPE_QHY21:
             case DEVICETYPE_QHY22:
             case DEVICETYPE_QHY23:
