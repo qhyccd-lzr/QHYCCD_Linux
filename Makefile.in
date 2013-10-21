@@ -85,7 +85,7 @@ LTLIBRARIES = $(lib_LTLIBRARIES)
 libqhyccd_la_LIBADD =
 am_libqhyccd_la_OBJECTS = qhyccd.lo common.lo qhy5lii.lo qhy5ii.lo \
 	qhy9.lo qhycam.lo ic8300.lo qhy22.lo interguider.lo cssl.lo \
-	qhy6.lo qhy21.lo qhy23.lo
+	qhy6.lo qhy21.lo qhy23.lo qhy11.lo
 libqhyccd_la_OBJECTS = $(am_libqhyccd_la_OBJECTS)
 DEFAULT_INCLUDES = -I.@am__isrc@
 depcomp = $(SHELL) $(top_srcdir)/depcomp
@@ -289,7 +289,7 @@ ACLOCAL_AMFLAGS = -I m4
 SUBDIRS = firmware udev
 lib_LTLIBRARIES = libqhyccd.la
 libqhyccd_la_CFLAGS = $(VISIBILITY_CFLAGS) $(AM_CFLAGS)
-libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.cpp src/common.h src/common.cpp src/qhy5lii.cpp src/qhy5lii.h src/qhy5ii.cpp src/qhy5ii.h src/qhy9.cpp src/qhy9.h src/qhycam.cpp src/qhycam.h src/ic8300.cpp src/ic8300.h src/qhy22.cpp src/qhy22.h src/interguider.cpp src/interguider.h src/cssl.cpp src/cssl.h src/qhy6.cpp src/qhy6.h src/qhy21.cpp src/qhy21.h src/qhy23.cpp src/qhy23.h
+libqhyccd_la_SOURCES = src/qhyccd.h src/qhyccd.cpp src/common.h src/common.cpp src/qhy5lii.cpp src/qhy5lii.h src/qhy5ii.cpp src/qhy5ii.h src/qhy9.cpp src/qhy9.h src/qhycam.cpp src/qhycam.h src/ic8300.cpp src/ic8300.h src/qhy22.cpp src/qhy22.h src/interguider.cpp src/interguider.h src/cssl.cpp src/cssl.h src/qhy6.cpp src/qhy6.h src/qhy21.cpp src/qhy21.h src/qhy23.cpp src/qhy23.h src/qhy11.cpp src/qhy11.h
 pkginclude_HEADERS = src/qhyccd.h src/common.h src/interguider.h
 all: config.h
 	$(MAKE) $(AM_MAKEFLAGS) all-recursive
@@ -389,6 +389,7 @@ distclean-compile:
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/cssl.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/ic8300.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/interguider.Plo@am__quote@
+@AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qhy11.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qhy21.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qhy22.Plo@am__quote@
 @AMDEP_TRUE@@am__include@ @am__quote@./$(DEPDIR)/qhy23.Plo@am__quote@
@@ -510,6 +511,13 @@ qhy23.lo: src/qhy23.cpp
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/qhy23.cpp' object='qhy23.lo' libtool=yes @AMDEPBACKSLASH@
 @AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
 @am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qhy23.lo `test -f 'src/qhy23.cpp' || echo '$(srcdir)/'`src/qhy23.cpp
+
+qhy11.lo: src/qhy11.cpp
+@am__fastdepCXX_TRUE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -MT qhy11.lo -MD -MP -MF $(DEPDIR)/qhy11.Tpo -c -o qhy11.lo `test -f 'src/qhy11.cpp' || echo '$(srcdir)/'`src/qhy11.cpp
+@am__fastdepCXX_TRUE@	$(am__mv) $(DEPDIR)/qhy11.Tpo $(DEPDIR)/qhy11.Plo
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	source='src/qhy11.cpp' object='qhy11.lo' libtool=yes @AMDEPBACKSLASH@
+@AMDEP_TRUE@@am__fastdepCXX_FALSE@	DEPDIR=$(DEPDIR) $(CXXDEPMODE) $(depcomp) @AMDEPBACKSLASH@
+@am__fastdepCXX_FALSE@	$(LIBTOOL)  --tag=CXX $(AM_LIBTOOLFLAGS) $(LIBTOOLFLAGS) --mode=compile $(CXX) $(DEFS) $(DEFAULT_INCLUDES) $(INCLUDES) $(AM_CPPFLAGS) $(CPPFLAGS) $(AM_CXXFLAGS) $(CXXFLAGS) -c -o qhy11.lo `test -f 'src/qhy11.cpp' || echo '$(srcdir)/'`src/qhy11.cpp
 
 mostlyclean-libtool:
 	-rm -f *.lo
