@@ -24,8 +24,9 @@
 extern QUsb    *qhyusb;
 extern QHY5II  *q5ii;
 extern QHY5LII *q5lii;
-extern QHY9    *qhy9;
 extern QHY6    *qhy6;
+extern QHY9    *qhy9;
+extern QHY22   *qhy22;
 
 extern int GainTable[73];
 
@@ -97,6 +98,9 @@ int OpenCameraByID(int camid)
         }
         else if(model->model_id == QHYCCD_QHY22 && camid == DEVICETYPE_QHY22)
         {
+            #ifdef QHYCCD_DEBUG
+            printf("QHY22 Found\n");
+            #endif
             qhyusb->QCam.CAMERA = DEVICETYPE_QHY22;
             InitCamera();
             return DEVICETYPE_QHY22;
@@ -360,7 +364,7 @@ void SetResolution(int x,int y)
     	}
     	case DEVICETYPE_QHY22:
     	{
-	    CorrectQHY22WH(&x,&y);
+	    qhy22->CorrectQHY22WH(&x,&y);
 	    break;
     	}
     }
@@ -500,6 +504,7 @@ void BeginLive(void)
 	case DEVICETYPE_QHY22:
     	{
             int Total_P,PatchNumber;
+            qhy22->initQHY22_regs();
             sendRegisterQHYCCDOld(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);
 	    qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
 	    break;

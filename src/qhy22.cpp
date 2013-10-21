@@ -2,37 +2,33 @@
 #include "qhycam.h"
 #include <stdio.h>
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif
-extern QUsb *qhyusb;
 
-void  CorrectQHY22WH(int *w,int *h)
+extern QUsb *qhyusb;
+QHY22 *qhy22;
+
+void  QHY22::CorrectQHY22WH(int *w,int *h)
 {
     if(*w <= 768 && *h <= 560)
-	{
-		*w = 768;
-		*h = 560;
-		initQHY22_768x560();
-	}
-	else if(*w <= 1536 && *h <= 1120)
-	{
-		*w = 1536;
-		*h = 1120;
-		initQHY22_1536x1120();
-	}
-	else
-	{
-		*w = 3072;
-		*h = 2240;
-		initQHY22_3072x2240();
-	}
+    {
+        *w = 768;
+	*h = 560;
+	initQHY22_768x560();
+    }
+    else if(*w <= 1536 && *h <= 1120)
+    {
+        *w = 1536;
+	*h = 1120;
+	initQHY22_1536x1120();
+    }
+    else
+    {
+	*w = 3072;
+	*h = 2240;
+	initQHY22_3072x2240();
+    }
 }
 
-void initQHY22_regs(void)
+void QHY22::initQHY22_regs(void)
 {
     qhyusb->ccdreg.devname = (char *)"QHY22-0";
     qhyusb->ccdreg.Gain = qhyusb->QCam.camGain;
@@ -58,7 +54,7 @@ void initQHY22_regs(void)
     qhyusb->ccdreg.MotorHeating = 1;
 }
 
-void initQHY22_768x560(void)
+void QHY22::initQHY22_768x560(void)
 {
     qhyusb->ccdreg.HBIN = 2;
     qhyusb->ccdreg.VBIN = 4;
@@ -71,14 +67,9 @@ void initQHY22_768x560(void)
     qhyusb->QCam.cameraW = 768;
     qhyusb->QCam.cameraH = 560;
     
-    int Total_P,PatchNumber;
-    sendRegisterQHYCCDOld(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);
-    #ifdef QHYCCD_DEBUG
-    printf("Total_P %d,PathNumber %d\n",Total_P,PatchNumber);
-    #endif
 }
 
-void initQHY22_1536x1120(void)
+void QHY22::initQHY22_1536x1120(void)
 {
     qhyusb->ccdreg.HBIN = 2;
     qhyusb->ccdreg.VBIN = 2;
@@ -90,13 +81,8 @@ void initQHY22_1536x1120(void)
     qhyusb->ccdreg.Offset =  qhyusb->QCam.camOffset;
     qhyusb->QCam.cameraW = 1536;
     qhyusb->QCam.cameraH = 1120;
-    int Total_P,PatchNumber;
-    sendRegisterQHYCCDOld(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);
-    #ifdef QHYCCD_DEBUG
-    printf("Total_P %d,PathNumber %d\n",Total_P,PatchNumber);
-    #endif
 }
-void initQHY22_3072x2240(void)
+void QHY22::initQHY22_3072x2240(void)
 {
     qhyusb->ccdreg.HBIN = 1;
     qhyusb->ccdreg.VBIN = 1;
@@ -108,15 +94,6 @@ void initQHY22_3072x2240(void)
     qhyusb->ccdreg.Offset =  qhyusb->QCam.camOffset;
     qhyusb->QCam.cameraW = 3072;
     qhyusb->QCam.cameraH = 2240;
-    int Total_P,PatchNumber;
-    sendRegisterQHYCCDOld(qhyusb->QCam.ccd_handle,qhyusb->ccdreg,qhyusb->QCam.cameraW*qhyusb->QCam.cameraH*2,&Total_P,&PatchNumber);
-    #ifdef QHYCCD_DEBUG
-    printf("Total_P %d,PathNumber %d\n",Total_P,PatchNumber);
-    #endif
+
 }
 
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif

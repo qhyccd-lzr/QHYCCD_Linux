@@ -2,7 +2,6 @@
 #include "qhycam.h"
 #include <stdio.h>
 
-
 extern QUsb *qhyusb;
 QHY6 *qhy6;
 
@@ -17,8 +16,8 @@ void QHY6::CorrectQHY6WH(int *w,int *h)
 	else
 	{
 		*w = 800;
-		*h = 298;
-		initQHY6_800x298();
+		*h = 596;
+		initQHY6_800x596();
 	}
 }
 
@@ -57,14 +56,14 @@ void QHY6::initQHY6_400x298(void)
     
 }
 
-void QHY6::initQHY6_800x298(void)
+void QHY6::initQHY6_800x596(void)
 {
     qhyusb->ccdreg.HBIN = 1;
     qhyusb->ccdreg.VBIN = 1;
     qhyusb->ccdreg.LineSize = 800;
-    qhyusb->ccdreg.VerticalSize = 298;
+    qhyusb->ccdreg.VerticalSize = 596;
     qhyusb->QCam.cameraW = 800;
-    qhyusb->QCam.cameraH = 298;
+    qhyusb->QCam.cameraH = 596;
 
 }
 

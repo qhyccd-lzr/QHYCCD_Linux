@@ -5,7 +5,7 @@ public:
 
 	void initQHY6_400x298(void);
 
-	void initQHY6_800x298(void);
+	void initQHY6_800x596(void);
 
 	void CorrectQHY6WH(int *w,int *h);
          

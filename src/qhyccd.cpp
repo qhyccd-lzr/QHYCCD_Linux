@@ -13,12 +13,7 @@
 #include "qhyccd.h"
 #include "common.h"
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif
+
 QUsb *qhyusb;
 
 qhyccd_device_model supported_models[] =
@@ -232,6 +227,7 @@ int QUsb::qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data
         {
             case DEVICETYPE_QHY6:
             case DEVICETYPE_QHY9L:
+            case DEVICETYPE_QHY22:
             case DEVICETYPE_QHY5II:
             case DEVICETYPE_QHY5LII:
             {
