@@ -352,8 +352,4 @@ void QUsb::SWIFT_MSBLSB(unsigned char * Data, int x, int y)
         }
     }
 }
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif
+

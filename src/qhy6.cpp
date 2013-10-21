@@ -53,7 +53,7 @@ void QHY6::initQHY6_400x298(void)
     qhyusb->ccdreg.VerticalSize = 298;
     qhyusb->QCam.cameraW = 400;
     qhyusb->QCam.cameraH = 298;
-    
+    qhyusb->QCam.P_Size = 233*1024;
 }
 
 void QHY6::initQHY6_800x596(void)
@@ -64,6 +64,7 @@ void QHY6::initQHY6_800x596(void)
     qhyusb->ccdreg.VerticalSize = 596;
     qhyusb->QCam.cameraW = 800;
     qhyusb->QCam.cameraH = 596;
+    qhyusb->QCam.P_Size = 932*1024;
 
 }
 

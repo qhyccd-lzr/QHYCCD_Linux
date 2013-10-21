@@ -714,6 +714,7 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
                     ConvertQHY9LDataBIN44((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
                 }
             }
+            qhyusb->SWIFT_MSBLSB((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH);
             break;
         } 
     }

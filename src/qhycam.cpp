@@ -2,12 +2,6 @@
 #include <math.h>
 #include <stdio.h>
 
-#if 0
-#ifdef __cplusplus
-extern "C"
-{
-#endif
-#endif
 extern QUsb *qhyusb;
 
 void sendRegisterQHYCCDOld(qhyccd_device_handle *handle, 
@@ -299,8 +293,3 @@ double mVToDegree(double V)
 
 	return T;
 }
-#if 0
-#ifdef __cplusplus
-}
-#endif
-#endif
