@@ -16,12 +16,6 @@
 
 #define QHYCCD_DEVICE_LIST_SIZE 4    //最多连接的相机数量 
 
-#if 0
-#ifdef __cplusplus
-extern "C" {
-#endif /* __cplusplus */
-#endif
-
 
 
 typedef libusb_device                qhyccd_device;
@@ -41,19 +35,20 @@ enum qhyccd_endpoint_type {
 enum qhyccd_model_id 
 {
         QHYCCD_IMG2S = 1,
-        QHYCCD_IMG50 = 2,
-        QHYCCD_QHY2E = 3,
-        QHYCCD_QHY5II = 4,
-        QHYCCD_QHY6   = 5,
-        QHYCCD_QHY7   = 6,
-        QHYCCD_QHY8M  = 7,
-        QHYCCD_QHY9L  = 8,
-        QHYCCD_QHY11  = 9,
-        QHYCCD_QHY16  = 10,
-        QHYCCD_QHY20  = 11,
-        QHYCCD_QHY21  = 12,
-        QHYCCD_QHY22  = 13,
-        QHYCCD_QHY9   = 14
+        QHYCCD_IMG50,
+        QHYCCD_QHY2E,
+        QHYCCD_QHY5II,
+        QHYCCD_QHY6,
+        QHYCCD_QHY7,
+        QHYCCD_QHY8M,
+        QHYCCD_QHY9L,
+        QHYCCD_QHY11,
+        QHYCCD_QHY16,
+        QHYCCD_QHY20,
+        QHYCCD_QHY21,
+        QHYCCD_QHY22,
+        QHYCCD_QHY23,
+        QHYCCD_QHY9
 };
 
 typedef struct qhyccd_device_model {
@@ -82,6 +77,9 @@ typedef struct QHYCCDPara
     int cameraW;//宽
     int cameraH;//高
     int pos;
+    int P_Size;
+    int Total_P;
+    int PatchNumber;
     unsigned char usbtraffic;
     double camTime;//曝光时间(us)
     bool isColor;//相机是否彩色 true:彩色 false:黑白

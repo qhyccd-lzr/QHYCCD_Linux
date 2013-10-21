@@ -31,6 +31,7 @@ qhyccd_device_model supported_models[] =
         {QHYCCD_QHY20, (char *)"QHY20", 0x1618, 0x8051},
         {QHYCCD_QHY21, (char *)"QHY21", 0x1618, 0x6741},
         {QHYCCD_QHY22, (char *)"QHY22", 0x1618, 0x6941},
+        {QHYCCD_QHY23, (char *)"QHY23", 0x1618, 0x8141},
         {QHYCCD_QHY9,  (char *)"QHY9",  0x1618, 0x8301},
         {0, NULL, 0, 0}
 };
@@ -229,6 +230,7 @@ int QUsb::qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data
             case DEVICETYPE_QHY9L:
             case DEVICETYPE_QHY21:
             case DEVICETYPE_QHY22:
+            case DEVICETYPE_QHY23:
             case DEVICETYPE_QHY5II:
             case DEVICETYPE_QHY5LII:
             {

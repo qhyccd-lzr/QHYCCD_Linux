@@ -18,13 +18,7 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         unsigned char time_H,time_M,time_L;
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
-        #ifdef QHYCCD_DEBUG
-        printf("sendRegisterOld,LineSize %d\n",reg.LineSize);
-        printf("sendRegisterOld,VSize %d\n",reg.VerticalSize);
-        printf("sendRegisterOld,TopSkipPix, %d\n",reg.TopSkipPix);
-        printf("sendRegisterOld,T %ld\n",T);
-        printf("sendRegisterOld,P_Size %d\n",P_Size);
-        #endif
+ 
         if (T % P_Size) {
                 *Total_P = T / P_Size+1;
                 *PatchNumber = *Total_P * P_Size - T;
@@ -32,6 +26,14 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
                 *Total_P = T / P_Size;
                 *PatchNumber = 0;
         }
+       #ifdef QHYCCD_DEBUG
+        printf("sendRegisterOld,LineSize %d\n",reg.LineSize);
+        printf("sendRegisterOld,VSize %d\n",reg.VerticalSize);
+        printf("sendRegisterOld,TopSkipPix, %d\n",reg.TopSkipPix);
+        printf("sendRegisterOld,T %ld\n",T);
+        printf("sendRegisterOld,P_Size %d\n",P_Size);
+        printf("sendRegisterOld,PatchNumber %d\n",*PatchNumber);
+        #endif
 
         time_L=(reg.Exptime % 256);
         time_M=(reg.Exptime-time_L)/256;

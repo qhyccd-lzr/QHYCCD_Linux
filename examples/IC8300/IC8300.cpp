@@ -5,14 +5,14 @@
 #include <opencv/highgui.h>
 
 
-unsigned char ImgData[3584*2574*2];
-int w = 512,h = 375,bpp = 16,channels = 1;
+unsigned char ImgData[3468*2728*3];
+int w = 868,h = 682,bpp = 16,channels = 1;
 int main(void)
 {
     IplImage *img = cvCreateImage(cvSize(w,h),bpp,channels);
     img->imageData = (char *)ImgData;
 
-    int ret = OpenCameraByID(DEVICETYPE_QHY21);
+    int ret = OpenCameraByID(DEVICETYPE_QHY23);
     cvNamedWindow("IC8300",CV_WINDOW_AUTOSIZE);
     if(ret > 0)
     {
