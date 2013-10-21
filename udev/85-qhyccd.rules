@@ -40,6 +40,7 @@ ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0920", RUN+="/sbin/fxload -t fx2 -I 
 ATTRS{idVendor}=="1618", ATTRS{idProduct}=="8300", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY9.HEX -D $env{DEVNAME}"
 ATTRS{idVendor}=="1618", ATTRS{idProduct}=="8310", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY9L.HEX -D $env{DEVNAME}"
 ATTRS{idVendor}=="1618", ATTRS{idProduct}=="6940", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY22.HEX -D $env{DEVNAME}"
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="6740", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY21.HEX -D $env{DEVNAME}"
 LABEL="qhy_vidpid_end"
 
 # This is the ID presented once the firmware has been loaded.
@@ -72,6 +73,8 @@ ATTRS{modalias}=="usb:v1618p8301*",OWNER="root", GROUP="video", MODE="0660", SYM
 ATTRS{modalias}=="usb:v1618p8311*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY9L"
 
 ATTRS{modalias}=="usb:v1618p6941*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY22"
+
+ATTRS{modalias}=="usb:v1618p6741*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY21"
 
 LABEL="qhy-rules-end"
 
