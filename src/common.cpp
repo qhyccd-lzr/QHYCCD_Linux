@@ -736,15 +736,26 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
             {
                 if(qhyusb->ccdreg.VBIN == 1)
                 {
-                    ic8300->ConvertIC8300DataBIN11((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                    ic8300->ConvertIC8300DataBIN11((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,qhyusb->ccdreg.TopSkipPix);
                 }
                 else if(qhyusb->ccdreg.VBIN == 2)
                 {
-                    ic8300->ConvertIC8300DataBIN22((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                    ic8300->ConvertIC8300DataBIN22((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,qhyusb->ccdreg.TopSkipPix);
                 }
                 else if(qhyusb->ccdreg.VBIN == 4)
                 {
-                    ic8300->ConvertIC8300DataBIN44((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,0);
+                    ic8300->ConvertIC8300DataBIN44((unsigned char *)data,qhyusb->QCam.cameraW,qhyusb->QCam.cameraH,qhyusb->ccdreg.TopSkipPix);
+                }
+            }
+            else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY6)
+            {
+                if(qhyusb->ccdreg.VBIN == 1)
+                {
+                    qhy6->ConvertQHY6PRODataBIN11((unsigned char *)data);
+                }
+                else if(qhyusb->ccdreg.VBIN == 2)
+                {
+                    qhy6->ConvertQHY6PRODataBIN22((unsigned char *)data);
                 }
             }
             break;
@@ -1126,41 +1137,76 @@ void EepromRead(unsigned char addr, unsigned char* data, unsigned short len)
 
 void GuideControl(unsigned char Direction,long PulseTime) 
 {
-    unsigned char Buffer[2];
+    unsigned char Buffer[4];
     unsigned short value = 0;
     unsigned short index = 0;
 
-    switch(Direction)
+    if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY5II || qhyusb->QCam.CAMERA == DEVICETYPE_QHY5LII)
     {
-        case 0:
-        {
-            index = 0x80;
-            value = 0x01;
-            break;
-        }
-        case 1:
-        {
-            index = 0x40;
-            value = 0x02;
-            break;
-        }
-        case 2:
-        {
-            index = 0x20;
-            value = 0x02;
-            break;
-        }
-        case 3:
-        {
-            index = 0x10;
-            value = 0x01;
-            break;
-        }
-    }
-    qhyusb->qhyccd_vTXD_Ex(qhyusb->QCam.ccd_handle,0xc0,value,index,Buffer,2);
+        switch(Direction)
+	{
+            case 0:
+	    {
+	        index = 0x80;
+		value = 0x01;
+		break;
+            }
+	    case 1:
+	    {
+		index = 0x40;
+		value = 0x02;
+		break;
+            }
+	    case 2:
+	    {
+		index = 0x20;
+		value = 0x02;
+		break;
+	    }
+	    case 3:
+	    {
+		index = 0x10;
+		value = 0x01;
+		break;
+            }
+	}
+        qhyusb->qhyccd_vTXD_Ex(qhyusb->QCam.ccd_handle,0xc0,value,index,Buffer,2);
     // pulseTime unit is 1ms
-    usleep(PulseTime*1000);
-    qhyusb->qhyccd_vTXD_Ex(qhyusb->QCam.ccd_handle,0xc0,value,0x0,Buffer,2);
+        usleep(PulseTime*1000);
+        qhyusb->qhyccd_vTXD_Ex(qhyusb->QCam.ccd_handle,0xc0,value,0x0,Buffer,2);
+    }
+    else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY6)
+    {
+        switch(Direction)
+	{
+            case 0:
+	    {
+	        index = 0x02;
+		break;
+            }
+	    case 1:
+	    {
+		index = 0x04;
+		break;
+            }
+	    case 2:
+	    {
+		index = 0x01;
+		break;
+	    }
+	    case 3:
+	    {
+		index = 0x08;
+		break;
+            }
+	}
+        Buffer[0] = 0x09;
+        Buffer[1] = index;
+        Buffer[2] = qhyusb->MSB(PulseTime);
+        Buffer[3] = qhyusb->LSB(PulseTime);
+        sendInterrupt(qhyusb->QCam.ccd_handle,4,Buffer);
+        usleep(PulseTime*1000);
+    }
 }
 
 

@@ -1,6 +1,7 @@
 #include "qhy6.h"
 #include "qhycam.h"
-#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
 
 extern QUsb *qhyusb;
 QHY6 *qhy6;
@@ -66,5 +67,44 @@ void QHY6::initQHY6_800x596(void)
     qhyusb->QCam.cameraH = 596;
     qhyusb->QCam.P_Size = 932*1024;
 
+}
+
+
+void QHY6::ConvertQHY6PRODataBIN12(unsigned char *Data)
+{
+    qhyusb->SWIFT_MSBLSB(Data,800,298);
+}
+
+
+
+void QHY6::ConvertQHY6PRODataBIN22(unsigned char *Data)
+{
+    qhyusb->SWIFT_MSBLSB(Data,400,298);
+}
+
+void QHY6::ConvertQHY6PRODataBIN11(unsigned char *Data)
+{
+    int x=800;
+    int y=596;
+
+    unsigned char * Buf = NULL;
+
+    Buf=(unsigned char *)malloc(x*y*2);
+
+    int j=0;
+    int k=0;
+
+    while(j < y)
+    {
+        memcpy(Buf+j*x*2, Data+k*x*2,           x*2);
+	j++;
+        memcpy(Buf+j*x*2, Data+k*x*2+(y/2)*x*2 ,  x*2);
+	j++;
+        k++;
+    }
+    memcpy(Data,Buf,x*y*2);
+    free(Buf);
+
+    qhyusb->SWIFT_MSBLSB(Data,x,y);
 }
 
