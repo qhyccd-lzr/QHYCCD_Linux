@@ -12,24 +12,26 @@ int main(void)
     IplImage *img = cvCreateImage(cvSize(w,h),bpp,channels);
     img->imageData = (char *)ImgData;
 
-    int ret = OpenCameraByID(DEVICETYPE_IC8300);
+    int ret = OpenCameraByID(DEVICETYPE_QHY16000);
     cvNamedWindow("IC8300",CV_WINDOW_AUTOSIZE);
     if(ret > 0)
     {
         printf("ret:%d\n",ret);
  
         SetSpeed(false);   
-        SetExposeTime(100000.0);
+        SetExposeTime(1000.0);
         SetUSBTraffic(100);
-        SetGain(30);
+        SetGain(200);
         SetOffset(135);
         SetResolution(w,h);
  
         BeginLive();
-
-        GetImageData(w,h,bpp,channels,ImgData); 
-        cvShowImage("IC8300",img);
-        cvWaitKey(0);
+        while(1)
+        {
+            GetImageData(w,h,bpp,channels,ImgData); 
+            cvShowImage("IC8300",img);
+            cvWaitKey(30);
+        }
        
         cvDestroyWindow("IC8300");
 

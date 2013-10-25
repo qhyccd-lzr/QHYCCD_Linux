@@ -33,6 +33,7 @@ qhyccd_device_model supported_models[] =
         {QHYCCD_QHY22,  (char *)"QHY22",  0x1618, 0x6941},
         {QHYCCD_QHY23,  (char *)"QHY23",  0x1618, 0x8141},
         {QHYCCD_QHY9,   (char *)"QHY9",   0x1618, 0x8301},
+        {QHYCCD_QHY16000,(char *)"QHY16000",0x1618, 0x1611},
         {0, NULL, 0, 0}
 };
 

@@ -21,19 +21,21 @@
 #include "qhy21.h"
 #include "qhy23.h"
 #include "qhy11.h"
+#include "qhy16000.h"
 #include "qhycam.h"
 
 
-extern QUsb    *qhyusb;
-extern QHY5II  *q5ii;
-extern QHY5LII *q5lii;
-extern QHY6    *qhy6;
-extern QHY9    *qhy9;
-extern IC8300  *ic8300;
-extern QHY22   *qhy22;
-extern QHY21   *qhy21;
-extern QHY23   *qhy23;
-extern QHY11   *qhy11;
+extern QUsb     *qhyusb;
+extern QHY5II   *q5ii;
+extern QHY5LII  *q5lii;
+extern QHY6     *qhy6;
+extern QHY9     *qhy9;
+extern IC8300   *ic8300;
+extern QHY22    *qhy22;
+extern QHY21    *qhy21;
+extern QHY23    *qhy23;
+extern QHY11    *qhy11;
+extern QHY16000 *qhy16000;
 
 extern int GainTable[73];
 
@@ -109,6 +111,7 @@ int OpenCameraByID(int camid)
         }
         else if(model->model_id == QHYCCD_IC8300 && camid == DEVICETYPE_IC8300)
         {
+            ic8300 = new IC8300();
             qhyusb->QCam.CAMERA = DEVICETYPE_IC8300;
             InitCamera();
             ic8300->send2oled("USB CAM");
@@ -116,12 +119,14 @@ int OpenCameraByID(int camid)
         }
         else if(model->model_id == QHYCCD_QHY11 && camid == DEVICETYPE_QHY11)
         {
+            qhy11 = new QHY11();
             qhyusb->QCam.CAMERA = DEVICETYPE_QHY11;
             InitCamera();
             return DEVICETYPE_QHY11;
         }
         else if(model->model_id == QHYCCD_QHY22 && camid == DEVICETYPE_QHY22)
         {
+            qhy22 = new QHY22();
             #ifdef QHYCCD_DEBUG
             printf("QHY22 Found\n");
             #endif
@@ -131,6 +136,7 @@ int OpenCameraByID(int camid)
         }
         else if(model->model_id == QHYCCD_QHY21 && camid == DEVICETYPE_QHY21)
         {
+            qhy21 = new QHY21();
             #ifdef QHYCCD_DEBUG
             printf("QHY21 Found\n");
             #endif
@@ -140,6 +146,7 @@ int OpenCameraByID(int camid)
         }  
         else if(model->model_id == QHYCCD_QHY23 && camid == DEVICETYPE_QHY23)
         {
+            qhy23 = new QHY23();
             #ifdef QHYCCD_DEBUG
             printf("QHY23 Found\n");
             #endif
@@ -147,6 +154,16 @@ int OpenCameraByID(int camid)
             InitCamera();
             return DEVICETYPE_QHY23;
         }      
+        else if(model->model_id == QHYCCD_QHY16000 && camid == DEVICETYPE_QHY16000)
+        {
+            qhy16000 = new QHY16000();
+            #ifdef QHYCCD_DEBUG
+            printf("QHY16000 Found\n");
+            #endif
+            qhyusb->QCam.CAMERA = DEVICETYPE_QHY16000;
+            InitCamera();
+            return DEVICETYPE_QHY16000;
+        } 
     }
     #ifdef QHYCCD_DEBUG
     printf("please check USB link or camid\n");
@@ -174,7 +191,8 @@ void CloseCamera(void)
         delete(qhy22);
     else if(qhy23)
         delete(qhy23);
-
+    else if(qhy16000)
+        delete(qhy16000);
     qhyusb->qhyccd_free_device_list(qhyusb->QCam.device_list);
     qhyusb->qhyccd_close(qhyusb->QCam.ccd_handle);
 }
@@ -239,8 +257,13 @@ void InitCamera(void)
             {
     	        SetResolution(3468,2728);
             }
+            else if(qhyusb->QCam.CAMERA == DEVICETYPE_QHY16000)
+            {
+    	        SetResolution(4960,3328);
+            }
 	    break;
         }
+        
     }
     InitOthers();
 }
@@ -250,6 +273,7 @@ void InitOthers(void)
 {
     switch(qhyusb->QCam.CAMERA)
     {
+        case DEVICETYPE_QHY16000:
         case DEVICETYPE_QHY5II:
         case DEVICETYPE_QHY5LII:
         {
@@ -364,6 +388,11 @@ void SetExposeTime(double exptime)
 		q5lii->SetExposureTime_QHY5LII(exptime);
 		break;
 	}
+        case DEVICETYPE_QHY16000:
+        {
+                qhy16000->setExpseTime16000(exptime);
+                break;
+        }
     }
     qhyusb->QCam.camTime = (unsigned long)exptime/10;
 }
@@ -382,6 +411,11 @@ void SetGain(unsigned short gain)
         	q5lii->SetQHY5LIIGain(gain);
 		break;
     	}
+        case DEVICETYPE_QHY16000:
+        {
+                qhy16000->setGain16000(gain);
+                break;
+        }
     }
     qhyusb->QCam.camGain = gain;
 }
@@ -438,6 +472,11 @@ void SetResolution(int x,int y)
     	case DEVICETYPE_QHY23:
     	{
 	    qhy23->CorrectQHY23WH(&x,&y);
+	    break;
+    	}
+    	case DEVICETYPE_QHY16000:
+    	{
+	    qhy16000->CorrectQHY16000WH(&x,&y);
 	    break;
     	}
     }
@@ -610,6 +649,11 @@ void BeginLive(void)
             qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
 	    break;           
         }
+        case DEVICETYPE_QHY16000:
+        {
+            qhyusb->beginVideo(qhyusb->QCam.ccd_handle);
+            break;
+        }
     }
 }
 
@@ -719,6 +763,11 @@ int *lvlstatR,int *lvlstatG,int *lvlstatB)
 	    memcpy(data,cropImg->imageData,cropImg->imageSize);
 	    cvReleaseImage(&cvImg);
 	    cvReleaseImage(&cropImg);
+            break;
+        }
+        case DEVICETYPE_QHY16000:
+        {
+            qhyusb->qhyccd_readUSB2B(qhyusb->QCam.ccd_handle,(unsigned char *)data,qhyusb->QCam.cameraW * qhyusb->QCam.cameraH,1,&qhyusb->QCam.pos);
             break;
         }
         case DEVICETYPE_QHY9:

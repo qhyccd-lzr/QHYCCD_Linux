@@ -48,7 +48,8 @@ enum qhyccd_model_id
         QHYCCD_QHY21,
         QHYCCD_QHY22,
         QHYCCD_QHY23,
-        QHYCCD_QHY9
+        QHYCCD_QHY9,
+        QHYCCD_QHY16000
 };
 
 typedef struct qhyccd_device_model {
