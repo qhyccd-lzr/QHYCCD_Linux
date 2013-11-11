@@ -238,11 +238,6 @@ int QUsb::qhyccd_readUSB2B(qhyccd_device_handle *dev_handle, unsigned char *data
                 dataEndpoint = 0x82;
             }
             break;
-            case DEVICETYPE_QHY9:
-            {
-                dataEndpoint = 0x86;
-            }
-            break;
             default:
             {
                 dataEndpoint = 0x86;
