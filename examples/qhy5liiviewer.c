@@ -1,31 +1,32 @@
 /*
  * qhy5liiviewer.c
- * 
+ *
  * Copyright 2013 Joaquin Bogado <joaquinbogado@gmail.com>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
  * (at your option) any later version.
- * 
+ *
  * This program is distributed in the hope that it will be useful,
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston,
  * MA 02110-1301, USA.
- * 
- * 
+ *
+ *
  */
- 
+
+
 /**
- * Compile with 
- * gcc -o qhy5lviewer *c -lSDL -lSDL_image -lpthread -lusb -lcfitsio `pkg-config --libs opencv` -DQHY5L_DEBUG
- * for debuging or 
- * gcc -o qhy5lviewer *c -lSDL -lSDL_image -lpthread -lusb -lcfitsio `pkg-config --libs opencv`
+ * Compile with
+ * g++ -fpermissive -o qhy5liiviewer *c -I../src -lSDL -lSDL_image -lpthread -lusb -lcfitsio -lqhyccd `pkg-config --libs opencv` -DQHY5L_DEBUG
+ * for debuging or
+ * gcc -o qhy5liiviewer *c -I../src -lSDL -lSDL_image -lpthread -lusb -lcfitsio `pkg-config --libs opencv`
  * to not show debug messages
  * **/
 #include <stdio.h>
@@ -70,7 +71,7 @@ SDL_Color colors[256];
 SDL_Event event;
 
 char fmt[10] = "ppm";
-char basename[256] = "image";
+char imagebasename[256] = "image";
 char imagename[256];
 
 void (*writefunction)(void *, int, int, char *) = write_ppm;
@@ -198,11 +199,12 @@ void write_ppm(void * data, int width, int height, char *filename){
 void show_help(char * progname){
 	printf("USAGE: qhy5lviewer [options]\n\nOPTIONS:\n");
 	printf("  -g | --gain <gain>\n\t\t Sensor Gain<0 - 1000> (default: 100)\n\n");
-	printf("  -t | --exposure <exposure>\n\t\t Exposure time in msec (default: 100)\n\n");
+	printf("  -t | --exposure <exposure>\n\t\t Exposure time in msec (default: 1000)\n\n");
 	printf("  -f | --file <filename>\n\t\t Output file name to write images (default: image)\n\n");
 	printf("  -m | --format <fmt>\n\t\t File type to write (default: FITS, else ppm file will be created.)\n\n");
 	printf("  -h | --help\n\t\t Show this message\n\n");
-	
+
+
 	printf("IN-PROGRAM SHORTCUTS:\n");
 	printf("  S -> start/stop frame grabbing\n");
 	printf("  P -> gain +10\n");
@@ -210,12 +212,14 @@ void show_help(char * progname){
 	printf("  L -> exposure time +100\n");
 	printf("  K -> exposure time -100\n");
 	printf("  Q -> exit program\n\n");
-	
+
+
 	exit(0);
 }
 
 void parse_args(int argc, char **argv){
-	
+
+
 	struct option long_options[] = {
 		{"exposure" ,required_argument, NULL, 't'},
 		{"gain", required_argument, NULL, 'g'},
@@ -224,13 +228,13 @@ void parse_args(int argc, char **argv){
 		//{"height", required_argument, NULL, 'y'},  //Small resolutions don't work :(
 		{"file", required_argument, NULL, 'o'},
 		//{"count", required_argument, NULL, 'c'},   //NOT YET IMPLEMENTED
-		{"format", required_argument, NULL, 'f'}, 
+		{"format", required_argument, NULL, 'f'},
 		{"help", no_argument , NULL, 'h'},
 		{0, 0, 0, 0}
 	};
 	while (1) {
 		char c;
-		c = getopt_long (argc, argv, 
+		c = getopt_long (argc, argv,
 					//"t:g:b:x:y:f:c:f:h",
 					"t:g:x:y:o:f:h",
 					long_options, NULL);
@@ -244,7 +248,7 @@ void parse_args(int argc, char **argv){
 			cam.gain = strtol(optarg, NULL, 0);
 			break;
 		case 'o':
-			strncpy(basename, optarg, 255);
+			strncpy(imagebasename, optarg, 255);
 			break;
 		case 'f':
 			strncpy(fmt, optarg, 10);
@@ -271,7 +275,7 @@ int main(int argc, char **argv){
 
 	parse_args(argc, argv);
 	check_args();
-	stat.status = OpenCamera();
+	stat.status = OpenCameraByID(DEVICETYPE_QHY5LII);
 #ifdef QHY5L_DEBUG
 	printf("OpenCamera devolvio 0x%x\n", stat.status);
 #endif
@@ -313,7 +317,8 @@ int main(int argc, char **argv){
 	//End SDL init
 	SetGain(cam.gain);
 	SetExposeTime(cam.exptime);
-	
+
+
 	SetSpeed(false);
 	SetUSBTraffic(255);//0-255 increase the value will reduce the speed.
 
@@ -329,7 +334,8 @@ int main(int argc, char **argv){
 	while (!stat.quit){
 		//process SDL events
 		processEvents();
-		
+
+
 		//display an image in the surface.
 		GetImageData(cam.w, cam.h, cam.bpp, cam.channels, cam.pixels);
 #ifdef QHY5L_DEBUG
@@ -340,7 +346,7 @@ int main(int argc, char **argv){
 		SDL_UnlockSurface(hello);
 
 		if (stat.write){
-			sprintf(imagename, "%s%05d.%s", basename, stat.count, fmt);
+			sprintf(imagename, "%s%05d.%s", imagebasename, stat.count, fmt);
 			printf("Capturing %s\n", imagename);
 			writefunction(cam.pixels, cam.w, cam.h, imagename);
 			stat.count++;
