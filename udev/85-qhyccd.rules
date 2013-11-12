@@ -21,6 +21,7 @@ SUBSYSTEM!="usb_device", GOTO="qhy_vidpid_end"
 
 LABEL="qhy_vidpid_test"
 
+ATTRS{idVendor}=="1618", ATTRS{idProduct}=="b618", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/IMG0H.HEX -D $env{DEVNAME}"
 ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0412", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY2.HEX -D $env{DEVNAME}"
 ATTRS{idVendor}=="1618", ATTRS{idProduct}=="0901", RUN+="/sbin/fxload -t fx2 -I /usr/lib/libqhyccd/firmware/QHY5LOADER.HEX -D $env{DEVNAME}"
 SYSFS{idVendor}=="1618", SYSFS{idProduct}=="0901", RUN+="/bin/sleep 5"
@@ -54,6 +55,8 @@ SUBSYSTEMS=="usb", GOTO="qhy-vipi"
 GOTO="qhy-rules-end"
 
 LABEL="qhy-vipi"
+
+ATTRS{modalias}=="usb:v1618pa618*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="IMG0H"
 
 ATTRS{modalias}=="usb:v16c0p081e*",OWNER="root", GROUP="video", MODE="0660", SYMLINK+="QHY2"
 
