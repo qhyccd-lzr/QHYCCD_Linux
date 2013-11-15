@@ -722,11 +722,15 @@ double QHY5LII::GetQHY5LIITemp(void){
 	double slope;
 	double T0;
 	uint16_t sensed, calib1, calib2;
+	// start measuring
 	W_I2C_MICRON_Address16_OneRegister(0x30B4, 0x0011);
-	sensed = R_I2C_MICRON_Address16_OneRegister(0x30B2);
+	
+	// reading the calibration params gives just enough time
 	calib1 = R_I2C_MICRON_Address16_OneRegister(0x30C6);
 	calib2 = R_I2C_MICRON_Address16_OneRegister(0x30C8);
+	// stop measuring
 	W_I2C_MICRON_Address16_OneRegister(0x30B4, 0x0000);
+	sensed = R_I2C_MICRON_Address16_OneRegister(0x30B2);
 
 	slope = (70.0 - 55.0)/(calib1 - calib2);
 	T0 = (slope*calib1 - 70.0);
