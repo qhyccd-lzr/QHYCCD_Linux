@@ -1,0 +1,1 @@
+/Users/qhyccd/codespace/QHYCCD_LinuxV4/build/src/CMakeFiles/qhyccd.dir

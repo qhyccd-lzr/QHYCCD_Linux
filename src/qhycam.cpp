@@ -1,15 +1,69 @@
+/*
+ QHYCCD SDK
+ 
+ Copyright (c) 2014 QHYCCD.
+ All Rights Reserved.
+ 
+ This program is free software; you can redistribute it and/or modify it
+ under the terms of the GNU General Public License as published by the Free
+ Software Foundation; either version 2 of the License, or (at your option)
+ any later version.
+ 
+ This program is distributed in the hope that it will be useful, but WITHOUT
+ ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or
+ FITNESS FOR A PARTICULAR PURPOSE.  See the GNU General Public License for
+ more details.
+ 
+ You should have received a copy of the GNU General Public License along with
+ this program; if not, write to the Free Software Foundation, Inc., 59
+ Temple Place - Suite 330, Boston, MA  02111-1307, USA.
+ 
+ The full GNU General Public License is included in this distribution in the
+ file called LICENSE.
+ */
+
 #include "qhycam.h"
 #include <math.h>
 #include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+#include "shareparameters.h"
+#include "qhyccderr.h"
 
-extern QUsb *qhyusb;
 
-void sendRegisterQHYCCDOld(qhyccd_device_handle *handle, 
+int QHYCAM::openCamera(libusb_device *d,libusb_device_handle **h)
+{
+    int ret;
+
+    if(d)
+    {
+        ret = libusb_open(d,h);
+        libusb_kernel_driver_active(*h,0);
+        libusb_claim_interface(*h,0);
+    }
+    return ret;
+}
+
+void QHYCAM::closeCamera(libusb_device_handle *h)
+{
+    if(h)
+    {
+        libusb_close(h);
+    }
+}
+
+int QHYCAM::sendRegisterQHYCCDOld(qhyccd_handle *handle, 
                   CCDREG reg, int P_Size, int *Total_P, int *PatchNumber)
 {
+        int ret = QHYCCD_ERROR;
         unsigned long T;  //total actual transfer data  (byte)
         unsigned char REG[64];
         unsigned char time_H,time_M,time_L;
+
+        if(P_Size <= 0)
+        {
+            P_Size = 1024;
+        }
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
  
@@ -20,25 +74,11 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
                 *Total_P = T / P_Size;
                 *PatchNumber = 0;
         }
-       #ifdef QHYCCD_DEBUG
-        printf("sendRegisterOld,LineSize %d\n",reg.LineSize);
-        printf("sendRegisterOld,VSize %d\n",reg.VerticalSize);
-        printf("sendRegisterOld,TopSkipPix, %d\n",reg.TopSkipPix);
-        printf("sendRegisterOld,T %ld\n",T);
-        printf("sendRegisterOld,P_Size %d\n",P_Size);
-        printf("sendRegisterOld,PatchNumber %d\n",*PatchNumber);
-        #endif
 
         time_L=(reg.Exptime % 256);
         time_M=(reg.Exptime-time_L)/256;
         time_H=(reg.Exptime-time_L-time_M*256)/65536;
-         #ifdef QHYCCD_DEBUG
-        printf("sendRegisterOld,Exptime %d\n",reg.Exptime);
-        printf("sendRegisterOld,time_L, %d\n",time_L);
-        printf("sendRegisterOld,time_M, %d\n",time_M);
-        printf("sendRegisterOld,time_H, %d\n",time_H);
-        #endif        
-        
+
         REG[0]=reg.Gain ;
         
         REG[1]=reg.Offset ;
@@ -50,28 +90,28 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         REG[5]=reg.HBIN ;
         REG[6]=reg.VBIN ;
         
-        REG[7]=qhyusb->MSB(reg.LineSize );
-        REG[8]=qhyusb->LSB(reg.LineSize );
+        REG[7]=MSB(reg.LineSize );
+        REG[8]=LSB(reg.LineSize );
         
-        REG[9]= qhyusb->MSB(reg.VerticalSize );
-        REG[10]=qhyusb->LSB(reg.VerticalSize );
+        REG[9]= MSB(reg.VerticalSize );
+        REG[10]=LSB(reg.VerticalSize );
         
-        REG[11]=qhyusb->MSB(reg.SKIP_TOP );
-        REG[12]=qhyusb->LSB(reg.SKIP_TOP );
+        REG[11]=MSB(reg.SKIP_TOP );
+        REG[12]=LSB(reg.SKIP_TOP );
         
-        REG[13]=qhyusb->MSB(reg.SKIP_BOTTOM );
-        REG[14]=qhyusb->LSB(reg.SKIP_BOTTOM );
+        REG[13]=MSB(reg.SKIP_BOTTOM );
+        REG[14]=LSB(reg.SKIP_BOTTOM );
         
-        REG[15]=qhyusb->MSB(reg.LiveVideo_BeginLine );
-        REG[16]=qhyusb->LSB(reg.LiveVideo_BeginLine );
+        REG[15]=MSB(reg.LiveVideo_BeginLine );
+        REG[16]=LSB(reg.LiveVideo_BeginLine );
         
-        REG[19]=qhyusb->MSB(reg.AnitInterlace );
-        REG[20]=qhyusb->LSB(reg.AnitInterlace );
+        REG[19]=MSB(reg.AnitInterlace );
+        REG[20]=LSB(reg.AnitInterlace );
         
         REG[22]=reg.MultiFieldBIN ;
         
-        REG[29]=qhyusb->MSB(reg.ClockADJ );
-        REG[30]=qhyusb->LSB(reg.ClockADJ );
+        REG[29]=MSB(reg.ClockADJ );
+        REG[30]=LSB(reg.ClockADJ );
         
         REG[32]=reg.AMPVOLTAGE ;
         
@@ -86,8 +126,8 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         
         REG[46]=reg.TopSkipNull ;
         
-        REG[47]=qhyusb->MSB(reg.TopSkipPix );
-        REG[48]=qhyusb->LSB(reg.TopSkipPix );
+        REG[47]=MSB(reg.TopSkipPix );
+        REG[48]=LSB(reg.TopSkipPix );
         
         REG[51]=reg.MechanicalShutterMode ;
         REG[52]=reg.DownloadCloseTEC ;
@@ -96,34 +136,37 @@ void sendRegisterQHYCCDOld(qhyccd_device_handle *handle,
         
         REG[63]=reg.Trig ;
         
-        REG[17]=qhyusb->MSB(*PatchNumber);
-        REG[18]=qhyusb->LSB(*PatchNumber);
+        REG[17]=MSB(*PatchNumber);
+        REG[18]=LSB(*PatchNumber);
         
         REG[53]=(reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0);
         
         REG[57]=reg.ADCSEL ;
         
-        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
+        ret = vendTXD(handle, 0xb5, REG, 64);
+        if(ret == 64)
+        {
+            ret = QHYCCD_SUCCESS;
+        }
+  
+        ret = vendTXD(handle, 0xb5, REG, 64);
+        if(ret == 64)
+        {
+            ret = QHYCCD_SUCCESS;
+        }
 
-        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
+        return ret;
 }
 
-void sendRegisterQHYCCDNew(qhyccd_device_handle *handle, 
+int QHYCAM::sendRegisterQHYCCDNew(qhyccd_handle *handle, 
                   CCDREG reg, int P_Size, int *Total_P, int *PatchNumber)
 {
+        int ret = QHYCCD_ERROR;
         unsigned long T;  //total actual transfer data  (byte)
         unsigned char REG[64];
         unsigned char time_H,time_M,time_L;
 
         T = reg.LineSize * reg.VerticalSize * 2 + reg.TopSkipPix * 2;
-
-        #ifdef QHYCCD_DEBUG
-        printf("sendRegisterNew,LineSize %d\n",reg.LineSize);
-        printf("sendRegisterNew,VSize %d\n",reg.VerticalSize);
-        printf("sendRegisterNew,TopSkipPix, %d\n",reg.TopSkipPix);
-        printf("sendRegisterNew,T %ld\n",T);
-        printf("sendRegisterNew,P_Size %d\n",P_Size);
-        #endif
 
         if (T % P_Size) {
                 *Total_P = T / P_Size+1;
@@ -135,12 +178,7 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
 
         time_L=(reg.Exptime % 256);
         time_M=(reg.Exptime-time_L)/256;
-        time_H=(reg.Exptime-time_L-time_M*256)/65536;
-        #ifdef QHYCCD_DEBUG
-        printf("sendRegisterNew,time_L, %d\n",time_L);
-        printf("sendRegisterNew,time_M, %d\n",time_M);
-        printf("sendRegisterNew,time_H, %d\n",time_H);
-        #endif        
+        time_H=(reg.Exptime-time_L-time_M*256)/65536;    
         
         REG[0]=reg.Gain ;
         
@@ -153,28 +191,28 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         REG[5]=reg.HBIN ;
         REG[6]=reg.VBIN ;
         
-        REG[7]=qhyusb->MSB(reg.LineSize );
-        REG[8]=qhyusb->LSB(reg.LineSize );
+        REG[7]=MSB(reg.LineSize );
+        REG[8]=LSB(reg.LineSize );
         
-        REG[9]= qhyusb->MSB(reg.VerticalSize );
-        REG[10]=qhyusb->LSB(reg.VerticalSize );
+        REG[9]= MSB(reg.VerticalSize );
+        REG[10]=LSB(reg.VerticalSize );
         
-        REG[11]=qhyusb->MSB(reg.SKIP_TOP );
-        REG[12]=qhyusb->LSB(reg.SKIP_TOP );
+        REG[11]=MSB(reg.SKIP_TOP );
+        REG[12]=LSB(reg.SKIP_TOP );
         
-        REG[13]=qhyusb->MSB(reg.SKIP_BOTTOM );
-        REG[14]=qhyusb->LSB(reg.SKIP_BOTTOM );
+        REG[13]=MSB(reg.SKIP_BOTTOM );
+        REG[14]=LSB(reg.SKIP_BOTTOM );
         
-        REG[15]=qhyusb->MSB(reg.LiveVideo_BeginLine );
-        REG[16]=qhyusb->LSB(reg.LiveVideo_BeginLine );
+        REG[15]=MSB(reg.LiveVideo_BeginLine );
+        REG[16]=LSB(reg.LiveVideo_BeginLine );
         
-        REG[19]=qhyusb->MSB(reg.AnitInterlace );
-        REG[20]=qhyusb->LSB(reg.AnitInterlace );
+        REG[19]=MSB(reg.AnitInterlace );
+        REG[20]=LSB(reg.AnitInterlace );
         
         REG[22]=reg.MultiFieldBIN ;
         
-        REG[29]=qhyusb->MSB(reg.ClockADJ );
-        REG[30]=qhyusb->LSB(reg.ClockADJ );
+        REG[29]=MSB(reg.ClockADJ );
+        REG[30]=LSB(reg.ClockADJ );
         
         REG[32]=reg.AMPVOLTAGE ;
         
@@ -189,8 +227,8 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         
         REG[46]=reg.TopSkipNull ;
         
-        REG[47]=qhyusb->MSB(reg.TopSkipPix );
-        REG[48]=qhyusb->LSB(reg.TopSkipPix );
+        REG[47]=MSB(reg.TopSkipPix );
+        REG[48]=LSB(reg.TopSkipPix );
         
         REG[51]=reg.MechanicalShutterMode ;
         REG[52]=reg.DownloadCloseTEC ;
@@ -199,76 +237,303 @@ void sendRegisterQHYCCDNew(qhyccd_device_handle *handle,
         
         REG[63]=reg.Trig ;
         
-        REG[17]=qhyusb->MSB(*PatchNumber);
-        REG[18]=qhyusb->LSB(*PatchNumber);
+        REG[17]=MSB(*PatchNumber);
+        REG[18]=LSB(*PatchNumber);
         
         REG[53]=(reg.WindowHeater&~0xf0)*16+(reg.MotorHeating&~0xf0);
         
         REG[57]=reg.ADCSEL ;
         
-        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
+        ret = vendTXD(handle, 0xb5, REG, 64);
+        if(ret == 64)
+        {
+            ret = QHYCCD_SUCCESS;
+        }
+  
+        ret = vendTXD(handle, 0xb5, REG, 64);
+        if(ret == 64)
+        {
+            ret = QHYCCD_SUCCESS;
+        }
 
-        qhyusb->qhyccd_vTXD(handle, 0xb5, REG, 64);
+        return ret;
 }
 
-void setDC201FromInterrupt(qhyccd_device_handle *handle,unsigned char PWM,unsigned char FAN)
+
+int QHYCAM::vendTXD(qhyccd_handle *dev_handle, uint8_t req,
+                unsigned char* data, uint16_t length)
 {
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_WRITE, req,
+                                      0, 0, data, length, 3000);
+        return ret;
+}
+
+
+int QHYCAM::vendRXD(qhyccd_handle *dev_handle, uint8_t req,
+                unsigned char* data, uint16_t length)
+{
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_READ, req,
+                                      0, 0, data, length, 3000);
+        return ret;
+}
+
+int QHYCAM::vendTXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+{
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_WRITE, req,
+                                      value, index, data, length, 3000);
+        return ret;
+}
+
+int QHYCAM::vendRXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+{
+        int ret;
+        ret = libusb_control_transfer(dev_handle, QHYCCD_REQUEST_READ, req,
+                                      value, index, data, length, 3000);
+        return ret;
+}
+
+
+int QHYCAM::iTXD(qhyccd_handle *dev_handle,
+                unsigned char *data, int length)
+{
+        int ret;
+
+        int length_transfered = -1;
+
+        ret = libusb_bulk_transfer(dev_handle, QHYCCD_INTERRUPT_WRITE_ENDPOINT, 
+                                        data, length, &length_transfered, 3000);
+
+        return ret;
+}
+
+
+int QHYCAM::iRXD(qhyccd_handle *dev_handle,
+                unsigned char *data, int length)
+{
+        int ret;
+
+        int length_transfered;
+
+        ret = libusb_bulk_transfer(dev_handle, QHYCCD_INTERRUPT_READ_ENDPOINT, 
+                                        data, length, &length_transfered, 3000);
+        return ret;
+}
+
+
+
+int QHYCAM::readUSB2(qhyccd_handle *dev_handle, unsigned char *data,
+                    int p_size, int p_num)
+{
+        int ret;
+        int length_transfered;
+
+        ret = libusb_bulk_transfer(dev_handle, usbep,
+                                   data, p_size * p_num,
+                                   &length_transfered, 0);
+        
+        return ret;
+}
+
+
+int QHYCAM::readUSB2_OnePackage3(qhyccd_handle *dev_handle,
+                                unsigned char *data, int length)
+{
+        int ret;
+        int length_transfered;
+
+        ret = libusb_bulk_transfer(dev_handle, usbep,
+                                   data, length, &length_transfered, 0);
+        return ret;
+}
+
+int QHYCAM::beginVideo(qhyccd_handle *handle)
+{
+    int ret = QHYCCD_ERROR;
+    unsigned char buf[1];
+    buf[0] = 100;
+
+    ret = vendTXD(handle, 0xb3, buf, 1);
+    if(ret == 1)
+    {
+        ret = QHYCCD_SUCCESS;
+    }
+
+    return ret;
+}
+
+int QHYCAM::readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,
+                     int p_size, int p_num, int* pos)
+{
+        int ret;
+        int length_transfered,length_total = 0;
+        int i;
+        unsigned char *buf;
+        buf = (unsigned char*)malloc(p_size);
+        
+        for (i = 0; i < p_num; ++i) 
+        {
+                ret = libusb_bulk_transfer(dev_handle,
+                                           usbep,
+                                           buf, p_size,
+                                           &length_transfered,0);
+                if (ret < 0) {
+                        printf("%d\n",ret);
+                        free(buf);
+                        return ret;
+                }
+                length_total += length_transfered;
+                memcpy(data + i * p_size, buf, p_size);
+                *pos = i;
+        }
+       
+        free(buf);
+        return length_total;
+}
+
+int QHYCAM::readUSB2BForQHY5IISeries(qhyccd_handle *dev_handle, unsigned char *data,int sizetoread,int exptime)
+{
+    int ret = -1;
+    unsigned char buf[4];
+    int transfered = 0;
+    int try_cnt = 0;
+    int try_cmos = 0;
+    int pos = 0;
+    int to_read = sizetoread + 5;
+
+
+    while( to_read )
+    {
+        int ret = libusb_bulk_transfer(dev_handle, usbep, data + pos,to_read, &transfered, (int)exptime + 3000);
+
+        if(ret != LIBUSB_SUCCESS && ret != LIBUSB_ERROR_TIMEOUT)
+        {
+            if( try_cnt > 3 )
+            {
+                return QHYCCD_ERROR_EVTUSB;
+            }
+            try_cnt++;
+
+            continue;
+        }
+        else if((ret == LIBUSB_ERROR_TIMEOUT) && (transfered == 0))
+        {
+            if(try_cmos > 2)
+            {
+                return QHYCCD_ERROR_EVTCMOS;
+            }
+            try_cmos++;
+        }           
+
+        pos += transfered;
+        to_read -= transfered;
+
+       /* Here we are using the pattern as a frame delimiter. If we still have bytes
+          to read and the pattern is found then the frames are missalined and we are at
+          the end of the previous framefram We have to start agin.
+       */
+       unsigned char pat[4] = {0xaa, 0x11, 0xcc, 0xee};
+       void *ppat = memmem(data+pos-5, 4, pat, 4);
+
+       if ((to_read) && (ppat))
+       {
+           pos = 0;
+           to_read = psize + 5;
+           continue;
+       }
+       /* If by accident to_read is 0 and we are not at the end of the frame
+          we have missed the alignment pattern, so look for the next one.
+       */
+       if ((to_read <= 0) && (ppat == NULL))
+       {
+           if( try_cnt > 3 )
+           {
+               return QHYCCD_ERROR_EVTUSB;
+           }
+           pos = 0;
+           to_read = psize + 5;
+           try_cnt++;
+           continue;
+       }
+    }
+    return QHYCCD_SUCCESS;
+}
+
+int QHYCAM::setDC201FromInterrupt(qhyccd_handle *handle,unsigned char PWM,unsigned char FAN)
+{
+        int ret;
 	unsigned char Buffer[3];
 	Buffer[0]=0x01;
 	
-	if (PWM==0)
+	if (PWM == 0)
 	{
-		Buffer[2]=Buffer[2] &~ 0x80;
-		Buffer[1]=0;
+		Buffer[2] = (Buffer[2] &~ 0x80);
+		Buffer[1] = 0;
 	}
 	else
 	{
-		Buffer[1]=PWM;
-		Buffer[2]=Buffer[2] | 0x80;
+		Buffer[1] = PWM;
+		Buffer[2] = (Buffer[2] | 0x80);
 	}
 	
 	if (FAN==0) 	
 	{
-		Buffer[2]=Buffer[2] &~ 0x01;
+		Buffer[2] = (Buffer[2] &~ 0x01);
 	}
         else            
         {
-        	Buffer[2]=Buffer[2] | 0x01;
+        	Buffer[2] = (Buffer[2] | 0x01);
         }
-        sendInterrupt(handle,3, Buffer);
+        ret = sendInterrupt(handle,3, Buffer);
+        
+        return ret;
 }
-signed short getDC201FromInterrupt(qhyccd_device_handle *handle)
+
+signed short QHYCAM::getDC201FromInterrupt(qhyccd_handle *handle)
 {
 	unsigned char Buffer[4];
 	signed short x;
 	
 	getFromInterrupt(handle,4,Buffer);
-	x=Buffer[1]*256+Buffer[2];
+	x = Buffer[1]*256+Buffer[2];
+       
 	return x;
 }
-unsigned char sendInterrupt(qhyccd_device_handle *handle,unsigned char length,unsigned char *data)
+int  QHYCAM::sendInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data)
 {
-	unsigned char i;
-	i = qhyusb->qhyccd_iTXD(handle,data,length);
-	return i;
+    int ret = QHYCCD_ERROR;
+
+    ret = iTXD(handle,data,length);
+
+    if(ret != LIBUSB_SUCCESS)
+    {
+        return QHYCCD_ERROR; 
+    }
+
+    return QHYCCD_SUCCESS;
 }
 
-unsigned char getFromInterrupt(qhyccd_device_handle *handle,unsigned char length,unsigned char *data)
+unsigned char QHYCAM::getFromInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data)
 {
 	unsigned char i;
 	
-	i = qhyusb->qhyccd_iRXD(handle,data,length);
+	i = iRXD(handle,data,length);
+
 	return i;
 }
 
-double GetCCDTemp(qhyccd_device_handle *handle)
+double QHYCAM::GetCCDTemp(qhyccd_handle *handle)
 {
 	signed short v;
+
 	v = (signed short)(1.024*(float)getDC201FromInterrupt(handle));
+           
 	return mVToDegree((double)v);
 }
 
-double RToDegree(double R)
+double QHYCAM::RToDegree(double R)
 {
 	double 	T;
 	double LNR;
@@ -277,19 +542,109 @@ double RToDegree(double R)
 	if (R<1) R=1;
 	
 	LNR=log(R);
-	T=1/( 0.002679+0.000291*LNR+	LNR*LNR*LNR*4.28e-7  );
+	T=1 / (0.002679+0.000291*LNR + LNR*LNR*LNR*4.28e-7);
 	T=T-273.15;
 	return T;
 }
 
+double QHYCAM::DegreeTomV(double degree)
+{
+	double V;
+	double R;
 
-double mVToDegree(double V)
+	R=DegreeToR(degree);
+	V=33000/(R+10)-1625;
+
+	return V;
+}
+
+double QHYCAM::mVToDegree(double V)
 {
 	double R;
 	double T;
 
 	R=33/(V/1000+1.625)-10;
+        
 	T=RToDegree(R);
 
 	return T;
+}
+
+double QHYCAM::DegreeToR(double degree)
+{
+
+#define SQR3(x) ((x)*(x)*(x))
+#define SQRT3(x) (exp(log(x)/3))
+
+	if (degree<-50) degree=-50;
+	if (degree>50)  degree=50;
+
+	double x,y;
+	double R;
+	double T;
+
+	double A=0.002679;
+	double B=0.000291;
+	double C=4.28e-7;
+
+	T=degree+273.15;
+
+
+	y=(A-1/T)/C;
+	x=sqrt( SQR3(B/(3*C))+(y*y)/4);
+	R=exp(  SQRT3(x-y/2)-SQRT3(x+y/2));
+
+	return R;
+}
+
+unsigned char QHYCAM::MSB(unsigned short i)
+{
+    unsigned int j;
+    j=(i&~0x00ff)>>8;
+    return j;
+}
+
+unsigned char QHYCAM::LSB(unsigned short i)
+{
+    unsigned int j;
+    j=i&~0xff00;
+    return j;
+}
+
+int QHYCAM::I2CTwoWrite(qhyccd_handle *handle,uint16_t addr,unsigned short value)
+{
+    unsigned char data[2];
+    data[0] = MSB(value);
+    data[1] = LSB(value);
+
+    return libusb_control_transfer(handle,QHYCCD_REQUEST_WRITE,0xbb,0,addr,data,2,2000);
+}
+
+unsigned short QHYCAM::I2CTwoRead(qhyccd_handle *handle,uint16_t addr)
+{
+    unsigned char data[2];
+
+    libusb_control_transfer(handle,QHYCCD_REQUEST_READ,0xb7,0,addr,data,2,2000);
+
+    return data[0] * 256 + data[1];
+}
+
+void QHYCAM::SWIFT_MSBLSB(unsigned char *Data, int x, int y)
+{
+    int i,j;
+    unsigned char tempData;
+    unsigned long s;
+
+    s=0;
+
+    for (j = 0; j < y; j++) 
+    {
+	for (i = 0; i < x; i++) 
+	{
+	    tempData=Data[s];
+	    Data[s]=Data[s+1];
+	    Data[s+1]=tempData;
+	    s=s+2;
+	}
+    }
 }
