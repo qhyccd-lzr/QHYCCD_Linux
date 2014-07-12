@@ -48,6 +48,7 @@
 #include "qhy6.h"
 #include "qhy5ii.h"
 #include "qhy5lii_m.h"
+#include "qhy8.h"
 
 /* This is the maximum number of qhyccd cams. */
 #define MAXDEVICES          (100)

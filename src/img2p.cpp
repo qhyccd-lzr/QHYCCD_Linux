@@ -615,7 +615,15 @@ void IMG2P::ConvertDataBIN11(unsigned char * Data,int x, int y, unsigned short P
 
 void IMG2P::ConvertDataBIN22(unsigned char * Data,int x, int y, unsigned short PixShift)
 {
-    SWIFT_MSBLSB(Data,x,y );
+	unsigned char * Buf = NULL;
+    
+    Buf=(unsigned char *) malloc(x*y*2);
+    
+    memcpy(Buf,Data+PixShift*2,x*y*2) ;
+    SWIFT_MSBLSB(Buf,x,y);
+    memcpy(Data,Buf,x*y*2);
+    
+    free(Buf);
 }
 
 

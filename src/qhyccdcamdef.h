@@ -67,6 +67,10 @@ typedef struct libusb_device_handle    qhyccd_handle;
 #define DEVICETYPE_IMG2P        220
 
 /**
+ * Type define for QHY8 */
+#define DEVICETYPE_QHY8         400
+
+/**
  * Type define for QHY8L */
 #define DEVICETYPE_QHY8L        413
 
