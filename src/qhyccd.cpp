@@ -336,19 +336,19 @@ struct VPD
 unsigned short camvid[MAXDEVICES] = 
 {
 	0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,
-    0x1618,0x1618,0x1618,0x1618
+    0x1618,0x1618,0x1618,0x1618,0X1618
 };
 
 unsigned short campid[MAXDEVICES] =
 {
 	0x0921,0x8311,0x6741,0x6941,0x6005,0x1001,0x1201,0x8301,0x6003,
-    0x1101,0x8141,0x2851,0x025a
+    0x1101,0x8141,0x2851,0x025a,0x6001
 };
 
 unsigned short fpid[MAXDEVICES] =
 {
     0x0920,0x8310,0x6740,0x6940,0x6004,0x1000,0x1200,0x8300,0x6002,
-    0x1100,0x8140,0x2850,0x0259
+    0x1100,0x8140,0x2850,0x0259,0x6000
 };
 
 /* Global vid pid struct */
@@ -532,6 +532,11 @@ static int QHYCCDSeriesMatch(int index,qhyccd_handle *handle)
         case 0x025a:
         {
             ret = DEVICETYPE_QHY6;
+            break;
+        }
+        case 0x6001:
+        {
+            ret = DEVICETYPE_QHY8;
             break;
         }
         default:
@@ -810,6 +815,20 @@ int InitQHYCCDClass(int camtype,int index)
             if(cydev[index].qcam != NULL)
             {
                 memcpy(cydev[index].id,"QHY6-M-",7);
+                ret = QHYCCD_SUCCESS;
+            }
+            else
+            {
+                ret = QHYCCD_ERROR_INITCLASS;
+            }
+            break;
+        }
+        case DEVICETYPE_QHY8:
+        {
+            cydev[index].qcam = new QHY8();
+            if(cydev[index].qcam != NULL)
+            {
+                memcpy(cydev[index].id,"QHY8-C-",7);
                 ret = QHYCCD_SUCCESS;
             }
             else
@@ -1678,6 +1697,11 @@ int OSXInitQHYCCDFiramware()
                 case 0x0259:
                 {
                     SetQHYCCDFirmware(h,"firmware/QHY6.HEX",1);
+                    break;
+                }
+                case 0x6000:
+                {
+                    SetQHYCCDFirmware(h,"firmware/QHY8.HEX",1);
                     break;
                 }
             }
