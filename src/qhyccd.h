@@ -22,44 +22,18 @@
  file called LICENSE.
  */
 
-/*! \file qhyccd.h
-      \brief QHYCCD SDK interface for programer
-  */
+/*! 
+ * @file qhyccd.h
+ * @brief QHYCCD SDK interface for programer
+ */
 #include "qhyccderr.h"
 #include <libusb-1.0/libusb.h>
 #include "qhyccdcamdef.h"
+#include "qhyccdstruct.h"
 
 #ifndef __QHYCCD_H__
 #define __QHYCCD_H__
 
-typedef libusb_device                qhyccd_device;
-typedef libusb_device_handle         qhyccd_handle;
-
-enum CONTROL_ID
-{
-    CONTROL_BRIGHTNESS = 0,
-    CONTROL_CONTRAST,
-    CONTROL_WBR,
-    CONTROL_WBB,
-    CONTROL_WBG,
-    CONTROL_GAMMA,
-    CONTROL_GAIN,
-    CONTROL_OFFSET,
-    CONTROL_EXPOSURE,
-    CONTROL_SPEED,
-    CONTROL_TRANSFERBIT,
-    CONTROL_CHANNELS,
-    CONTROL_USBTRAFFIC,
-    CONTROL_ROWNOISERE,
-    CONTROL_CURTEMP,
-    CONTROL_CURPWM,
-    CONTROL_MANULPWM,
-    CONTROL_CFWPORT,
-    CAM_BIN1X1MODE,
-    CAM_BIN2X2MODE,
-    CAM_BIN3X3MODE,
-    CAM_BIN4X4MODE
-};
 
 /** \fn int InitQHYCCDResource()
       \brief initialize QHYCCD SDK resource
@@ -72,7 +46,6 @@ int InitQHYCCDResource(void);
 
 /** \fn int ReleaseQHYCCDResource()
       \brief release QHYCCD SDK resource
-      \param handle camera control handle
       \return 
 	  on success,return QHYCCD_SUCCESS \n
 	  QHYCCD_ERROR_RELEASERESOURCE if the release failed \n
@@ -127,10 +100,11 @@ int CloseQHYCCD(qhyccd_handle *handle);
   */
 int InitQHYCCD(qhyccd_handle *handle);
 
-/** \fn unsigned char IsQHYCCDControlAvailable(CONTROL_ID controlId)
-      \brief check the camera has the queried function or not
-      \param controlId function type
-	  \return
+/** @fn int IsQHYCCDControlAvailable(qhyccd_handle *handle,CONTROL_ID controlId)
+    @brief check the camera has the queried function or not
+    @param handle camera control handle
+    @param controlId function type
+    @return
 	  on have,return QHYCCD_SUCCESS \n
 	  on do not have,return QHYCCD_ERROR_NOTSUPPORT \n
 	  another QHYCCD_ERROR code on other failures
@@ -228,19 +202,20 @@ int GetQHYCCDMemLength(qhyccd_handle *handle);
   */
 int ExpQHYCCDSingleFrame(qhyccd_handle *handle);
 
-/** \fn int GetQHYCCDSingleFrame(qhyccd_handle *handle,int *w,int *h,int *bpp,int *channels,unsigned char *imgdata)
-      \brief get single frame data from camera
-	  \param handle camera control handle
-	  \param *w pointer to width of ouput image
-	  \param *h pointer to height of ouput image
-      \param *bpp pointer to depth of ouput image
-      \param *channels pointer to channels of ouput image
-	  \return
-	  on success,return QHYCCD_SUCCESS \n
-	  QHYCCD_ERROR_GETTINGDATA,if there is anoher program is getting data \n
-	  QHYCCD_ERROR_GETTINGFAILED,if get data failed \n
-	  another QHYCCD_ERROR code on other failures
-  */
+/**
+   @fn int GetQHYCCDSingleFrame(qhyccd_handle *handle,int *w,int *h,int *bpp,int *channels,unsigned char *imgdata)
+   @brief get live frame data from camera
+   @param handle camera control handle
+   @param *w pointer to width of ouput image
+   @param *h pointer to height of ouput image
+   @param *bpp pointer to depth of ouput image
+   @param *channels pointer to channels of ouput image
+   @param *imgdata image data buffer
+   @return
+   on success,return QHYCCD_SUCCESS \n
+   QHYCCD_ERROR_GETTINGFAILED,if get data failed \n
+   another QHYCCD_ERROR code on other failures
+ */
 int GetQHYCCDSingleFrame(qhyccd_handle *handle,int *w,int *h,int *bpp,int *channels,unsigned char *imgdata);
 
 /** \fn int StopQHYCCDExpSingle(qhyccd_handle *handle)
@@ -261,14 +236,16 @@ int StopQHYCCDExpSingle(qhyccd_handle *handle);
   */
 int BeginQHYCCDLive(qhyccd_handle *handle);
 
-/** \fn int GetQHYCCDLiveFrame(qhyccd_handle *handle,int *w,int *h,int *bpp,int *channels,unsigned char *imgdata)
-      \brief get live frame data from camera
-	  \param handle camera control handle
-	  \param *w pointer to width of ouput image
-	  \param *h pointer to height of ouput image
-      \param *bpp pointer to depth of ouput image
-      \param *channels pointer to channels of ouput image
-	  \return
+/**   
+      @fn int GetQHYCCDLiveFrame(qhyccd_handle *handle,int *w,int *h,int *bpp,int *channels,unsigned char *imgdata)
+      @brief get live frame data from camera
+	  @param handle camera control handle
+	  @param *w pointer to width of ouput image
+	  @param *h pointer to height of ouput image
+      @param *bpp pointer to depth of ouput image
+      @param *channels pointer to channels of ouput image
+      @param *imgdata image data buffer
+	  @return
 	  on success,return QHYCCD_SUCCESS \n
 	  QHYCCD_ERROR_GETTINGFAILED,if get data failed \n
 	  another QHYCCD_ERROR code on other failures
@@ -295,14 +272,14 @@ int StopQHYCCDLive(qhyccd_handle *handle);
   */
 int SetQHYCCDBinMode(qhyccd_handle *handle,int wbin,int hbin);
 
-/** \fn int SetQHYCCDBitsMode(qhyccd_handle *handle,int bits)
-      \brief set camera's bin mode for ouput image data
-      \param handle camera control handle
-      \param wbin width bin mode
-	  \param hbin height bin mode
-      \return
-	  on success,return QHYCCD_SUCCESS \n
-	  another QHYCCD_ERROR code on other failures
+/**
+   @fn int SetQHYCCDBitsMode(qhyccd_handle *handle,int bits)
+   @brief set camera's depth bits for ouput image data
+   @param handle camera control handle
+   @param bits image depth
+   @return
+   on success,return QHYCCD_SUCCESS \n
+   another QHYCCD_ERROR code on other failures
   */
 int SetQHYCCDBitsMode(qhyccd_handle *handle,int bits);
 
@@ -360,22 +337,28 @@ int SetQHYCCDTrigerMode(qhyccd_handle *handle,int trigerMode);
   */
 void Bits16ToBits8(qhyccd_handle *h,unsigned char *InputData16,unsigned char *OutputData8,int imageX,int imageY,unsigned short B,unsigned short W);
 
-/** \fn void HistInfo192x130(qhyccd_handle *h,int imageX,int imageY,unsigned char *InBuf,unsigned char *OutBuf)
-      \brief make the hist info
-      \param h camera control handle
-      \param imageX image width
-      \param imageY image height
-      \param InBuf for the raw image data
-      \param OutBuf for 192x130 8bits 3 channels image
+/**
+   @fn void HistInfo192x130(qhyccd_handle *h,int x,int y,unsigned char *InBuf,unsigned char *OutBuf)
+   @brief make the hist info
+   @param h camera control handle
+   @param x image width
+   @param y image height
+   @param InBuf for the raw image data
+   @param OutBuf for 192x130 8bits 3 channels image
   */
 void HistInfo192x130(qhyccd_handle *h,int x,int y,unsigned char *InBuf,unsigned char *OutBuf);
 
+/** 
+    @fn int OSXInitQHYCCDFiramware()
+    @brief download the firmware to camera.(this api just need call in OSX system)
+ */
+int OSXInitQHYCCDFiramware();
 
 //struct CAMPARA *GetCamStruct();
 
 //struct BINRESOLUTION *SupportBIN(int bin);
 
-int OSXInitQHYCCDFiramware();
+
 
 
 

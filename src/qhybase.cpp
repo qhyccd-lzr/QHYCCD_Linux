@@ -73,7 +73,6 @@ void QHYBASE::ControlCamTemp(qhyccd_handle *h,double MAXPWM)
 	}
 }
 
-
 void QHYBASE::Bit16To8_Stretch(unsigned char *InputData16,unsigned char *OutputData8,int imageX,int imageY,unsigned short B,unsigned short W)
 {
 
@@ -110,7 +109,6 @@ void QHYBASE::Bit16To8_Stretch(unsigned char *InputData16,unsigned char *OutputD
     }
 
 }
-
 
 void QHYBASE::HistInfo(int x,int y,unsigned char *InBuf,unsigned char *outBuf)
 {

@@ -41,6 +41,7 @@ set(QHYCCD_INCLUDE
     qhyccd.h
     qhyccdcamdef.h
     qhyccderr.h
+    qhyccdstruct.h
    )
 
 

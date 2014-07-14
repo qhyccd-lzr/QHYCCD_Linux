@@ -27,11 +27,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include "shareparameters.h"
 #include "qhyccderr.h"
 
 
-int QHYCAM::openCamera(libusb_device *d,libusb_device_handle **h)
+int QHYCAM::openCamera(qhyccd_device *d,qhyccd_handle **h)
 {
     int ret;
 
@@ -44,7 +43,7 @@ int QHYCAM::openCamera(libusb_device *d,libusb_device_handle **h)
     return ret;
 }
 
-void QHYCAM::closeCamera(libusb_device_handle *h)
+void QHYCAM::closeCamera(qhyccd_handle *h)
 {
     if(h)
     {
@@ -303,7 +302,7 @@ int QHYCAM::iTXD(qhyccd_handle *dev_handle,
 
         int length_transfered = -1;
 
-        ret = libusb_bulk_transfer(dev_handle, QHYCCD_INTERRUPT_WRITE_ENDPOINT, 
+        ret = libusb_bulk_transfer(dev_handle, usbintwep,
                                         data, length, &length_transfered, 3000);
 
         return ret;
@@ -317,7 +316,7 @@ int QHYCAM::iRXD(qhyccd_handle *dev_handle,
 
         int length_transfered;
 
-        ret = libusb_bulk_transfer(dev_handle, QHYCCD_INTERRUPT_READ_ENDPOINT, 
+        ret = libusb_bulk_transfer(dev_handle, usbintrep,
                                         data, length, &length_transfered, 3000);
         return ret;
 }

@@ -1250,7 +1250,7 @@ int QHY5LII_C::SetChipBitsMode(qhyccd_handle *h,int bits)
     return QHYCCD_SUCCESS;  
 }
 
-int QHY5LII_C::SetChipChannels(int channels)
+int QHY5LII_C::SetChipChannels(qhyccd_handle *h,int channels)
 {
     int ret = QHYCCD_ERROR;
 

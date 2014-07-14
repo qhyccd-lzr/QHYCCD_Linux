@@ -22,15 +22,13 @@
  file called LICENSE.
  */
 
-/*! \file qhyccdcamdef.h
-      \brief QHYCCD SDK error define
+/*! 
+   @file qhyccdcamdef.h
+   @brief QHYCCD SDK error define
   */
 
 #ifndef __QHYCCDCAMDEF_H__
 #define __QHYCCDCAMDEF_H__
-
-typedef struct libusb_device           qhyccd_device;
-typedef struct libusb_device_handle    qhyccd_handle;
 
 
 
@@ -170,37 +168,14 @@ typedef struct libusb_device_handle    qhyccd_handle;
  * Type define for UNKNOW */
 #define DEVICETYPE_UNKNOW       -1
 
-
+/**
+ * debayer mode for mono to color */
 enum BAYER_ID
 {
     BAYER_GB = 1,
     BAYER_GR,
     BAYER_BG,
     BAYER_RG
-};
-
-enum SMOOTHTYPE
-{
-    BLUR_NO_SCALE = 1,
-    BLUR,
-    GAUSSIAN,
-    MEDIAN,
-    BILATERAL
-};
-
-
-
-struct BINRESOLUTION
-{
-    int width;
-    int height;
-};
-
-struct CAMPARA
-{
-    int num;
-    char *name[128];
-    int  value[128];
 };
 
 #endif

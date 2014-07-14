@@ -22,134 +22,397 @@
  file called LICENSE.
  */
 
+/*!
+ * @file qhycam.h
+ * @brief QHYCAM class define
+ */
+
 #include <unistd.h>
 #include <stdbool.h>
 #include <math.h>
-#include <libusb-1.0/libusb.h>
+#include "qhyccdstruct.h"
 
-#ifndef QHYCAMODEF
-#define QHYCAMODEF
-
-typedef libusb_device                qhyccd_device;
-typedef libusb_device_handle         qhyccd_handle;
+#ifndef __QHYCAMDEF_H__
+#define __QHYCAMDEF_H__
 
 
-#define QHYCCD_REQUEST_READ  0xC0
-#define QHYCCD_REQUEST_WRITE 0x40
-
-#define QHYCCD_INTERRUPT_READ_ENDPOINT  0x81
-#define QHYCCD_INTERRUPT_WRITE_ENDPOINT 0x01
-typedef struct ccdreg 
-{
-    char* devname;
-    unsigned char Gain;
-    unsigned char Offset;
-    unsigned long Exptime;
-    unsigned char HBIN;
-    unsigned char VBIN;
-    unsigned short LineSize;
-    unsigned short VerticalSize;
-    unsigned short SKIP_TOP;
-    unsigned short SKIP_BOTTOM;
-    unsigned short LiveVideo_BeginLine;
-    unsigned short AnitInterlace;
-    unsigned char MultiFieldBIN;
-    unsigned char AMPVOLTAGE;
-    unsigned char DownloadSpeed;
-    unsigned char TgateMode;
-    unsigned char ShortExposure;
-    unsigned char VSUB;
-    unsigned char CLAMP;
-    unsigned char TransferBIT;
-    unsigned char TopSkipNull;
-    unsigned short TopSkipPix;
-    unsigned char MechanicalShutterMode;
-    unsigned char DownloadCloseTEC;
-    unsigned char SDRAM_MAXSIZE;
-    unsigned short ClockADJ;
-    unsigned char Trig;
-    unsigned char MotorHeating;   //0,1,2
-    unsigned char WindowHeater;   //0-15
-    unsigned char ADCSEL;
-}CCDREG;
-
+/**
+ * @brief QHYCAM class define
+ *
+ * include all functions for qhycam
+ */
 class QHYCAM
 {
 public:
-	QHYCAM(){};
-	~QHYCAM(){};
-        int openCamera(libusb_device *d,libusb_device_handle **h);
-
-        void closeCamera(libusb_device_handle *h);
-
-        void sendForceStop(qhyccd_handle *handle){};
-
-        int  sendInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data);      
-
-	int  vendTXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
-
-	int  vendRXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char* data, uint16_t length);
-
-        int  iTXD(qhyccd_handle *dev_handle,unsigned char *data, int length);
-
-        int  iRXD(qhyccd_handle *dev_handle,unsigned char *data, int length);
-	
-        int  vendTXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
-	
-        int  vendRXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
+	QHYCAM()
+    {
+        usbep = 0x82;
+        usbintwep = 0x01;
+        usbintrep = 0x81;
+    }
+	~QHYCAM()
+    {
         
-        int  readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,int p_size, int p_num, int* pos);
+    }
+    
+    /**
+     @fn int openCamera(qhyccd_deivce *d,qhyccd_handle **h)
+     @brief open the camera,open the device handle
+     @param d deivce deivce
+     @param h device control handle
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int openCamera(qhyccd_device *d,qhyccd_handle **h);
 
-        int  readUSB2BForQHY5IISeries(qhyccd_handle *dev_handle, unsigned char *data,int sizetoread,int exptime);
+    /**
+     @fn void closeCamera(qhyccd_device *h)
+     @brief close the camera,close the deivce handle
+     @param h deivce control handle
+     */
+    void closeCamera(qhyccd_handle *h);
+    
+    /**
+     @fn void sendForceStop(qhyccd_handle *h)
+     @brief force stop exposure
+     @param h device control handle
+     */
+    void sendForceStop(qhyccd_handle *handle){};
 
-	int  readUSB2(qhyccd_handle *dev_handle, unsigned char *data, int p_size, int p_num);
+    /**
+     @fn int sendInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data)
+     @brief send a package to deivce using the interrupt endpoint
+     @param handle device control handle
+     @param length the package size(unit:byte)
+     @param data package buffer
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int sendInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data);
 
-	int  readUSB2_OnePackage3(qhyccd_handle *dev_handle, unsigned char *data, int length);
+    /**
+     @fn int vendTXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char *data, uint16_t length)
+     @brief send a package to deivce using the vendor request
+     @param dev_handle device control handle
+     @param req request command
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+	int vendTXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char *data, uint16_t length);
 
-	int beginVideo(qhyccd_handle *handle);        
+    /**
+     @fn int vendRXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char *data, uint16_t length)
+     @brief get a package from deivce using the vendor request
+     @param dev_handle device control handle
+     @param req request command
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+	int vendRXD(qhyccd_handle *dev_handle, uint8_t req, unsigned char *data, uint16_t length);
+    
+    /**
+     @fn iTXD(qhyccd_handle *dev_handle,unsigned char *data, int length)
+     @brief send a package to deivce using the bulk endpoint
+     @param dev_handle device control handle
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int iTXD(qhyccd_handle *dev_handle,unsigned char *data, int length);
+    
+    /**
+     @fn iRXD(qhyccd_handle *dev_handle,unsigned char *data, int length)
+     @brief get a package from deivce using the bulk endpoint
+     @param dev_handle device control handle
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int iRXD(qhyccd_handle *dev_handle,unsigned char *data, int length);
+    
+    /**
+     @fn int vendTXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+     @brief send a package to deivce using the vendor request,extend the index and value interface
+     @param dev_handle device control handle
+     @param req request command
+     @param value value interface
+     @param index index interface
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int vendTXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
+    
+    /**
+     @fn int vendRXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length)
+     @brief get a package from deivce using the vendor request,extend the index and value interface
+     @param dev_handle device control handle
+     @param req request command
+     @param value value interface
+     @param index index interface
+     @param data package buffer
+     @param length the package size(unit:byte)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int vendRXD_Ex(qhyccd_handle *dev_handle, uint8_t req,uint16_t value,uint16_t index,unsigned char* data, uint16_t length);
+    
+    /**
+     @fn int readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,int p_size, int p_num, int* pos)
+     @brief get image packages from deivce using bulk endpoint
+     @param dev_handle device control handle
+     @param data package buffer
+     @param p_size package size
+     @param p_num package num
+     @param pos reserved
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,int p_size, int p_num, int* pos);
+    
+    /**
+     @fn int readUSB2BForQHY5IISeries(qhyccd_handle *dev_handle, unsigned char *data,int sizetoread,int exptime)
+     @brief get image packages from deivce using bulk endpoint,specify for QHY5II series
+     @param dev_handle device control handle
+     @param data package buffer
+     @param sizetoread total size to get
+     @param exptime the expose time
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int readUSB2BForQHY5IISeries(qhyccd_handle *dev_handle, unsigned char *data,int sizetoread,int exptime);
 
-        int sendRegisterQHYCCDOld(qhyccd_handle *handle,
+    /**
+     @fn int readUSB2(qhyccd_handle *dev_handle, unsigned char *data,int p_size, int p_num)
+     @brief get image packages from deivce using bulk endpoint
+     @param dev_handle device control handle
+     @param data package buffer
+     @param p_size package size
+     @param p_num package num
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+	int readUSB2(qhyccd_handle *dev_handle, unsigned char *data, int p_size, int p_num);
+
+    /**
+     @fn int readUSB2_OnePackage3(qhyccd_handle *dev_handle, unsigned char *data, int length)
+     @brief get one package from deivce using bulk endpoint
+     @param dev_handle device control handle
+     @param data package buffer
+     @param length package size
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+	int readUSB2_OnePackage3(qhyccd_handle *dev_handle, unsigned char *data, int length);
+
+    /**
+     @fn int beginVideo(qhyccd_handle *handle)
+     @brief send begin exposure signal to deivce
+     @param handle device control handle
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+	int beginVideo(qhyccd_handle *handle);
+    
+    /**
+     @fn int sendRegisterQHYCCDOld(qhyccd_handle *handle,
+     CCDREG reg, int P_Size, int *Total_P, int *PatchNumber)
+     @brief send register params to deivce and some other info
+     @param handle deivce control handle
+     @param reg register struct
+     @param P_Size the package size
+     @param Total_P the total packages
+     @param PatchNumber the patch for usb transfer,the total size must multiple 512 bytes.
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int sendRegisterQHYCCDOld(qhyccd_handle *handle,
                   CCDREG reg, int P_Size, int *Total_P, int *PatchNumber);
-
-        int sendRegisterQHYCCDNew(qhyccd_handle *handle, 
+    
+    /**
+     @fn int sendRegisterQHYCCDNew(qhyccd_handle *handle,
+     CCDREG reg, int P_Size, int *Total_P, int *PatchNumber)
+     @brief New interface!!! send register params to deivce and some other info
+     @param handle deivce control handle
+     @param reg register struct
+     @param P_Size the package size
+     @param Total_P the total packages
+     @param PatchNumber the patch for usb transfer,the total size must multiple 512 bytes.
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int sendRegisterQHYCCDNew(qhyccd_handle *handle,
                   CCDREG reg, int P_Size, int *Total_P, int *PatchNumber);
-                  
-        int setDC201FromInterrupt(qhyccd_handle *handle,unsigned char PWM,unsigned char FAN);
+    
+    /**
+     @fn int setDC201FromInterrupt(qhyccd_handle *handle,unsigned char PWM,unsigned char FAN)
+     @brief control the DC201 using the interrupt endpoint
+     @param handle deivce control handle
+     @param PWM cool power
+     @param FAN switch for camera's fan (NOT SUPPORT NOW)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int setDC201FromInterrupt(qhyccd_handle *handle,unsigned char PWM,unsigned char FAN);
+    
+    /**
+     @fn signed short getDC201FromInterrupt(qhyccd_handle *handle)
+     @brief get the temprature value from DC201 using the interrupt endpoint
+     @param handle deivce control handle
+     @return
+     success return  temprature value \n
+     another QHYCCD_ERROR code on other failures
+     */
+    signed short getDC201FromInterrupt(qhyccd_handle *handle);
+    
+    /**
+     @fn unsigned char getFromInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data)
+     @brief get some special information from deivce,using interrupt endpoint
+     @param handle deivce control handle
+     @param length package size
+     @param data package buffer
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    unsigned char getFromInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data);
+    
+    /**
+     @fn double GetCCDTemp(qhyccd_handle *handle)
+     @brief get ccd/cmos chip temperature
+     @param handle deivce control handle
+     @return
+     success return temperature \n
+     */
+    double GetCCDTemp(qhyccd_handle *handle);
+    
+    /**
+     @fn double RToDegree(double R)
+     @brief calc,transfer R to degree
+     @param R R
+     @return
+     success return degree
+     */
+    double RToDegree(double R);
+    
+    /**
+     @fn double mVToDegree(double V)
+     @brief calc,transfer mV to degree
+     @param V mv
+     @return
+     success return degree
+     */
+    double mVToDegree(double V);
+    
+    /**
+     @fn double DegreeTomV(double degree)
+     @brief calc,transfer degree to mv
+     @param degree degree
+     @return
+     success return mv
+     */
+    double DegreeTomV(double degree);
 
-        signed short getDC201FromInterrupt(qhyccd_handle *handle);
+    /**
+     @fn double DegreeToR(double degree)
+     @brief calc,transfer degree to R
+     @param degree degree
+     @return
+     success return R
+     */
+    double DegreeToR(double degree);
 
-        unsigned char getFromInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data);
-
-        double GetCCDTemp(qhyccd_handle *handle);
-
-        double RToDegree(double R);
-
-        double mVToDegree(double V);
-
-        double DegreeTomV(double degree);
-
-        double DegreeToR(double degree);
-
+    /**
+     @fn int I2CTwoWrite(qhyccd_handle *handle,uint16_t addr,unsigned short value)
+     @brief set param by I2C
+     @param handle device control handle
+     @param addr inter reg addr
+     @param value param value
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
 	int I2CTwoWrite(qhyccd_handle *handle,uint16_t addr,unsigned short value);
 
+    /**
+     @fn unsigned short I2CTwoRead(qhyccd_handle *handle,uint16_t addr)
+     @brief get param by I2C
+     @param handle device control handle
+     @param addr inter reg addr
+     @return
+     success return param value \n
+     another QHYCCD_ERROR code on other failures
+     */
 	unsigned short I2CTwoRead(qhyccd_handle *handle,uint16_t addr);
 
+    /**
+     @fn unsigned char MSB(unsigned short i)
+     @brief apart the 16 bits value to 8bits(high 8bits)
+     @param i 16bits value
+     @return
+     success return 8bits value(high 8bits) \n
+     another QHYCCD_ERROR code on other failures
+     */
 	unsigned char MSB(unsigned short i);
 
+    /**
+     @fn unsigned char LSB(unsigned short i)
+     @brief apart the 16 bits value to 8bits(low 8bits)
+     @param i 16bits value
+     @return
+     success return 8bits value(low 8bits) \n
+     another QHYCCD_ERROR code on other failures
+     */
 	unsigned char LSB(unsigned short i);
 
+    /**
+     @fn void SWIFT_MSBLSB(unsigned char * Data, int x, int y)
+     @brief to switch the every single 16bits pixel data,hign 8bits and low 8bits
+     @param Data 16bits image data buffer
+     @param x image width
+     @param y image height
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
 	void SWIFT_MSBLSB(unsigned char * Data, int x, int y);
 
-        CCDREG ccdreg;
+    CCDREG ccdreg; //!< ccd registers params
 
-        /* usb transfer endpoint */
-        int usbep;
-        /* usb transfer package size at onece */
-        int psize;
-        /* the number of usb transfer packages */
-        int totalp;
-        /* patch for image*/
-        int patchnumber;
+    int usbep;     //!< usb transfer endpoint
+
+    int usbintwep; //!< usb interrupt write endpoint
+    
+    int usbintrep; //!< usb interrupt read endpoint
+    
+    int psize;     //!< usb transfer package size at onece
+
+    int totalp;    //!< the total usb transfer packages
+
+    int patchnumber;//!< patch for image transfer packages 
 
 };
 
