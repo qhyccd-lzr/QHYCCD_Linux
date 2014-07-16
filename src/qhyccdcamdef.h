@@ -137,6 +137,10 @@
 #define DEVICETYPE_QHY5LII_COOL 58
 
 /**
+ * Type define for QHYXXX */
+#define DEVICETYPE_QHYXXX       59
+
+/**
  * Type define for QHY16000 */
 #define DEVICETYPE_Q16000       160
 

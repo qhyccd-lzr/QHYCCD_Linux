@@ -55,6 +55,7 @@
 #include "qhy5ii.h"
 #include "qhy5lii_m.h"
 #include "qhy8.h"
+#include "qhyxxx.h"
 
 /* 
   This is the maximum number of qhyccd cams.
@@ -87,21 +88,21 @@ struct cydev
 unsigned short camvid[MAXDEVICES] = 
 {
 	0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,
-    0x1618,0x1618,0x1618,0x1618,0X1618
+    0x1618,0x1618,0x1618,0x1618,0X1618,0x1618
 };
 
 /* Global struct for camera io product id */
 unsigned short campid[MAXDEVICES] =
 {
 	0x0921,0x8311,0x6741,0x6941,0x6005,0x1001,0x1201,0x8301,0x6003,
-    0x1101,0x8141,0x2851,0x025a,0x6001
+    0x1101,0x8141,0x2851,0x025a,0x6001,0x0941
 };
 
 /* Global struct for camera'firmware product id */
 unsigned short fpid[MAXDEVICES] =
 {
     0x0920,0x8310,0x6740,0x6940,0x6004,0x1000,0x1200,0x8300,0x6002,
-    0x1100,0x8140,0x2850,0x0259,0x6000
+    0x1100,0x8140,0x2850,0x0259,0x6000,0x0940
 };
 
 /* Global var for include vid,pid,qhybase clase... */
@@ -280,6 +281,10 @@ static int QHYCCDSeriesMatch(int index,qhyccd_handle *handle)
         {
             ret = DEVICETYPE_QHY8;
             break;
+        }
+        case 0x0941:
+        {
+            ret = DEVICETYPE_QHYXXX;
         }
         default:
         {
@@ -571,6 +576,20 @@ int InitQHYCCDClass(int camtype,int index)
             if(cydev[index].qcam != NULL)
             {
                 memcpy(cydev[index].id,"QHY8-C-",7);
+                ret = QHYCCD_SUCCESS;
+            }
+            else
+            {
+                ret = QHYCCD_ERROR_INITCLASS;
+            }
+            break;
+        }
+        case DEVICETYPE_QHYXXX:
+        {
+            cydev[index].qcam = new QHYXXX();
+            if(cydev[index].qcam != NULL)
+            {
+                memcpy(cydev[index].id,"QHYXXX-",7);
                 ret = QHYCCD_SUCCESS;
             }
             else
@@ -1444,6 +1463,11 @@ int OSXInitQHYCCDFiramware()
                 case 0x6000:
                 {
                     SetQHYCCDFirmware(h,"firmware/QHY8.HEX",1);
+                    break;
+                }
+                case 0x0940:
+                {
+                    SetQHYCCDFirmware(h,"firmware/QHYXXX.HEX",1);
                     break;
                 }
             }
