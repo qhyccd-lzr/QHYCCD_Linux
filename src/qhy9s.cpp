@@ -150,6 +150,18 @@ int QHY9S::InitChipRegs(qhyccd_handle *h)
 
     int ret = QHYCCD_ERROR;
     
+    ret = SetChipResolution(h,camx,camy);
+    if(ret != QHYCCD_SUCCESS)
+    {
+        return ret;
+    }
+    
+    ret = SetChipBinMode(h,camxbin,camybin);
+    if(ret != QHYCCD_SUCCESS)
+    {
+        return ret;
+    }
+    
     ret = SetChipSpeed(h,usbspeed);
     if(ret != QHYCCD_SUCCESS)
     {
@@ -174,18 +186,6 @@ int QHY9S::InitChipRegs(qhyccd_handle *h)
         return ret;
     } 
 
-    ret = SetChipResolution(h,camx,camy);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return ret;
-    }
-    
-    ret = SetChipBinMode(h,camxbin,camybin);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return ret;
-    }
-    
     return ret;
 }
 
@@ -344,8 +344,29 @@ double QHY9S::GetChipBitsMode()
 
 double QHY9S::GetChipCoolTemp(qhyccd_handle *h)
 {
+    /* Typically you wish to display temperature every second, along with
+       calling the TEC control routine, which also reads the current
+       temperature. As a result, my QHY9C with the firmware that comes with
+       this SDK tends to hang somewhere in the firmware and the temperature
+       readout will start oscillating between 24 deg and -19 or whatever was
+       the last temperature, causing the TEC routine to go a little crazy.
+       Furthermore, setting the TEC PWM has no effect and I've verified this
+       with my lab bench power supply - the current draw remained constant.
+
+       Because of all this, I'm disabling this readout here, and instead
+       we're simply going to return the last value that was read by the TEC
+       control routine. The side-effect is that, depending on when you call
+       this function (before or after the TEC routine), you may get the
+       temperature from last second. That being said, the TEC routine will use
+       an up to date, just read temperature.
+
+       N.B. This seems to be the idea with the GetChipCoolPWM() below as well,
+       but my guess is that this allows you to read temperature without using
+       the TEC routine... But why wouldn't you use the TEC on this camera?
+
     nowVoltage = 1.024 * (float)getDC201FromInterrupt(h); // mV
     currentTEMP = mVToDegree(nowVoltage);
+    */
     
     return currentTEMP;
 }
@@ -456,7 +477,7 @@ int QHY9S::InitBIN44Mode()
 
 int QHY9S::SetChipResolution(qhyccd_handle *h,int x,int y)
 {
-    int ret = QHYCCD_ERROR_NOTSUPPORT;
+    int ret = QHYCCD_SUCCESS;
 
     roixstart = 0;
     roiystart = 0;
