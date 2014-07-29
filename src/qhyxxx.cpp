@@ -33,7 +33,7 @@
 QHYXXX::QHYXXX()
 {
     /* init the tmp buffer for usb transfer */
-    rawarray = new unsigned char[1280*960*4];
+    rawarray = new unsigned char[1280*960*2];
     
     /* data endpoint */
     usbep = 0x82;
@@ -64,6 +64,7 @@ QHYXXX::QHYXXX()
     camgain = 0.1;
     camblue = 0.01;
     camgreen = 0.01;
+    
 }
 
 QHYXXX::~QHYXXX()
@@ -91,12 +92,6 @@ int QHYXXX::ConnectCamera(libusb_device *d,qhyccd_handle **h)
 
 int QHYXXX::DisConnectCamera(qhyccd_handle *h)
 {
-    if(monoimg)
-    {
-        cvReleaseImage(&monoimg);
-        monoimg = NULL;
-    }
-
     InitCmos(h);
     closeCamera(h);
     return QHYCCD_SUCCESS;
@@ -128,19 +123,7 @@ int QHYXXX::ReSetParams2cam(qhyccd_handle *h)
     if(ret != QHYCCD_SUCCESS)
     {
         return ret;
-    }  
- 
-    ret = SetChipWBRed(h,camred);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETRED;
-    } 
-
-    ret = SetChipWBBlue(h,camblue);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETBLUE;
-    } 
+    }
 
     return ret;
 }
@@ -148,7 +131,7 @@ int QHYXXX::ReSetParams2cam(qhyccd_handle *h)
 int QHYXXX::InitChipRegs(qhyccd_handle *h)
 {
     int ret = QHYCCD_ERROR;
-    
+
     ret = SetChipResolution(h,camx,camy);
     if(ret != QHYCCD_SUCCESS)
     {
@@ -177,19 +160,8 @@ int QHYXXX::InitChipRegs(qhyccd_handle *h)
     if(ret != QHYCCD_SUCCESS)
     {
         return ret;
-    }  
+    }
  
-    ret = SetChipWBRed(h,camred);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETRED;
-    } 
-
-    ret = SetChipWBBlue(h,camblue);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETBLUE;
-    } 
     return QHYCCD_SUCCESS;
 }
 
@@ -240,6 +212,12 @@ int QHYXXX::IsColorCam()
 int QHYXXX::IsCoolCam()
 {
     return QHYCCD_NOTCOOL;
+}
+
+double QHYXXX::GetChipCoolTemp(qhyccd_handle *h)
+{
+    currentTEMP = GetCCDTemp(h);
+    return currentTEMP;
 }
 
 int QHYXXX::GetControlMinMaxStepValue(CONTROL_ID controlId,double *min,double *max,double *step)
@@ -742,17 +720,6 @@ int QHYXXX::SetChipResolution(qhyccd_handle *h,int x,int y)
     int ret;
     int xstart;
     int ystart;
-    
-    if(monoimg)
-    {
-        cvReleaseImage(&monoimg);
-        monoimg = NULL;
-    }
-
-    if(colorimg)
-    {
-        cvReleaseImage(&colorimg);
-    }
 
     if(x == 1280 && y == 960)
     {
@@ -809,29 +776,6 @@ int QHYXXX::SetChipResolution(qhyccd_handle *h,int x,int y)
     roiysize = camy;  
     psize= camx * camy;
     totalp = 1;
-    
-    if(monoimg == NULL)
-    {
-        monoimg = cvCreateImage(cvSize(roixsize,roiysize),cambits,1);
-        monoimg->imageData = (char *)rawarray;
-        if(monoimg == NULL)
-        {
-            monoimg = NULL;
-            ret =  QHYCCD_ERROR_RESOLUTION;
-            return ret;
-        }
-    }
-
-    if(colorimg == NULL)
-    {
-        colorimg = cvCreateImage(cvSize(roixsize,roiysize),cambits,3);
-        if(colorimg == NULL)
-        {
-            colorimg = NULL;
-            ret =  QHYCCD_ERROR_RESOLUTION;
-            return ret;
-        }
-    }
 
     ret = ReSetParams2cam(h);
     
@@ -889,12 +833,8 @@ int QHYXXX::GetSingleFrame(qhyccd_handle *h,int *pW,int *pH,int * pBpp,int *pCha
     ret = readUSB2BForQHY5IISeries(h,rawarray,psize * totalp,exptime);
     if(ret == QHYCCD_SUCCESS)
     {
-        if(*pChannels == 3)
-        {
-            cvCvtColor(monoimg,colorimg,CV_BayerGR2RGB);
-        }
 
-        memcpy(ImgData,colorimg->imageData,colorimg->imageSize);
+        memcpy(ImgData,rawarray,psize * totalp);
     }
     return ret;  
 }
@@ -930,12 +870,7 @@ int QHYXXX::GetLiveFrame(qhyccd_handle *h,int *pW,int *pH,int * pBpp,int *pChann
         ret = readUSB2BForQHY5IISeries(h,rawarray,psize * totalp,exptime);
         if(ret == QHYCCD_SUCCESS)
         {
-            if(*pChannels == 3)
-            {
-                cvCvtColor(monoimg,colorimg,CV_BayerGR2RGB);
-                memcpy(ImgData,colorimg->imageData,colorimg->imageSize);
-            }
-            memcpy(ImgData,monoimg->imageData,monoimg->imageSize);
+            memcpy(ImgData,rawarray,psize * totalp);
         }
         else if(ret == QHYCCD_ERROR_EVTUSB)
         {
@@ -1012,6 +947,34 @@ int QHYXXX::SetChipBitsMode(qhyccd_handle *h,int bits)
 int QHYXXX::SetChipBinMode(qhyccd_handle *h,int wbin,int hbin)
 {
     return QHYCCD_SUCCESS;
+}
+
+int QHYXXX::SetChipCoolPWM(qhyccd_handle *h,double PWM)
+{
+    int ret = QHYCCD_ERROR;
+    
+    currentPWM = PWM;
+    ret = setDC201FromInterrupt(h, (unsigned char)PWM, 255);
+    
+    return ret;
+}
+
+int QHYXXX::Send2CFWPort(qhyccd_handle *h,int pos)
+{
+    int ret;
+    unsigned char buf[2];
+    
+    if(pos >= '0' && pos <= '8')
+    {
+        buf[0] = pos;
+        ret = vendTXD(h,0xd0,buf,1);
+        if(ret == 1)
+        {
+            return QHYCCD_SUCCESS;
+        }
+    }
+    
+    return QHYCCD_ERROR;
 }
 
 int QHYXXX::Send2GuiderPort(qhyccd_handle *h,unsigned char Direction,unsigned short PulseTime)

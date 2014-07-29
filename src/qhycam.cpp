@@ -379,7 +379,6 @@ int QHYCAM::readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,
                                            buf, p_size,
                                            &length_transfered,0);
                 if (ret < 0) {
-                        printf("%d\n",ret);
                         free(buf);
                         return ret;
                 }
@@ -492,12 +491,11 @@ int QHYCAM::setDC201FromInterrupt(qhyccd_handle *handle,unsigned char PWM,unsign
 
 signed short QHYCAM::getDC201FromInterrupt(qhyccd_handle *handle)
 {
-	unsigned char Buffer[4];
+	unsigned char Buffer[64];
 	signed short x;
 	
 	getFromInterrupt(handle,4,Buffer);
 	x = Buffer[1]*256+Buffer[2];
-       
 	return x;
 }
 int  QHYCAM::sendInterrupt(qhyccd_handle *handle,unsigned char length,unsigned char *data)
@@ -537,8 +535,8 @@ double QHYCAM::RToDegree(double R)
 	double 	T;
 	double LNR;
 	
-	if (R>400) R=400;
-	if (R<1) R=1;
+	if(R > 400) R=400;
+	if(R < 1) R=1;
 	
 	LNR=log(R);
 	T=1 / (0.002679+0.000291*LNR + LNR*LNR*LNR*4.28e-7);
@@ -562,7 +560,7 @@ double QHYCAM::mVToDegree(double V)
 	double R;
 	double T;
 
-	R=33/(V/1000+1.625)-10;
+	R = 33 / (V / 1000+1.625) - 10;
         
 	T=RToDegree(R);
 

@@ -398,6 +398,17 @@ public:
     int SetChipUSBTraffic(qhyccd_handle *h,int i);
     
     /**
+     @fn int SetChipCoolPWM(qhyccd_handle *h,double PWM)
+     @brief set cool power
+     @param h camera control handle
+     @param PWM power(0-255)
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int SetChipCoolPWM(qhyccd_handle *h,double PWM);
+    
+    /**
      @fn int Send2GuiderPort(qhyccd_handle *h,unsigned char Direction,unsigned short PulseTime)
      @brief send the command to camera's guide port
      @param h camera control handle
@@ -410,6 +421,16 @@ public:
     int Send2GuiderPort(qhyccd_handle *h,unsigned char Direction,unsigned short PulseTime);
     
     /**
+     @fn int Send2CFWPort(qhyccd_handle *h,int pos)
+     @brief send the command to camera's color filter wheel port
+     @param h camera control handle
+     @param pos the color filter position
+     @return
+     success return QHYCCD_SUCCESS \n
+     another QHYCCD_ERROR code on other failures
+     */
+    int Send2CFWPort(qhyccd_handle *h,int pos);
+    /**
      @fn int SetPll(qhyccd_handle *h,unsigned char clk)
      @brief set the cmos inter pll
      @param h camera control handle
@@ -419,6 +440,16 @@ public:
      another QHYCCD_ERROR code on other failures
      */
     int SetPll(qhyccd_handle *h,unsigned char clk);
+    
+    
+    /**
+     @fn double GetChipCoolTemp()
+     @brief get the current ccd/cmos chip temprature
+     @return
+     success return the current chip temprature \n
+     another QHYCCD_ERROR code on other failures
+     */
+    double GetChipCoolTemp(qhyccd_handle *h);
     
     /**
      @fn void SWIFT_MSBLSB(unsigned char *ImgData)

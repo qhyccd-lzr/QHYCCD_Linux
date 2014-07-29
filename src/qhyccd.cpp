@@ -87,22 +87,22 @@ struct cydev
 /* Global struct for camera's vendor id */
 unsigned short camvid[MAXDEVICES] = 
 {
-	0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,
+    0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,0x1618,
     0x1618,0x1618,0x1618,0x1618,0X1618,0x1618
 };
 
 /* Global struct for camera io product id */
 unsigned short campid[MAXDEVICES] =
 {
-	0x0921,0x8311,0x6741,0x6941,0x6005,0x1001,0x1201,0x8301,0x6003,
-    0x1101,0x8141,0x2851,0x025a,0x6001,0x0941
+    0x0921,0x8311,0x6741,0x6941,0x6005,0x1001,0x1201,0x8301,0x6003,
+    0x1101,0x8141,0x2851,0x025a,0x6001,0x0931
 };
 
 /* Global struct for camera'firmware product id */
 unsigned short fpid[MAXDEVICES] =
 {
     0x0920,0x8310,0x6740,0x6940,0x6004,0x1000,0x1200,0x8300,0x6002,
-    0x1100,0x8140,0x2850,0x0259,0x6000,0x0940
+    0x1100,0x8140,0x2850,0x0259,0x6000,0x0930
 };
 
 /* Global var for include vid,pid,qhybase clase... */
@@ -282,9 +282,10 @@ static int QHYCCDSeriesMatch(int index,qhyccd_handle *handle)
             ret = DEVICETYPE_QHY8;
             break;
         }
-        case 0x0941:
+        case 0x0931:
         {
             ret = DEVICETYPE_QHYXXX;
+            break;
         }
         default:
         {
@@ -600,7 +601,7 @@ int InitQHYCCDClass(int camtype,int index)
         }
         default:
         {
-            fprintf(stderr,"The camtype is not correct\n");
+            fprintf(stderr,"The camtype %d is not correct\n",camtype);
             ret = QHYCCD_ERROR_NOTSUPPORT;
         }
     }
@@ -879,7 +880,7 @@ int SetQHYCCDParam(qhyccd_handle *handle,CONTROL_ID controlId, double value)
 double GetQHYCCDParam(qhyccd_handle *handle,CONTROL_ID controlId)
 {
     int index = QHYCCD_ERROR_INDEX;
-    int ret = QHYCCD_ERROR;
+    double ret = QHYCCD_ERROR;
 
     index = qhyccd_handle2index(handle);
 
@@ -1382,7 +1383,7 @@ LoadRam:
 	return 0;
 }
 
-int OSXInitQHYCCDFiramware()
+int OSXInitQHYCCDFirmware()
 {
     int ret = QHYCCD_ERROR;
     int i;
@@ -1390,7 +1391,7 @@ int OSXInitQHYCCDFiramware()
     
     libusb_init(NULL);
     
-    for(i = 0;i < 12;i++)
+    for(i = 0;i < 20;i++)
     {
         h = libusb_open_device_with_vid_pid(NULL,camvid[i],fpid[i]);
     
@@ -1465,7 +1466,7 @@ int OSXInitQHYCCDFiramware()
                     SetQHYCCDFirmware(h,"firmware/QHY8.HEX",1);
                     break;
                 }
-                case 0x0940:
+                case 0x0930:
                 {
                     SetQHYCCDFirmware(h,"firmware/QHYXXX.HEX",1);
                     break;

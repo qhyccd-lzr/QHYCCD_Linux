@@ -349,10 +349,10 @@ void Bits16ToBits8(qhyccd_handle *h,unsigned char *InputData16,unsigned char *Ou
 void HistInfo192x130(qhyccd_handle *h,int x,int y,unsigned char *InBuf,unsigned char *OutBuf);
 
 /** 
-    @fn int OSXInitQHYCCDFiramware()
+    @fn int OSXInitQHYCCDFirmware()
     @brief download the firmware to camera.(this api just need call in OSX system)
  */
-int OSXInitQHYCCDFiramware();
+int OSXInitQHYCCDFirmware();
 
 //struct CAMPARA *GetCamStruct();
 
