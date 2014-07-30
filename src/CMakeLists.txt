@@ -36,6 +36,7 @@ set(QHYCCD_SRC
    qhy5lii_m.cpp
    qhy8.cpp
    qhyxxx.cpp
+   simu.cpp
    )
 
 set(QHYCCD_INCLUDE
