@@ -290,7 +290,7 @@ static int QHYCCDSeriesMatch(int index,qhyccd_handle *handle)
         }
         case 0xffff:
         {
-            ret = DEVICETYPE_SIMULATOR
+            ret = DEVICETYPE_SIMULATOR;
             break;
         }
         default:
@@ -681,7 +681,7 @@ int ScanQHYCCD(void)
 	       GetIdFromCam(handle,cydev[nid].id);
 
 	       libusb_close(handle);
-           cydev[nid].handle = NULL;
+               cydev[nid].handle = NULL;
 	       cydev[nid].is_open = 0;
 	       ++nid;
 	    }

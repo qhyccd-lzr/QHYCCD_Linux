@@ -169,6 +169,10 @@
 #define DEVICETYPE_SOLAR800G    9001
 
 /**
+ * Type define for SIMULOTOR */
+#define DEVICETYPE_SIMULATOR    0xffff
+
+/**
  * Type define for UNKNOW */
 #define DEVICETYPE_UNKNOW       -1
 

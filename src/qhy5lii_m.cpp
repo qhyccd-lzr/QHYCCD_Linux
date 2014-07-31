@@ -33,7 +33,7 @@
 QHY5LII_M::QHY5LII_M()
 {
     /* init the tmp buffer for usb transfer */
-    rawarray = new unsigned char[1280*960*4];
+    rawarray = new unsigned char[1280*960*2];
     
     /* data endpoint */
     usbep = 0x82;
@@ -52,7 +52,7 @@ QHY5LII_M::QHY5LII_M()
     camchannels = 1;
 
     /* init usb traffic */
-    usbtraffic = 100;
+    usbtraffic = 200;
 
     /* init usb speed */
     usbspeed = 0;
@@ -91,12 +91,6 @@ int QHY5LII_M::ConnectCamera(libusb_device *d,qhyccd_handle **h)
 
 int QHY5LII_M::DisConnectCamera(qhyccd_handle *h)
 {
-    if(monoimg)
-    {
-        cvReleaseImage(&monoimg);
-        monoimg = NULL;
-    }
-
     InitCmos(h);
     closeCamera(h);
     return QHYCCD_SUCCESS;
@@ -130,18 +124,6 @@ int QHY5LII_M::ReSetParams2cam(qhyccd_handle *h)
         return ret;
     }  
  
-    ret = SetChipWBRed(h,camred);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETRED;
-    } 
-
-    ret = SetChipWBBlue(h,camblue);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETBLUE;
-    } 
-
     return ret;
 }
 
@@ -179,17 +161,6 @@ int QHY5LII_M::InitChipRegs(qhyccd_handle *h)
         return ret;
     }  
  
-    ret = SetChipWBRed(h,camred);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETRED;
-    } 
-
-    ret = SetChipWBBlue(h,camblue);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return QHYCCD_ERROR_SETBLUE;
-    } 
     return QHYCCD_SUCCESS;
 }
 
@@ -742,17 +713,6 @@ int QHY5LII_M::SetChipResolution(qhyccd_handle *h,int x,int y)
     int ret;
     int xstart;
     int ystart;
-    
-    if(monoimg)
-    {
-        cvReleaseImage(&monoimg);
-        monoimg = NULL;
-    }
-
-    if(colorimg)
-    {
-        cvReleaseImage(&colorimg);
-    }
 
     if(x == 1280 && y == 960)
     {
@@ -810,29 +770,6 @@ int QHY5LII_M::SetChipResolution(qhyccd_handle *h,int x,int y)
     psize= camx * camy;
     totalp = 1;
     
-    if(monoimg == NULL)
-    {
-        monoimg = cvCreateImage(cvSize(roixsize,roiysize),cambits,1);
-        monoimg->imageData = (char *)rawarray;
-        if(monoimg == NULL)
-        {
-            monoimg = NULL;
-            ret =  QHYCCD_ERROR_RESOLUTION;
-            return ret;
-        }
-    }
-
-    if(colorimg == NULL)
-    {
-        colorimg = cvCreateImage(cvSize(roixsize,roiysize),cambits,3);
-        if(colorimg == NULL)
-        {
-            colorimg = NULL;
-            ret =  QHYCCD_ERROR_RESOLUTION;
-            return ret;
-        }
-    }
-
     ret = ReSetParams2cam(h);
     
     return ret;
@@ -889,12 +826,7 @@ int QHY5LII_M::GetSingleFrame(qhyccd_handle *h,int *pW,int *pH,int * pBpp,int *p
     ret = readUSB2BForQHY5IISeries(h,rawarray,psize * totalp,exptime);
     if(ret == QHYCCD_SUCCESS)
     {
-        if(*pChannels == 3)
-        {
-            cvCvtColor(monoimg,colorimg,CV_BayerGR2RGB);
-        }
-
-        memcpy(ImgData,colorimg->imageData,colorimg->imageSize);
+        memcpy(ImgData,rawarray,psize * totalp);
     }
     return ret;  
 }
@@ -930,12 +862,7 @@ int QHY5LII_M::GetLiveFrame(qhyccd_handle *h,int *pW,int *pH,int * pBpp,int *pCh
         ret = readUSB2BForQHY5IISeries(h,rawarray,psize * totalp,exptime);
         if(ret == QHYCCD_SUCCESS)
         {
-            if(*pChannels == 3)
-            {
-                cvCvtColor(monoimg,colorimg,CV_BayerGR2RGB);
-                memcpy(ImgData,colorimg->imageData,colorimg->imageSize);
-            }
-            memcpy(ImgData,monoimg->imageData,monoimg->imageSize);
+            memcpy(ImgData,rawarray,psize * totalp);
         }
         else if(ret == QHYCCD_ERROR_EVTUSB)
         {
