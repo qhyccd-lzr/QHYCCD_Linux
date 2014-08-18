@@ -388,7 +388,7 @@ int QHYCAM::readUSB2B(qhyccd_handle *dev_handle, unsigned char *data,
         }
        
         free(buf);
-        return length_total;
+        return ret;
 }
 
 int QHYCAM::readUSB2BForQHY5IISeries(qhyccd_handle *dev_handle, unsigned char *data,int sizetoread,int exptime)

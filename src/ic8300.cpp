@@ -172,13 +172,7 @@ int IC8300::InitChipRegs(qhyccd_handle *h)
     {
         return ret;
     } 
-
-    ret = SetChipResolution(h,camx,camy);
-    if(ret != QHYCCD_SUCCESS)
-    {
-        return ret;
-    }
-    
+ 
     ret = SetChipBinMode(h,camxbin,camybin);
     if(ret != QHYCCD_SUCCESS)
     {
@@ -471,22 +465,24 @@ int IC8300::GetSingleFrame(qhyccd_handle *h,int *pW,int *pH,int * pBpp,int *pCha
     *pChannels = camchannels;
 
     ret = readUSB2B(h,rawarray,psize,totalp,&patchnumber); 
-
-    if(camxbin == 1 && camybin == 1)
+    if(ret == LIBUSB_SUCCESS)
     {
-	ConvertDataBIN11(rawarray,camx,camy,ccdreg.TopSkipPix);
-    }
-    else if(camxbin == 2 && camybin == 2)
-    {
-	ConvertDataBIN22(rawarray,camx,camy,ccdreg.TopSkipPix);
-    }
-    else if(camxbin == 4 && camybin == 4)
-    {
-	ConvertDataBIN44(rawarray,camx,camy,ccdreg.TopSkipPix);
-    }
+        if(camxbin == 1 && camybin == 1)
+        {
+	    ConvertDataBIN11(rawarray,camx,camy,ccdreg.TopSkipPix);
+        }
+        else if(camxbin == 2 && camybin == 2)
+        {
+	    ConvertDataBIN22(rawarray,camx,camy,ccdreg.TopSkipPix);
+        }
+        else if(camxbin == 4 && camybin == 4)
+        {
+	    ConvertDataBIN44(rawarray,camx,camy,ccdreg.TopSkipPix);
+        }
     
-    memcpy(ImgData,rawarray,camx*camy*cambits*camchannels/8);
-
+        memcpy(ImgData,rawarray,camx*camy*cambits*camchannels/8);
+        ret = QHYCCD_SUCCESS;
+    }
     return ret;  
 }
 
