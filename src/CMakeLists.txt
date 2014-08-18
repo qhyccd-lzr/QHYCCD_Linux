@@ -56,6 +56,7 @@ target_link_libraries(qhyccd ${OpenCV_LIBRARIES} ${LIBUSB_1_LIBRARIES})
 install(TARGETS qhyccd LIBRARY DESTINATION lib)
 
 if(${CMAKE_SYSTEM_NAME} MATCHES "Linux")
+  configure_file(${PROJECT_SOURCE_DIR}/85-qhyccdtemplete.rules ${PROJECT_SOURCE_DIR}/85-qhyccd.rules @ONLY)
   install (FILES ${PROJECT_SOURCE_DIR}/85-qhyccd.rules DESTINATION ${UDEVRULES_INSTALL_DIR})
 endif ()
 
