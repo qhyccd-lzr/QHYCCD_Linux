@@ -417,7 +417,7 @@ int IC8300::InitBIN44Mode()
     ccdreg.LineSize = 1792;
     ccdreg.VerticalSize = 644;
     ccdreg.TopSkipPix = 0;
-    psize = 1024;
+    psize = 1792 * 644;
     camxbin = 4;
     camybin = 4;
     camx = 896;
