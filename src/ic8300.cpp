@@ -189,40 +189,13 @@ int IC8300::IsChipHasFunction(CONTROL_ID controlId)
     switch(controlId)
     {
         case CONTROL_OFFSET:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CONTROL_EXPOSURE:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CONTROL_GAIN:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CONTROL_SPEED:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CONTROL_CFWPORT:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
+        case CONTROL_COOLER:
         case CAM_BIN1X1MODE:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CAM_BIN2X2MODE:
-        {
-            ret = QHYCCD_SUCCESS;
-            break;
-        }
         case CAM_BIN4X4MODE:
         {
             ret = QHYCCD_SUCCESS;
@@ -647,6 +620,19 @@ void IC8300::ConvertDataBIN44(unsigned char * Data,int x, int y, unsigned short 
 
     memcpy(Data,Buf,x*y*2);
     free(Buf);
+}
+
+int IC8300::GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+{
+    *chipw = 17.96;
+    *chiph = 13.52;
+    *imagew = 3584;
+    *imageh = 2574;
+    *pixelw = 5.4;
+    *pixelh = 5.4;
+    *bpp = 16;
+
+    return QHYCCD_SUCCESS;
 }
 
 

@@ -436,6 +436,20 @@ public:
      @param PixShift this is a way to fix the bad pixel data by the usb transfer
      */
     void ConvertDataBIN44(unsigned char * Data,int x, int y, unsigned short PixShift);
+
+    /** @fn int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh)
+      @brief get the camera's ccd/cmos chip info
+      @param h camera control handle
+      @param chipw chip size width
+      @param chiph chip size height
+      @param imagew chip output image width
+      @param imageh chip output image height
+      @param pixelw chip pixel size width
+      @param pixelh chip pixel size height
+      @param bpp chip pixel depth
+    */
+    int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp);
+
 };
 #endif
 

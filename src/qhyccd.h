@@ -354,10 +354,19 @@ void HistInfo192x130(qhyccd_handle *h,int x,int y,unsigned char *InBuf,unsigned 
  */
 int OSXInitQHYCCDFirmware();
 
-//struct CAMPARA *GetCamStruct();
 
-//struct BINRESOLUTION *SupportBIN(int bin);
-
+/** @fn int GetQHYCCDChipInfo(qhyccd_handle *h,double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+      @brief get the camera's ccd/cmos chip info
+      @param h camera control handle
+      @param chipw chip size width
+      @param chiph chip size height
+      @param imagew chip output image width
+      @param imageh chip output image height
+      @param pixelw chip pixel size width
+      @param pixelh chip pixel size height
+      @param bpp chip pixel depth
+  */
+int GetQHYCCDChipInfo(qhyccd_handle *h,double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp);
 
 
 

@@ -1501,3 +1501,21 @@ int OSXInitQHYCCDFirmware()
     libusb_exit(NULL);
     return ret;
 }
+
+int GetQHYCCDChipInfo(qhyccd_handle *h,double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+{
+    int index = QHYCCD_ERROR_INDEX;
+    int ret = QHYCCD_ERROR;
+
+    index = qhyccd_handle2index(h);
+
+    if(index != QHYCCD_ERROR_INDEX)
+    {
+        if(cydev[index].is_open)
+        {
+            ret = cydev[index].qcam->GetChipInfo(chipw,chiph,imagew,imageh,pixelw,pixelh,bpp);
+        }
+    }
+
+    return ret;
+}

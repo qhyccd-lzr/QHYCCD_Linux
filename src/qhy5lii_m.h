@@ -426,6 +426,26 @@ public:
      @param ImgData image buffer
      */
     void SWIFT_MSBLSB(unsigned char *ImgData);
+
+    /**
+     @fn void SetGainMonoQHY5LII(double gain)
+     @brief set gain to camera,here it is the bottom
+     @param gain gain value
+     */
+    void SetGainMonoQHY5LII(qhyccd_handle *h,double gain);
+
+    /** @fn int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh)
+      @brief get the camera's ccd/cmos chip info
+      @param h camera control handle
+      @param chipw chip size width
+      @param chiph chip size height
+      @param imagew chip output image width
+      @param imageh chip output image height
+      @param pixelw chip pixel size width
+      @param pixelh chip pixel size height
+      @param bpp chip pixel depth
+    */
+    int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp);
     
 private:
     int expmode;  //!< expose time mode

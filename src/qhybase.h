@@ -721,7 +721,24 @@ public:
     {
         return QHYCCD_ERROR;
     }
+
+    /** @fn virtual int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh)
+      @brief get the camera's ccd/cmos chip info
+      @param h camera control handle
+      @param chipw chip size width
+      @param chiph chip size height
+      @param imagew chip output image width
+      @param imageh chip output image height
+      @param pixelw chip pixel size width
+      @param pixelh chip pixel size height
+      @param bpp chip pixel depth
+    */
+    virtual int GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+    {
+        return QHYCCD_ERROR;
+    }
     
+
 public:
     
     /**
@@ -753,6 +770,8 @@ public:
      @param OutBuf for 192x130 8bits 3 channels image
      */
     void HistInfo(int x,int y,unsigned char *InBuf,unsigned char *OutBuf);
+
+
     
     int camx;        //!< current camera width
     int camy;        //!< current camera height

@@ -117,6 +117,8 @@ enum CONTROL_ID
     CONTROL_CURPWM,         /* current cool pwm */
     CONTROL_MANULPWM,       /* set the cool pwm */
     CONTROL_CFWPORT,        /* control camera color filter wheel port */
+    CONTROL_COOLER,
+    CONTROL_ST4PORT,
     CAM_BIN1X1MODE,         /* check if camera has bin1x1 mode */
     CAM_BIN2X2MODE,         /* check if camera has bin2x2 mode */
     CAM_BIN3X3MODE,         /* check if camera has bin3x3 mode */

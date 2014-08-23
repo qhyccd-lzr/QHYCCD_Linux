@@ -60,10 +60,8 @@ QHY5LII_M::QHY5LII_M()
     /* init exposetime */
     camtime = 20000;
 
-    /* init white blance */
-    camgain = 0.1;
-    camblue = 0.01;
-    camgreen = 0.01;
+    /* init cam gain */
+    camgain = 10;
 }
 
 QHY5LII_M::~QHY5LII_M()
@@ -221,21 +219,32 @@ int QHY5LII_M::GetControlMinMaxStepValue(CONTROL_ID controlId,double *min,double
     {
         case CONTROL_EXPOSURE:
         {
+            *min = 1;
+            *max = 10 * 60 * 1000 * 1000;               
             ret = QHYCCD_SUCCESS;
             break;
         }
         case CONTROL_GAIN:
         {
+            *min = 0;
+            *max = 100;
+            *step = 1;
             ret = QHYCCD_SUCCESS;
             break;
         }
         case CONTROL_SPEED:
         {
+            *min = 0;
+            *max = 2;
+            *step = 1;
             ret = QHYCCD_SUCCESS;
             break;
        }
        case CONTROL_USBTRAFFIC:
        {
+            *min = 0;
+            *max = 255;
+            *step = 1;
             ret = QHYCCD_SUCCESS;
             break;
        }  
@@ -288,6 +297,8 @@ int QHY5LII_M::SetChipGain(qhyccd_handle *h,double gain)
 
     camgain = gain;
     
+    SetGainMonoQHY5LII(h,gain);
+
     return QHYCCD_SUCCESS;
 }
 
@@ -1409,5 +1420,133 @@ void QHY5LII_M::SWIFT_MSBLSB(unsigned char *ImgData)
     }
 }
 
+void QHY5LII_M::SetGainMonoQHY5LII(qhyccd_handle *h,double gain)
+{
+	// gain input range 0-100  输入范围已经归一化到0-1000
+
+	int Gain_Min, Gain_Max;
+
+	Gain_Min = 0;
+	Gain_Max = 398;
+
+	gain = (Gain_Max - Gain_Min) * gain / 100;
+
+	unsigned short REG30B0;
+
+	//if (QCam5LII.CheckBoxQHY5LIILoneExpMode)
+	//	REG30B0 = 0X5330;
+	//else
+		REG30B0 = 0X1330;
+
+	unsigned short baseDGain;
+
+	double C[8] = {10, 8, 5, 4, 2.5, 2, 1.25, 1};
+	double S[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	int A[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+	int B[8] = {0, 0, 0, 0, 0, 0, 0, 0};
+
+	double Error[8];
+
+        int i;
+	for (i = 0; i < 8; i++) 
+        {
+		S[i] = gain / C[i];
+		A[i] = (int)(S[i]);
+		B[i] = (int)((S[i] - A[i]) / 0.03125);
+		if (A[i] > 7)
+			A[i] = 10000; // 限制A的范围在1-3
+		if (A[i] == 0)
+			A[i] = 10000; // 限制A的范围在1-3
+		Error[i] = fabs(((double)(A[i])+(double)(B[i]) * 0.03125) * C[i] - gain);
+	}
+
+	double minValue;
+	int minValuePosition;
+
+	minValue = Error[0];
+	minValuePosition = 0;
+
+	for (i = 0; i < 8; i++) {
+
+		if (minValue > Error[i]) {
+			minValue = Error[i];
+			minValuePosition = i;
+		}
+	}
+	// Form1->Edit6->Text=Form1->Edit6->Text+"minPosition="+AnsiString(minValuePosition)+"minValue="+minValue;
+	int AA, BB, CC;
+	double DD;
+	double EE;
+
+	AA = A[minValuePosition];
+	BB = B[minValuePosition];
+	if (minValuePosition == 0) {
+		CC = 8;
+		DD = 1.25;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x30);
+		I2CTwoWrite(h,0x3EE4, 0XD308);
+	}
+	if (minValuePosition == 1) {
+		CC = 8;
+		DD = 1;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x30);
+		I2CTwoWrite(h,0x3EE4, 0XD208);
+	}
+	if (minValuePosition == 2) {
+		CC = 4;
+		DD = 1.25;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x20);
+		I2CTwoWrite(h,0x3EE4, 0XD308);
+	}
+	if (minValuePosition == 3) {
+		CC = 4;
+		DD = 1;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x20);
+		I2CTwoWrite(h,0x3EE4, 0XD208);
+	}
+	if (minValuePosition == 4) {
+		CC = 2;
+		DD = 1.25;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x10);
+		I2CTwoWrite(h,0x3EE4, 0XD308);
+	}
+	if (minValuePosition == 5) {
+		CC = 2;
+		DD = 1;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x10);
+		I2CTwoWrite(h,0x3EE4, 0XD208);
+	}
+	if (minValuePosition == 6) {
+		CC = 1;
+		DD = 1.25;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x00);
+		I2CTwoWrite(h,0x3EE4, 0XD308);
+	}
+	if (minValuePosition == 7) {
+		CC = 1;
+		DD = 1;
+		I2CTwoWrite(h,0x30B0, (REG30B0 &~0x0030) + 0x00);
+		I2CTwoWrite(h,0x3EE4, 0XD208);
+	}
+
+	EE = fabs(((double)(AA)+(double)(BB) * 0.03125) * CC * DD - gain);
+
+	baseDGain = BB + AA * 32;
+	I2CTwoWrite(h,0x305E, baseDGain);
+
+}
+
+int QHY5LII_M::GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+{
+    *chipw = 4.8;
+    *chiph = 3.6;
+    *imagew = 1280;
+    *imageh = 960;
+    *pixelw = 3.75;
+    *pixelh = 3.75;
+    *bpp = 16;
+
+    return QHYCCD_SUCCESS;
+}
 
 

@@ -660,5 +660,18 @@ void QHY23::ConvertDataBIN44(unsigned char * Data,int x, int y, unsigned short P
     free(Buf);
 }
 
+int QHY23::GetChipInfo(double *chipw,double *chiph,int *imagew,int *imageh,double *pixelw,double *pixelh,int *bpp)
+{
+    *chipw = 14.6;
+    *chiph = 12.8;
+    *imagew = 3468;
+    *imageh = 2728;
+    *pixelw = 3.69;
+    *pixelh = 3.69;
+    *bpp = 16;
+
+    return QHYCCD_SUCCESS;
+}
+
 
 
