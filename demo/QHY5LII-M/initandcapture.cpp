@@ -76,7 +76,8 @@ int main(void)
             goto failure;
         }
 
-        ret = SetQHYCCDResolution(camhandle,1280,960);
+//        ret = SetQHYCCDResolution(camhandle,1280,960);
+        ret = SetQHYCCDResolution(camhandle,640,480);
         if(ret == QHYCCD_SUCCESS)
         {
             printf("Set QHY5LII-M resolution success!\n");
@@ -87,6 +88,17 @@ int main(void)
             goto failure;
         }
         
+        ret = SetQHYCCDParam(camhandle, CONTROL_USBTRAFFIC, 1000);
+        if(ret == QHYCCD_SUCCESS) 
+        {
+            printf("setting USB traffic success!\n");
+        }
+        else
+        {
+            printf("setting USB traffic failure\n");
+            goto failure;
+        }
+
         ret = BeginQHYCCDLive(camhandle);
         if(ret == QHYCCD_SUCCESS)
         {
