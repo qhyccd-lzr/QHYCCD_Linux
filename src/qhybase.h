@@ -45,7 +45,7 @@ class QHYBASE:public QHYCAM
 public:
     QHYBASE()
     {
-
+    	monoimg = roiimg = colorimg = NULL;
     }
     ~QHYBASE(){};
     

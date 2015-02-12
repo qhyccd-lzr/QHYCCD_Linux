@@ -41,7 +41,7 @@ int GainTable[] =
 };
 
 
-QHY5II::QHY5II()
+QHY5II::QHY5II() : QHYBASE()
 {
     /* init the tmp buffer for usb transfer */
     rawarray = new unsigned char[1280 * 1024 * 2];
