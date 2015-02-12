@@ -30,7 +30,7 @@
 #include <opencv/highgui.h>
 
 
-QHY5LII_M::QHY5LII_M()
+QHY5LII_M::QHY5LII_M() : QHYBASE()
 {
     /* init the tmp buffer for usb transfer */
     rawarray = new unsigned char[1280*960*2];
