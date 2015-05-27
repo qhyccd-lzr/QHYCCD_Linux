@@ -1,16 +1,26 @@
 QHYCCD SDK
 ==========
 
-Big difference!!!
+This package provides QHYCCD SDK for QHYCCD cameras.
 
-This sdk support Linux and OSX.
 
 Support Camera List:
-IMG2P,QHY6,QHY8,QHY8L,QHY8PRO,QHY9S,QHY10,QHY11,QHY12,QHY21,QHY22,QHY23,IC8300
-
-QHY5II,QHY5LII_M(mono),QHY5LII_C(color)
+QHY5,QHY5II,QHY5LII,IMG2P,QHY2PRO,QHY6,QHY7,QHY8,QHY8L,QHY8PRO,QHY9S,QHY10,QHY11,QHY12,QHY15,QHY16,QHY21,QHY22,QHY23,IC8300,IC16803,QHY27,QHY28,QHY29
 
 
+Requirtments
+============
+
++ libusb-1
+       libusb-1 is required.
 
 
+Installation
+============
+
+        See INSTALL
+
+How to Use
+============
+        please check the sample to help your development
 
