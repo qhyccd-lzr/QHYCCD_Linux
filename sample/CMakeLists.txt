@@ -4,10 +4,10 @@ PROJECT(QHYXXXDEMO)
 set(CMAKE_MODULE_PATH "${PROJECT_SOURCE_DIR}/../cmake_modules/")
 
 find_package(USB-1 REQUIRED)
-find_package(OpenCV REQUIRED)
+#find_package(OpenCV REQUIRED)
 
 include_directories($(USB_1_INCLUDE_DIR))
-include_directories($(OpenCV_INCLUDE_DIR))
+#include_directories($(OpenCV_INCLUDE_DIR))
 
 aux_source_directory(. SRC_LIST)
 
