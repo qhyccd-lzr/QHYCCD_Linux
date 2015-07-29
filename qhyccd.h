@@ -30,9 +30,22 @@
 #include "qhyccdcamdef.h"
 #include "qhyccdstruct.h"
 
+#ifdef WIN32
+#include "cyapi.h"
+#endif
+
 #ifndef __QHYCCD_H__
 #define __QHYCCD_H__
 
+/**
+ * typedef the libusb_deivce_handle qhyccd_handle
+ */
+#ifdef LINUX
+typedef struct libusb_device_handle qhyccd_handle;
+#endif
+#ifdef WIN32
+typedef CCyUSBDevice qhyccd_handle;
+#endif
 
 /** \fn int InitQHYCCDResource()
       \brief initialize QHYCCD SDK resource
@@ -652,4 +665,6 @@ EXPORTFUNC double STDCALL GetQHYCCDReadingProgress(qhyccd_handle *handle);
 */
 EXPORTFUNC int STDCALL TestQHYCCDPIDParas(qhyccd_handle *h, double p, double i, double d);
 
+
+EXPORTFUNC int STDCALL SetQHYCCDTrigerFunction(qhyccd_handle *h,bool value);
 #endif

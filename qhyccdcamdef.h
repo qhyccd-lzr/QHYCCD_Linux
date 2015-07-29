@@ -182,13 +182,13 @@
 #define DEVICETYPE_QHY27        899
 
 /**
- * Type define for QHYA9 */
-#define DEVICETYPE_QHYA9        900
+ * Type define for IC90A */
+#define DEVICETYPE_IC90A        900
 
 
 /**
- * Type define for QHYAPS */
-#define DEVICETYPE_QHYAPS       901
+ * Type define for IC16200A */
+#define DEVICETYPE_IC16200A     901
 
 /**
  * Type define for QHY28 */
@@ -217,6 +217,15 @@
 /**
  * Type define for SOLAR1600 */
 #define DEVICETYPE_SOLAR1600    908
+
+/**
+ * Type define for QHY5PII_M */
+#define DEVICETYPE_QHY5PII_M    909
+
+/**
+ * Type define for Titan034 */
+#define DEVICETYPE_TITAN034     910
+
 
 /**
  * Type define for QHY6 */
