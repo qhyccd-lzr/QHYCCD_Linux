@@ -513,6 +513,19 @@ EXPORTFUNC int STDCALL QHYCCDInterCamOledOnOff(qhyccd_handle *handle,unsigned ch
 EXPORTFUNC int STDCALL SetQHYCCDInterCamOledBrightness(qhyccd_handle *handle,unsigned char brightness);
 
 /** 
+  @fn int SendFourLine2QHYCCDInterCamOled(qhyccd_handle *handle,char *messagetemp,char *messageinfo,char *messagetime,char *messagemode)
+  @brief spilit the message to two line,send to camera
+  @param h camera control handle
+  @param messagetemp message for the oled's 1st line
+  @param messageinfo message for the oled's 2nd line
+  @param messagetime message for the oled's 3rd line
+  @param messagemode message for the oled's 4th line
+  @return
+  on success,return QHYCCD_SUCCESS \n
+  another QHYCCD_ERROR code on other failures
+*/
+EXPORTFUNC int STDCALL SendFourLine2QHYCCDInterCamOled(qhyccd_handle *handle,char *messagetemp,char *messageinfo,char *messagetime,char *messagemode);
+/** 
   @fn int SendTwoLine2QHYCCDInterCamOled(qhyccd_handle *handle,char *messageTop,char *messageBottom)
   @brief spilit the message to two line,send to camera
   @param h camera control handle
@@ -667,4 +680,11 @@ EXPORTFUNC int STDCALL TestQHYCCDPIDParas(qhyccd_handle *h, double p, double i, 
 
 
 EXPORTFUNC int STDCALL SetQHYCCDTrigerFunction(qhyccd_handle *h,bool value);
+
+EXPORTFUNC int STDCALL DownloadFX3FirmWare(unsigned short vid,unsigned short pid,char *imgpath);
+
+EXPORTFUNC int STDCALL GetQHYCCDType(qhyccd_handle *h);
+
+EXPORTFUNC int STDCALL SetQHYCCDDebayerOnOff(qhyccd_handle *h,bool onoff);
+
 #endif
