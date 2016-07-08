@@ -7,17 +7,10 @@ int main(void)
     char path[1024] = "The Path to your firmware Directroy";
     /* 
     for example:
-    firmware dirctory is /opt/phd2_qhy/tmp/firmware
-    path = "/opt/phd2_qhy/tmp/"
+    firmware dirctory path is /opt/phd2_qhy/tmp/firmware
+    path = "/opt/phd2_qhy/tmp/";
     */   
-    getcwd(path,1024);
 
-    /*
-     before you run this sample,please specify the path your firmware folder.the firmware folder must name "firmware".it is hardcode to my sdk.
-
-     ex:
-     OSXInitQHYCCDFirmware(./firmware/);
-     */
     InitQHYCCDResource();
 
     /*
