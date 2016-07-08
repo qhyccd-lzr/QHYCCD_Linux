@@ -4,8 +4,12 @@
 
 int main(void)
 {
-    char path[1024];
-    
+    char path[1024] = "The Path to your firmware Directroy";
+    /* 
+    for example:
+    firmware dirctory is /opt/phd2_qhy/tmp/firmware
+    path = "/opt/phd2_qhy/tmp/"
+    */   
     getcwd(path,1024);
 
     /*
@@ -14,6 +18,12 @@ int main(void)
      ex:
      OSXInitQHYCCDFirmware(./firmware/);
      */
+    InitQHYCCDResource();
 
+    /*
+    remember you should put the .HEX and .IMG files to firmware folder before run this sample 
+    */
     OSXInitQHYCCDFirmware(path);
+
+    ReleaseQHYCCDResource();
 }
