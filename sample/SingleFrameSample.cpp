@@ -12,7 +12,7 @@ int main(int argc,char *argv[])
     int ret = QHYCCD_ERROR;
     char id[32];
     int found = 0;
-    int w,h,bpp,channels;
+    unsigned int w,h,bpp,channels;
     unsigned char *ImgData;
     int camtime = 100000,camgain = 0,camoffset = 140,camspeed = 0,cambinx = 1,cambiny = 1;
 
@@ -61,6 +61,17 @@ int main(int argc,char *argv[])
             goto failure;
         }
 
+        ret = SetQHYCCDStreamMode(camhandle,0);
+        if(ret == QHYCCD_SUCCESS)
+        {
+            printf("SetQHYCCDStreamMode success!\n");
+        }
+        else
+        {
+            printf("SetQHYCCDStreamMode code:%d\n",ret);
+            goto failure;
+        }
+
         ret = InitQHYCCD(camhandle);
         if(ret == QHYCCD_SUCCESS)
         {
@@ -88,7 +99,60 @@ int main(int argc,char *argv[])
             goto failure;
         }
         
-        
+        ret = IsQHYCCDControlAvailable(camhandle,CAM_COLOR);
+        if(ret == BAYER_GB || ret == BAYER_GR || ret == BAYER_BG || ret == BAYER_RG)
+        {
+            printf("This is a Color Cam\n");
+            SetQHYCCDDebayerOnOff(camhandle,true);
+            SetQHYCCDParam(camhandle,CONTROL_WBR,20);
+            SetQHYCCDParam(camhandle,CONTROL_WBG,20);
+            SetQHYCCDParam(camhandle,CONTROL_WBB,20);
+        }        
+
+        ret = IsQHYCCDControlAvailable(camhandle,CONTROL_USBTRAFFIC);
+        if(ret == QHYCCD_SUCCESS)
+        {
+            ret = SetQHYCCDParam(camhandle,CONTROL_USBTRAFFIC,30);
+            if(ret != QHYCCD_SUCCESS)
+            {
+                printf("SetQHYCCDParam CONTROL_USBTRAFFIC failed\n");
+                getchar();
+                return 1;
+            }
+        }
+
+        ret = IsQHYCCDControlAvailable(camhandle,CONTROL_GAIN);
+        if(ret == QHYCCD_SUCCESS)
+        {
+            ret = SetQHYCCDParam(camhandle,CONTROL_GAIN,30);
+            if(ret != QHYCCD_SUCCESS)
+            {
+                printf("SetQHYCCDParam CONTROL_GAIN failed\n");
+                getchar();
+                return 1;
+            }
+        }
+
+        ret = IsQHYCCDControlAvailable(camhandle,CONTROL_OFFSET);
+        if(ret == QHYCCD_SUCCESS)
+        {
+            ret = SetQHYCCDParam(camhandle,CONTROL_OFFSET,140);
+            if(ret != QHYCCD_SUCCESS)
+            {
+                printf("SetQHYCCDParam CONTROL_GAIN failed\n");
+                getchar();
+                return 1;
+            }
+        }
+
+        ret = SetQHYCCDParam(camhandle,CONTROL_EXPOSURE,20000);//170000000);
+        if(ret != QHYCCD_SUCCESS)
+        {
+            printf("SetQHYCCDParam CONTROL_EXPOSURE failed\n");
+            getchar();
+            return 1;
+        }        
+
         ret = SetQHYCCDResolution(camhandle,0,0,w,h);
         if(ret == QHYCCD_SUCCESS)
         {
@@ -111,10 +175,26 @@ int main(int argc,char *argv[])
             goto failure;
         }
         
-        ret = ExpQHYCCDSingleFrame(camhandle);
+       ret = IsQHYCCDControlAvailable(camhandle,CONTROL_TRANSFERBIT);
         if(ret == QHYCCD_SUCCESS)
         {
+            ret = SetQHYCCDBitsMode(camhandle,16);
+            if(ret != QHYCCD_SUCCESS)
+            {
+                printf("SetQHYCCDParam CONTROL_GAIN failed\n");
+                getchar();
+                return 1;
+            }
+        }
+
+        ret = ExpQHYCCDSingleFrame(camhandle);
+        if( ret != QHYCCD_ERROR )
+        {
             printf("ExpQHYCCDSingleFrame success!\n");
+            if( ret != QHYCCD_READ_DIRECTLY )
+            {
+                sleep(100);
+            } 
         }
         else
         {
@@ -122,7 +202,7 @@ int main(int argc,char *argv[])
             goto failure;
         }
         
-        int length = GetQHYCCDMemLength(camhandle);
+        uint32_t length = GetQHYCCDMemLength(camhandle);
         
         if(length > 0)
         {
@@ -139,21 +219,22 @@ int main(int argc,char *argv[])
         if(ret == QHYCCD_SUCCESS)
         {
             printf("GetQHYCCDSingleFrame succeess! \n");
-            
             //to do anything you like:
-
-            delete(ImgData);       
+                 
         }
         else
         {
             printf("GetQHYCCDSingleFrame fail:%d\n",ret);
         }
+
+        delete(ImgData);  
     }
     else
     {
         printf("The camera is not QHYCCD or other error \n");
         goto failure;
     }
+
     if(camhandle)
     {
         ret = CancelQHYCCDExposingAndReadout(camhandle);
