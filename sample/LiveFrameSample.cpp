@@ -5,6 +5,13 @@
 #include <libqhy/qhyccd.h>
 #include <sys/time.h>
 
+//#define OPENCV_SUPPORT
+
+#ifdef OPENCV_SUPPORT
+#include <opencv/cv.h>
+#include <opencv/highgui.h>
+#endif
+
 int main(int argc,char *argv[])
 {
     int num = 0;
@@ -13,7 +20,7 @@ int main(int argc,char *argv[])
     char id[32];
     char camtype[16];
     int found = 0;
-    int w,h,bpp,channels;
+    unsigned int w,h,bpp,channels;
     unsigned char *ImgData;
     int camtime = 10000,camgain = 0,camspeed = 2,cambinx = 1,cambiny = 1;
 
@@ -90,7 +97,18 @@ int main(int argc,char *argv[])
             goto failure;
         }
         
-        
+       ret = IsQHYCCDControlAvailable(camhandle,CONTROL_TRANSFERBIT);
+        if(ret == QHYCCD_SUCCESS)
+        {
+            ret = SetQHYCCDBitsMode(camhandle,8);
+            if(ret != QHYCCD_SUCCESS)
+            {
+                printf("SetQHYCCDParam CONTROL_GAIN failed\n");
+                getchar();
+                return 1;
+            }
+        }        
+
         ret = SetQHYCCDResolution(camhandle,0,0,w,h);
         if(ret == QHYCCD_SUCCESS)
         {
@@ -130,12 +148,26 @@ int main(int argc,char *argv[])
         int t_start,t_end;
         t_start = time(NULL);
         int fps = 0;
-        
-        while(1)
+        #ifdef OPENCV_SUPPORT
+        IplImage *img = NULL;
+        cvNamedWindow("show",0);
+        #endif
+
+        ret = QHYCCD_ERROR;
+        while(ret != QHYCCD_SUCCESS)
         {
             ret = GetQHYCCDLiveFrame(camhandle,&w,&h,&bpp,&channels,ImgData);
             if(ret == QHYCCD_SUCCESS)
             {
+                #ifdef OPENCV_SUPPORT
+                if(img == NULL)
+                {
+                    img = cvCreateImageHeader(cvSize(w,h),bpp,1);
+                    img->imageData = (char *)ImgData;
+                }
+                cvShowImage("show",img);
+                cvWaitKey(30);
+                #endif
                 fps++;
                 t_end = time(NULL);
                 if(t_end - t_start >= 5)
@@ -144,10 +176,6 @@ int main(int argc,char *argv[])
                     fps = 0;
                     t_start = time(NULL);
                 }
-            }
-            else
-            {
-               printf("GetQHYCCDLiveFrame failed \n");
             }
 
         }
