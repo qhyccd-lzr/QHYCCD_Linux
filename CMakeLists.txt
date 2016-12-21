@@ -14,9 +14,9 @@ install(FILES ${FIRMWARE} DESTINATION "/usr/local/firmware")
 
 ELSE()
 
-set(FIRMWARE_INSTALL_DIR "/lib/firmware/qhy")
-set(UDEVRULES_INSTALL_DIR "/lib/udev/rules.d" CACHE STRING "Base directory for udev rules")
 set(LIB_INSTALL_DIR "${CMAKE_INSTALL_PREFIX}/lib")
+set(FIRMWARE_INSTALL_DIR "${LIB_INSTALL_DIR}/firmware/qhy")
+set(UDEVRULES_INSTALL_DIR "${LIB_INSTALL_DIR}/udev/rules.d" CACHE STRING "Base directory for udev rules")
 
 IF(UNIX AND NOT WIN32)
  IF (CMAKE_HOST_SYSTEM_PROCESSOR MATCHES "armv6l")
